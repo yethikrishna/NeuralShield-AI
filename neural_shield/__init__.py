@@ -95,3 +95,4 @@ __all__.extend([
 
 __version__ = "2026.6.17.5"
 from .realtime_adversarial_detector_2026 import RealTimeAdversarialDetector, AdversarialType, RealTimeAssessment
+from .enhanced_constitutional_classifier_2026_june import EnhancedConstitutionalClassifier, HarmCategory, ClassificationResult
