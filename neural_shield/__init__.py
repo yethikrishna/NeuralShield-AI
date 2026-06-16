@@ -1,6 +1,6 @@
 """
 NeuralShield-AI - AI Security Defense Framework
-June 2026 - Enhanced with Constitutional Classifiers, Input Purification, and Poisoning Detection
+June 2026 - Enhanced with Jailbreak Detection, Constitutional Classifiers, Input Purification
 """
 from .enhanced_mimetic_detector_2026 import EnhancedMimeticDetector2026
 from .constitutional_classifier_2026 import (
@@ -13,6 +13,14 @@ from .constitutional_classifier_2026 import (
 )
 from .input_purification_2026 import InputPurifier, AgentSecurityMonitor
 from .memory_poisoning_detector_2026 import MemoryPoisoningDetector
+from .rag_poisoning_detector_2026 import RAGPoisoningDetector, AdaptiveAttackDefender, MultiModalSecurityGate
+from .advanced_jailbreak_detector_2026 import (
+    AdvancedJailbreakDetector,
+    PromptShield2026,
+    AttackType,
+    DetectionResult
+)
+
 __all__ = [
     "EnhancedMimeticDetector2026",
     "ConstitutionalClassifier2026",
@@ -23,7 +31,14 @@ __all__ = [
     "ClassificationResult",
     "InputPurifier",
     "AgentSecurityMonitor",
-    "MemoryPoisoningDetector"
+    "MemoryPoisoningDetector",
+    "RAGPoisoningDetector",
+    "AdaptiveAttackDefender",
+    "MultiModalSecurityGate",
+    "AdvancedJailbreakDetector",
+    "PromptShield2026",
+    "AttackType",
+    "DetectionResult",
 ]
-__version__ = "2026.6.17.1"
-from .rag_poisoning_detector_2026 import RAGPoisoningDetector, AdaptiveAttackDefender, MultiModalSecurityGate
+
+__version__ = "2026.6.17.2"
