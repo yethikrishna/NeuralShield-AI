@@ -43,3 +43,9 @@ __all__ = [
 
 __version__ = "2026.6.17.2"
 from .shield_defense_framework_2026 import SHIELDDefenseFramework, ThreatCategory, ThreatAssessment
+from .graph_based_jailbreak_detector_2026 import (
+    GraphBasedJailbreakDetector,
+    RecursiveJailbreakDetector,
+    TokenNode,
+    GraphEdge
+)
