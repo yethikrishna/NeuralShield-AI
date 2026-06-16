@@ -1,0 +1,12 @@
+{
+  "module": "ProActActiveDefender",
+  "version": "2026.06.v2",
+  "total_test_prompts": 500,
+  "detection_total_seconds": 0.0037,
+  "detection_avg_ms": 0.0074,
+  "defense_total_seconds": 0.0037,
+  "defense_avg_ms": 0.0073,
+  "detections_per_second": 135099.66,
+  "defenses_per_second": 136729.17,
+  "timestamp": "2026-06-17 04:36:45"
+}

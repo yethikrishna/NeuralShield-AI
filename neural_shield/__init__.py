@@ -80,3 +80,17 @@ __all__.extend([
     "AttentionHijackType",
     "AttentionHijackAssessment"
 ])
+
+# ProAct Active Defense (Microsoft Research May 2026)
+from .proact_active_defense_2026 import (
+    ProActActiveDefender,
+    DeceptionStrategy,
+    DeceptionResult
+)
+__all__.extend([
+    "ProActActiveDefender",
+    "DeceptionStrategy",
+    "DeceptionResult"
+])
+
+__version__ = "2026.6.17.5"
