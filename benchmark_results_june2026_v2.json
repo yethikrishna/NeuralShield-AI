@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-06-17 01:40:55",
+  "input_purification_ms": 2.294948029993975,
+  "prompt_scan_ms": 0.002874026999961643,
+  "poisoning_detection_ms": 0.1172083300025406,
+  "version": "2026.6.17.1",
+  "new_features": [
+    "InputPurifier",
+    "AgentSecurityMonitor",
+    "MemoryPoisoningDetector"
+  ]
+}
