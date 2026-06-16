@@ -42,3 +42,4 @@ __all__ = [
 ]
 
 __version__ = "2026.6.17.2"
+from .shield_defense_framework_2026 import SHIELDDefenseFramework, ThreatCategory, ThreatAssessment
