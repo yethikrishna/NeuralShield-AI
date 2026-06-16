@@ -49,3 +49,22 @@ from .graph_based_jailbreak_detector_2026 import (
     TokenNode,
     GraphEdge
 )
+from .multi_turn_jailbreak_defender_2026 import (
+    MultiTurnJailbreakDetector,
+    ConversationDefenseEngine,
+    MultiTurnAttackType,
+    ConversationContextTracker,
+    MultiTurnDetectionResult,
+    ConversationTurn
+)
+
+__all__.extend([
+    "MultiTurnJailbreakDetector",
+    "ConversationDefenseEngine",
+    "MultiTurnAttackType",
+    "ConversationContextTracker",
+    "MultiTurnDetectionResult",
+    "ConversationTurn",
+])
+
+__version__ = "2026.6.17.3"
