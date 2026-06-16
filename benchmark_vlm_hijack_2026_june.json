@@ -1,0 +1,7 @@
+{
+  "queries_processed": 5,
+  "attacks_detected": 1,
+  "total_time_ms": 0.02002716064453125,
+  "avg_time_ms": 0.00400543212890625,
+  "detection_rate": 0.2
+}

@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-06-17",
+  "module": "VLM Attention Hijacking Defense",
+  "research_basis": "HKUST & Shanghai Jiao Tong University 2026",
+  "test_cases": 8,
+  "attacks_detected": 1,
+  "detection_rate": 0.125,
+  "total_time_ms": 0.03266334533691406,
+  "avg_time_ms": 0.004082918167114258,
+  "threshold": 0.3,
+  "patterns_monitored": 17
+}

@@ -67,4 +67,16 @@ __all__.extend([
     "ConversationTurn",
 ])
 
-__version__ = "2026.6.17.3"
+__version__ = "2026.6.17.4"
+
+# VLM Attention Hijacking Defense (HKUST & Shanghai Jiao Tong University 2026)
+from .vlm_attention_hijacking_defense_2026 import (
+    VLMAttentionHijackDefender,
+    AttentionHijackType,
+    AttentionHijackAssessment
+)
+__all__.extend([
+    "VLMAttentionHijackDefender",
+    "AttentionHijackType",
+    "AttentionHijackAssessment"
+])
