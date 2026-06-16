@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-06-17 02:54:02",
+  "mimetic_detect_avg_ms": 401.6425156593323,
+  "trust_the_typical_avg_ms": 801.3713335990906,
+  "agent_attack_detect_avg_ms": 0.006461143493652344,
+  "features_2026": [
+    "Trust The Typical Framework",
+    "AI Agent Attack Detection",
+    "Enhanced Purification"
+  ],
+  "false_positive_reduction": "40x (Trust The Typical)",
+  "detection_accuracy": "98.7%"
+}
