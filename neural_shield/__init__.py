@@ -26,3 +26,4 @@ __all__ = [
     "MemoryPoisoningDetector"
 ]
 __version__ = "2026.6.17.1"
+from .rag_poisoning_detector_2026 import RAGPoisoningDetector, AdaptiveAttackDefender, MultiModalSecurityGate

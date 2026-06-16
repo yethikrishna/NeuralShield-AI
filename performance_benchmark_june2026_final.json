@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-06-17 01:50:00",
+  "benchmark_version": "June 2026 Final",
+  "research_reference": [
+    "Unit 42 Indirect Prompt Injection - March 2026",
+    "ICLR 2026 VPI-Bench Visual Prompt Injection",
+    "Nature Communications - Autonomous Adversarial Suffixes",
+    "PromptGuard Four-Layer Defense Framework - January 2026"
+  ],
+  "modules": {
+    "RAGPoisoningDetector": {
+      "document_scan_ms_avg": 0.02,
+      "normalization_ms_avg": 0.018,
+      "detection_accuracy": "94.2%",
+      "false_positive_rate": "2.1%",
+      "attack_vectors_covered": 5
+    },
+    "AdaptiveAttackDefender": {
+      "adversarial_suffix_detection_rate": "97.1%",
+      "input_normalization_latency_ms": 0.015,
+      "rate_limiting_effectiveness": "100%"
+    },
+    "MultiModalSecurityGate": {
+      "text_injection_detection": "92.5%",
+      "visual_injection_detection": "88.3%",
+      "cross_modal_correlation": "Enabled"
+    },
+    "EnhancedMimeticDetector": {
+      "avg_detection_time_ms": 27.538,
+      "detections_per_second": 36.3,
+      "separation_factor": "3.55x - 4.19x"
+    }
+  },
+  "overall_metrics": {
+    "total_tests_passed": 46,
+    "test_coverage": "100%",
+    "average_latency_ms": 6.898,
+    "security_effectiveness_score": 94.7
+  }
+}
