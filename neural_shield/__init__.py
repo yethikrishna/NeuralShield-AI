@@ -360,3 +360,22 @@ __all__.extend([
     "BackdoorDetectionResult"
 ])
 __version__ = "2026.6.17.28"
+# Threat Response Orchestrator (June 2026 Production Release)
+# Automated response coordination across all security detectors
+from .threat_response_orchestrator_2026_june import (
+    ThreatResponseOrchestrator,
+    ResponsePolicy,
+    ThreatSeverity,
+    ResponseAction,
+    ThreatIncident,
+    ResponseResult
+)
+__all__.extend([
+    "ThreatResponseOrchestrator",
+    "ResponsePolicy",
+    "ThreatSeverity",
+    "ResponseAction",
+    "ThreatIncident",
+    "ResponseResult"
+])
+__version__ = "2026.6.17.29"
