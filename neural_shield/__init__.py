@@ -737,3 +737,25 @@ __all__.extend([
     "FeedHealthMetrics"
 ])
 __version__ = "2026.6.18.2"
+
+__version__ = "2026.6.18.1"
+# Real-Time Prompt Sanitization Engine (June 18, 2026 Production Release)
+# Multi-layer input sanitization: XSS, SQL injection, command injection, prompt injection, homoglyph defense
+from .realtime_prompt_sanitization_engine_2026_june import (
+    PromptSanitizationEngine,
+    InjectionType,
+    SanitizationLevel,
+    InjectionFinding,
+    SanitizationResult,
+    HomoglyphDefender,
+    create_prompt_sanitizer
+)
+__all__.extend([
+    "PromptSanitizationEngine",
+    "InjectionType",
+    "SanitizationLevel",
+    "InjectionFinding",
+    "SanitizationResult",
+    "HomoglyphDefender",
+    "create_prompt_sanitizer"
+])
