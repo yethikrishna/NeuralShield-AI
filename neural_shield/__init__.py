@@ -862,4 +862,21 @@ __all__.extend([
     "EvasionType",
     "EvasionDetectionResult"
 ])
+# Threat Intelligence Auto-Blacklisting Engine (June 18, 2026)
+# Automated threat blacklisting with confidence-based auto-flagging
+from .threat_intelligence_auto_blacklist_engine_2026_june import (
+    ThreatIntelligenceAutoBlacklistEngine,
+    BlacklistSeverity,
+    BlacklistSource,
+    BlacklistEntry,
+    BlacklistStats
+)
+__all__.extend([
+    "ThreatIntelligenceAutoBlacklistEngine",
+    "BlacklistSeverity",
+    "BlacklistSource",
+    "BlacklistEntry",
+    "BlacklistStats"
+])
+__version__ = "2026.6.18.1"
 __version__ = "2026.6.18.2"
