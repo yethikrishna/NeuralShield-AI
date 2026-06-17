@@ -491,3 +491,46 @@ __all__.extend([
     "create_watermark_protection"
 ])
 __version__ = "2026.6.17.35"
+
+# RAG Context Integrity Verifier (June 2026 Production Release)
+# Cryptographic integrity verification for RAG context chains
+from .rag_context_integrity_verifier_2026_june import (
+    RAGContextIntegrityVerifier,
+    ContextChunk,
+    IntegrityStatus,
+    TamperType,
+    IntegrityFinding,
+    IntegrityVerificationResult,
+    create_integrity_verifier
+)
+__all__.extend([
+    "RAGContextIntegrityVerifier",
+    "ContextChunk",
+    "IntegrityStatus",
+    "TamperType",
+    "IntegrityFinding",
+    "IntegrityVerificationResult",
+    "create_integrity_verifier"
+])
+__version__ = "2026.6.17.36"
+# RAG Context Integrity Verifier (June 17, 2026 Production Release)
+# Cryptographic integrity verification for RAG context chunks
+from .rag_context_integrity_verifier_2026_june import (
+    RAGContextIntegrityVerifier,
+    ContextChunk,
+    IntegrityStatus,
+    TamperType,
+    IntegrityFinding,
+    IntegrityVerificationResult,
+    create_integrity_verifier
+)
+__all__.extend([
+    "RAGContextIntegrityVerifier",
+    "ContextChunk",
+    "IntegrityStatus",
+    "TamperType",
+    "IntegrityFinding",
+    "IntegrityVerificationResult",
+    "create_integrity_verifier"
+])
+__version__ = "2026.6.17.36"
