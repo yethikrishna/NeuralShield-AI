@@ -447,3 +447,22 @@ __all__.extend([
     "create_adversarial_fuzzer"
 ])
 __version__ = "2026.6.17.32"
+# LLM Backdoor Watermark Detector (June 2026 Production Release)
+# Detects hidden watermarks, backdoor triggers, and steganographic data
+from .llm_backdoor_watermark_detector_2026_june import (
+    LLMBackdoorWatermarkDetector,
+    WatermarkType,
+    WatermarkConfidence,
+    WatermarkFinding,
+    WatermarkDetectionResult,
+    create_watermark_detector
+)
+__all__.extend([
+    "LLMBackdoorWatermarkDetector",
+    "WatermarkType",
+    "WatermarkConfidence",
+    "WatermarkFinding",
+    "WatermarkDetectionResult",
+    "create_watermark_detector"
+])
+__version__ = "2026.6.17.33"
