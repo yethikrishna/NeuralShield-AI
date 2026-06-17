@@ -926,3 +926,22 @@ __all__.extend([
     "create_visual_injection_detector"
 ])
 __version__ = "2026.6.18.4"
+# Output Integrity Watermarker & Provenance Tracker (June 18, 2026 Production Release)
+# Cryptographic watermarking, tamper detection, and provenance tracking for LLM outputs
+from .output_integrity_watermarker_provenance_2026_june import (
+    OutputIntegrityWatermarker,
+    WatermarkType,
+    TamperVerdict,
+    WatermarkMetadata,
+    WatermarkResult,
+    VerificationResult
+)
+__all__.extend([
+    "OutputIntegrityWatermarker",
+    "WatermarkType",
+    "TamperVerdict",
+    "WatermarkMetadata",
+    "WatermarkResult",
+    "VerificationResult"
+])
+__version__ = "2026.6.18.4"
