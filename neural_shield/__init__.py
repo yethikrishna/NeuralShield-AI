@@ -423,7 +423,28 @@ __all__.extend([
     "ThreatCategory",
     "create_threat_intelligence_aggregator"
 ])
-__version__ = "2026.6.17.31"
+__version__ = "2026.6.18.1"
+# MITRE ATT&CK Threat Mapper (June 18, 2026 Production Release)
+# Maps threats to MITRE ATT&CK framework tactics, techniques, and mitigations
+from .threat_intelligence_mitre_attack_mapper_2026_june import (
+    ThreatIntelligenceMITREAttackMapper,
+    MITRETactic,
+    MITRETechnique,
+    MITREMapping,
+    Mitigation,
+    ThreatMappingResult,
+    create_mitre_attack_mapper
+)
+__all__.extend([
+    "ThreatIntelligenceMITREAttackMapper",
+    "MITRETactic",
+    "MITRETechnique",
+    "MITREMapping",
+    "Mitigation",
+    "ThreatMappingResult",
+    "create_mitre_attack_mapper",
+])
+__version__ = "2026.6.18.2"
 # Adversarial Prompt Fuzzer (June 2026 Production Release)
 # Real fuzz testing framework for adversarial prompt robustness evaluation
 from .adversarial_prompt_fuzzer_2026_june import (
