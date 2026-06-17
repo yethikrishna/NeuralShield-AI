@@ -193,3 +193,23 @@ __all__.extend([
     "HallucinationDetectionResult"
 ])
 __version__ = "2026.6.17.12"
+# Model Extraction Attack Detector (June 2026 Production Release)
+from .model_extraction_detector_2026_june import (
+    ModelExtractionDetector,
+    ExtractionAttackType,
+    RiskLevel,
+    ExtractionFinding,
+    ExtractionDetectionResult,
+    QueryPatternAnalyzer,
+    MembershipInferenceDetector
+)
+__all__.extend([
+    "ModelExtractionDetector",
+    "ExtractionAttackType",
+    "RiskLevel",
+    "ExtractionFinding",
+    "ExtractionDetectionResult",
+    "QueryPatternAnalyzer",
+    "MembershipInferenceDetector"
+])
+__version__ = "2026.6.17.13"
