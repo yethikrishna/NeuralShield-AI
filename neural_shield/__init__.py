@@ -113,4 +113,20 @@ __all__.extend([
     "CorrelationConfidence"
 ])
 
-__version__ = "2026.6.17.6"
+# Adversarial Prompt Robustness Scorer (June 2026 Production Release)
+from .adversarial_robustness_scorer_2026_june import (
+    AdversarialRobustnessScorer,
+    AttackVector,
+    RiskLevel,
+    RobustnessScore,
+    VulnerabilityFinding
+)
+__all__.extend([
+    "AdversarialRobustnessScorer",
+    "AttackVector",
+    "RiskLevel",
+    "RobustnessScore",
+    "VulnerabilityFinding"
+])
+
+__version__ = "2026.6.17.7"
