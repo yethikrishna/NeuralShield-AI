@@ -399,3 +399,28 @@ __all__.extend([
     "ProtectionResult"
 ])
 __version__ = "2026.6.17.30"
+# Threat Intelligence Feed Aggregator (June 2026 Production Release)
+# Multi-source threat feed aggregation, signature caching, and real-time scoring
+from .threat_intelligence_feed_aggregator_2026_june import (
+    ThreatIntelligenceAggregator,
+    ThreatFeedCache,
+    ThreatSignature,
+    ThreatMatch,
+    AggregationResult,
+    ThreatSource,
+    ThreatSeverity,
+    ThreatCategory,
+    create_threat_intelligence_aggregator
+)
+__all__.extend([
+    "ThreatIntelligenceAggregator",
+    "ThreatFeedCache",
+    "ThreatSignature",
+    "ThreatMatch",
+    "AggregationResult",
+    "ThreatSource",
+    "ThreatSeverity",
+    "ThreatCategory",
+    "create_threat_intelligence_aggregator"
+])
+__version__ = "2026.6.17.31"
