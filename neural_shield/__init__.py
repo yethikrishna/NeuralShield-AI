@@ -299,3 +299,31 @@ __all__.extend([
     "ThreatFinding",
     "ClassificationResult"
 ])
+
+# Security Metrics & Analytics Dashboard (June 2026 Production Release)
+# Real-time security analytics, scoring, and reporting dashboard
+from .security_metrics_analytics_dashboard_2026_june import (
+    SecurityLevel,
+    MetricType,
+    AlertSeverity,
+    MetricDataPoint,
+    DashboardAlert,
+    SecurityScore,
+    TrendAnalysis,
+    DashboardReport,
+    SecurityAnalyticsDashboard,
+    create_security_dashboard
+)
+__all__.extend([
+    "SecurityLevel",
+    "MetricType",
+    "AlertSeverity",
+    "MetricDataPoint",
+    "DashboardAlert",
+    "SecurityScore",
+    "TrendAnalysis",
+    "DashboardReport",
+    "SecurityAnalyticsDashboard",
+    "create_security_dashboard"
+])
+__version__ = "2026.6.17.25"
