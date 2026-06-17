@@ -178,4 +178,18 @@ __all__.extend([
     "CoTDetectionResult",
     "InjectionFinding"
 ])
-__version__ = "2026.6.17.10"
+__version__ = "2026.6.17.11"
+# LLM Hallucination Detector (June 2026 Production Release)
+from .hallucination_detector_2026_june import (
+    HallucinationDetector2026,
+    HallucinationType,
+    HallucinationFinding,
+    HallucinationDetectionResult
+)
+__all__.extend([
+    "HallucinationDetector2026",
+    "HallucinationType",
+    "HallucinationFinding",
+    "HallucinationDetectionResult"
+])
+__version__ = "2026.6.17.12"
