@@ -379,3 +379,23 @@ __all__.extend([
     "ResponseResult"
 ])
 __version__ = "2026.6.17.29"
+
+# Context Window Protector (June 2026 Production Release)
+# Protects system prompt boundaries and context window from injection attacks
+from .context_window_protector_2026_june import (
+    ContextWindowProtector,
+    BoundaryAttackType,
+    ProtectionLevel,
+    BoundaryFingerprint,
+    BoundaryViolation,
+    ProtectionResult
+)
+__all__.extend([
+    "ContextWindowProtector",
+    "BoundaryAttackType",
+    "ProtectionLevel",
+    "BoundaryFingerprint",
+    "BoundaryViolation",
+    "ProtectionResult"
+])
+__version__ = "2026.6.17.30"
