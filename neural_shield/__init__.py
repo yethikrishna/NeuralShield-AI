@@ -696,3 +696,26 @@ __all__.extend([
     "CacheEntry"
 ])
 __version__ = "2026.6.17.47"
+# Threat Intelligence Orchestrator with Adaptive Learning (June 18, 2026 Production Release)
+# Multi-source threat aggregation, Bayesian confidence scoring, adaptive ML pattern learning
+from .threat_intelligence_orchestrator_adaptive_2026_june import (
+    ThreatIntelligenceOrchestrator,
+    ThreatSeverity,
+    ThreatCategory,
+    IOC,
+    ThreatMatch,
+    OrchestratorResult,
+    BayesianConfidenceEngine,
+    AdaptivePatternLearner
+)
+__all__.extend([
+    "ThreatIntelligenceOrchestrator",
+    "ThreatSeverity",
+    "ThreatCategory",
+    "IOC",
+    "ThreatMatch",
+    "OrchestratorResult",
+    "BayesianConfidenceEngine",
+    "AdaptivePatternLearner"
+])
+__version__ = "2026.6.18.1"
