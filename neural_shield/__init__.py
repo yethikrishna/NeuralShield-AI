@@ -906,3 +906,23 @@ __all__.extend([
     "create_threat_tagger"
 ])
 __version__ = "2026.6.18.3"
+
+# VLM Visual Prompt Injection Detector (June 18, 2026 Production Release)
+# Detects hidden prompt injections in visual inputs: steganography, QR codes, micro-text, metadata
+from .vlm_visual_prompt_injection_detector_2026_june import (
+    VLMVisualPromptInjectionDetector,
+    VisualInjectionType,
+    DetectionConfidence,
+    VisualInjectionFinding,
+    VisualDetectionResult,
+    create_visual_injection_detector
+)
+__all__.extend([
+    "VLMVisualPromptInjectionDetector",
+    "VisualInjectionType",
+    "DetectionConfidence",
+    "VisualInjectionFinding",
+    "VisualDetectionResult",
+    "create_visual_injection_detector"
+])
+__version__ = "2026.6.18.4"
