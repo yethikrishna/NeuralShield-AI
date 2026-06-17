@@ -574,15 +574,16 @@ from .security_audit_forensics_engine_2026_june import (
     AuditLogSummary,
     create_audit_engine
 )
+from .threat_intelligence_auto_updater_2026_june import (
+    ThreatIntelligenceAutoUpdater,
+    ThreatSignature,
+    CacheEntry,
+    UpdateStatus,
+)
 __all__.extend([
-    "SecurityAuditForensicsEngine",
-    "AuditEventType",
-    "AuditSeverity",
-    "IntegrityStatus",
-    "AuditEvent",
-    "ForensicsQuery",
-    "IntegrityReport",
-    "AuditLogSummary",
-    "create_audit_engine"
+    "ThreatIntelligenceAutoUpdater",
+    "ThreatSignature",
+    "CacheEntry",
+    "UpdateStatus",
 ])
-__version__ = "2026.6.17.39"
+__version__ = "2026.6.17.40"
