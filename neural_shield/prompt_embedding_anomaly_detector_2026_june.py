@@ -270,7 +270,7 @@ class PromptEmbeddingAnomalyDetector:
         
         # Injection patterns - REAL regex patterns
         injection_patterns = [
-            (r"ignore.*(all|previous|system|instruct), AnomalyType.INJECTION_PATTERN, AnomalySeverity.CRITICAL, 0.95),
+            (r"ignore.*(all|previous|system|instruct)", AnomalyType.INJECTION_PATTERN, AnomalySeverity.CRITICAL, 0.95),
             (r"disregard.*(all|previous|above)", AnomalyType.INJECTION_PATTERN, AnomalySeverity.HIGH, 0.90),
             (r"(override|bypass|disable).*(safety|filter|guard)", AnomalyType.JAILBREAK_SYNTAX, AnomalySeverity.HIGH, 0.88),
             (r"(roleplay|pretend|imagine).*(you are|as).*(unrestricted|developer)", AnomalyType.JAILBREAK_SYNTAX, AnomalySeverity.HIGH, 0.85),
