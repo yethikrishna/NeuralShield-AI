@@ -999,3 +999,21 @@ __all__.extend([
 ])
 __version__ = "2026.6.18.5"
 __version__ = "2026.6.18.4"
+
+# Threat Intelligence Reputation Scorer (June 18, 2026 Production Release)
+# Multi-factor reputation scoring for IPs, domains, and URLs with caching and confidence calibration
+from .threat_intelligence_reputation_scorer_2026_june import (
+    ThreatIntelligenceReputationScorer,
+    ReputationCategory,
+    EntityType,
+    ReputationFactors,
+    ReputationScore
+)
+__all__.extend([
+    "ThreatIntelligenceReputationScorer",
+    "ReputationCategory",
+    "EntityType",
+    "ReputationFactors",
+    "ReputationScore"
+])
+__version__ = "2026.6.18.6"
