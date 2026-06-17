@@ -577,10 +577,33 @@ __all__.extend([
     "SecurityRiskLevel",
     "SecurityFinding",
     "APIValidationResult",
-    "ValidatedRequest",
-    "create_api_security_validator"
+
+
 ])
-__version__ = "2026.6.17.38"
+__version__ = "2026.6.17.45"
+
+# Security Policy Compliance Auditor (June 17, 2026 Production Release)
+# Real security policy enforcement, compliance scoring, and violation auditing
+from .security_policy_compliance_auditor_2026_june import (
+    SecurityPolicyComplianceAuditor,
+    PolicySeverity,
+    PolicyCategory,
+    PolicyViolation,
+    ComplianceResult,
+    SecurityPolicy
+)
+__all__.extend([
+    "SecurityPolicyComplianceAuditor",
+    "PolicySeverity",
+    "PolicyCategory",
+    "PolicyViolation",
+    "ComplianceResult",
+    "SecurityPolicy"
+])
+
+
+
+
 
 # Security Audit Logging & Forensics Engine (June 17, 2026 Production Release)
 # Tamper-evident hash-chained audit logging with cryptographic integrity
