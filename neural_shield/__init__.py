@@ -229,4 +229,20 @@ __all__.extend([
     "ConfusionFinding",
     "ConfusionDetectionResult"
 ])
-__version__ = "2026.6.17.14"
+__version__ = "2026.6.17.15"
+# LLM Agent Tool Call Security Validator (June 2026 Production Release)
+from .agent_tool_call_validator_2026_june import (
+    AgentToolCallValidator,
+    ToolCallAttackType,
+    ValidationRiskLevel,
+    ToolCallFinding,
+    ToolCallValidationResult
+)
+__all__.extend([
+    "AgentToolCallValidator",
+    "ToolCallAttackType",
+    "ValidationRiskLevel",
+    "ToolCallFinding",
+    "ToolCallValidationResult"
+])
+__version__ = "2026.6.17.16"
