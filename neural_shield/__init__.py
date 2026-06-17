@@ -662,3 +662,23 @@ __all__.extend([
     "ThreatActorType",
 ])
 __version__ = "2026.6.17.42"
+
+# Prompt Embedding Anomaly Detector (June 17, 2026 Production Release)
+# Real character n-gram embedding with cosine similarity for anomaly detection
+from .prompt_embedding_anomaly_detector_2026_june import (
+    PromptEmbeddingAnomalyDetector,
+    AnomalyType,
+    AnomalySeverity,
+    AnomalyFinding,
+    EmbeddingAnomalyResult,
+    create_embedding_anomaly_detector
+)
+__all__.extend([
+    "PromptEmbeddingAnomalyDetector",
+    "AnomalyType",
+    "AnomalySeverity",
+    "AnomalyFinding",
+    "EmbeddingAnomalyResult",
+    "create_embedding_anomaly_detector"
+])
+__version__ = "2026.6.17.46"
