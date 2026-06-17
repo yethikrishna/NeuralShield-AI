@@ -880,3 +880,29 @@ __all__.extend([
 ])
 __version__ = "2026.6.18.1"
 __version__ = "2026.6.18.2"
+
+# Threat Intelligence Auto-Tagging & MITRE ATT&CK Mapper (June 18, 2026)
+# Automated threat classification, tagging, and MITRE ATT&CK framework mapping
+from .threat_intelligence_auto_tagger_mitre_2026_june import (
+    ThreatIntelligenceAutoTagger,
+    ThreatTag,
+    MITREAttackTactic,
+    MITREAttackTechnique,
+    AutoTagConfidence,
+    MITREMapping,
+    AutoTagResult,
+    TaggingRule,
+    create_threat_tagger
+)
+__all__.extend([
+    "ThreatIntelligenceAutoTagger",
+    "ThreatTag",
+    "MITREAttackTactic",
+    "MITREAttackTechnique",
+    "AutoTagConfidence",
+    "MITREMapping",
+    "AutoTagResult",
+    "TaggingRule",
+    "create_threat_tagger"
+])
+__version__ = "2026.6.18.3"
