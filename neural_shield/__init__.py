@@ -1017,3 +1017,35 @@ __all__.extend([
     "ReputationScore"
 ])
 __version__ = "2026.6.18.6"
+
+# Ensemble Threat Detector with Weighted Voting (June 18, 2026 Production Release)
+# Multi-detector ensemble with dynamic weight adjustment and confidence calibration
+from .ensemble_threat_detector_weighted_voting_2026_june import (
+    DetectorType,
+    ThreatSeverity,
+    DetectorResult,
+    EnsembleDecision,
+    DetectorPerformance,
+    BaseThreatDetector,
+    PatternMatchingDetector,
+    EntropyAnomalyDetector,
+    KeywordFrequencyDetector,
+    ConstitutionalHeuristicDetector,
+    EnsembleThreatDetector,
+    create_ensemble_threat_detector,
+)
+__all__.extend([
+    "DetectorType",
+    "ThreatSeverity",
+    "DetectorResult",
+    "EnsembleDecision",
+    "DetectorPerformance",
+    "BaseThreatDetector",
+    "PatternMatchingDetector",
+    "EntropyAnomalyDetector",
+    "KeywordFrequencyDetector",
+    "ConstitutionalHeuristicDetector",
+    "EnsembleThreatDetector",
+    "create_ensemble_threat_detector",
+])
+__version__ = "2026.6.18.7"
