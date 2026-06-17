@@ -850,4 +850,16 @@ __all__.extend([
     "ObfuscationDetector",
     "ContextIntegrityMonitor"
 ])
+
+# Prompt Injection Evasion Detector - June 18 2026
+from .prompt_injection_evasion_detector_2026_june import (
+    PromptInjectionEvasionDetector,
+    EvasionType,
+    EvasionDetectionResult
+)
+__all__.extend([
+    "PromptInjectionEvasionDetector",
+    "EvasionType",
+    "EvasionDetectionResult"
+])
 __version__ = "2026.6.18.2"
