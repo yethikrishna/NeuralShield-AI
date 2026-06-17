@@ -424,3 +424,26 @@ __all__.extend([
     "create_threat_intelligence_aggregator"
 ])
 __version__ = "2026.6.17.31"
+# Adversarial Prompt Fuzzer (June 2026 Production Release)
+# Real fuzz testing framework for adversarial prompt robustness evaluation
+from .adversarial_prompt_fuzzer_2026_june import (
+    AdversarialPromptFuzzer,
+    FuzzerAttackType,
+    FuzzSeverity,
+    MutationStrategy,
+    FuzzTestCase,
+    FuzzResult,
+    FuzzReport,
+    create_adversarial_fuzzer
+)
+__all__.extend([
+    "AdversarialPromptFuzzer",
+    "FuzzerAttackType",
+    "FuzzSeverity",
+    "MutationStrategy",
+    "FuzzTestCase",
+    "FuzzResult",
+    "FuzzReport",
+    "create_adversarial_fuzzer"
+])
+__version__ = "2026.6.17.32"
