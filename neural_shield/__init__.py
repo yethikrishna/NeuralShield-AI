@@ -559,3 +559,4 @@ __all__.extend([
     "create_memory_safety_monitor"
 ])
 __version__ = "2026.6.17.37"
+from .security_rate_limiter_circuit_breaker_2026_june import SecurityRateLimiter, RateLimitResult, CircuitState
