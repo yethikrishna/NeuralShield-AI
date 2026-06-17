@@ -326,4 +326,21 @@ __all__.extend([
     "SecurityAnalyticsDashboard",
     "create_security_dashboard"
 ])
-__version__ = "2026.6.17.25"
+__version__ = "2026.6.17.26"
+# Prompt Firewall 2026 (June 2026 Production Release)
+# Multi-layer AI security protection against prompt injection
+from .prompt_firewall_2026_june import (
+    PromptFirewall2026,
+    FirewallThreatLevel,
+    AttackVector,
+    FirewallFinding,
+    FirewallResult
+)
+__all__.extend([
+    "PromptFirewall2026",
+    "FirewallThreatLevel",
+    "AttackVector",
+    "FirewallFinding",
+    "FirewallResult"
+])
+__version__ = "2026.6.17.27"
