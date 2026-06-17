@@ -560,6 +560,27 @@ __all__.extend([
 ])
 __version__ = "2026.6.17.37"
 from .security_rate_limiter_circuit_breaker_2026_june import SecurityRateLimiter, RateLimitResult, CircuitState
+# API Gateway Security Validator (June 17, 2026 Production Release)
+# Production-grade API security middleware for LLM endpoint protection
+from .api_gateway_security_validator_2026_june import (
+    APIGatewaySecurityValidator,
+    APIAttackType,
+    SecurityRiskLevel,
+    SecurityFinding,
+    APIValidationResult,
+    ValidatedRequest,
+    create_api_security_validator
+)
+__all__.extend([
+    "APIGatewaySecurityValidator",
+    "APIAttackType",
+    "SecurityRiskLevel",
+    "SecurityFinding",
+    "APIValidationResult",
+    "ValidatedRequest",
+    "create_api_security_validator"
+])
+__version__ = "2026.6.17.38"
 
 # Security Audit Logging & Forensics Engine (June 17, 2026 Production Release)
 # Tamper-evident hash-chained audit logging with cryptographic integrity
