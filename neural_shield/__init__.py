@@ -129,4 +129,23 @@ __all__.extend([
     "VulnerabilityFinding"
 ])
 
-__version__ = "2026.6.17.7"
+# LLM Output Sanitizer & PII Redactor (June 2026 Production Release)
+from .output_sanitizer_pii_redactor_2026 import (
+    OutputSanitizer,
+    PIIRedactor,
+    PIIType,
+    HarmCategory,
+    RedactionLevel,
+    PIIDetection,
+    SanitizationResult
+)
+__all__.extend([
+    "OutputSanitizer",
+    "PIIRedactor",
+    "PIIType",
+    "HarmCategory",
+    "RedactionLevel",
+    "PIIDetection",
+    "SanitizationResult"
+])
+__version__ = "2026.6.17.8"
