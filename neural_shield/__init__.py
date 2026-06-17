@@ -682,3 +682,17 @@ __all__.extend([
     "create_embedding_anomaly_detector"
 ])
 __version__ = "2026.6.17.46"
+
+# Threat Intelligence Cache with TTL (June 17, 2026 Production Release)
+# Production-grade thread-safe TTL caching for threat intelligence lookups
+from .threat_intelligence_cache_2026_june import (
+    ThreatIntelligenceCache,
+    CacheEntryStatus,
+    CacheEntry
+)
+__all__.extend([
+    "ThreatIntelligenceCache",
+    "CacheEntryStatus",
+    "CacheEntry"
+])
+__version__ = "2026.6.17.47"
