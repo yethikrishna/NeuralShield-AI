@@ -576,56 +576,29 @@ from .security_audit_forensics_engine_2026_june import (
 )
 from .threat_intelligence_auto_updater_2026_june import (
     ThreatIntelligenceAutoUpdater,
+    UpdateStatus,
     ThreatSignature,
     CacheEntry,
-    UpdateStatus,
 )
 __all__.extend([
     "ThreatIntelligenceAutoUpdater",
+    "UpdateStatus",
     "ThreatSignature",
     "CacheEntry",
-    "UpdateStatus",
 ])
-# RAG Poisoning Signature Detector (June 17, 2026 Production Release)
-# Signature-based detection of poisoned context injections in RAG systems
-from .rag_poisoning_signature_detector_2026_june import (
-    PoisoningType,
-    RiskLevel,
-    ContextChunk,
-    PoisoningSignature,
-    PoisoningFinding,
-    PoisoningDetectionResult,
-    RAGPoisoningSignatureDetector,
-    create_rag_poisoning_detector
+__version__ = "2026.6.17.40"
+# Threat Context Enricher (June 17, 2026 Production Release)
+# Real-time threat context enrichment with IP reputation, geolocation, and threat intelligence
+from .threat_context_enricher_2026_june import (
+    ThreatContextEnricher,
+    ThreatSeverity,
+    ThreatCategory,
+    EnrichedContext
 )
 __all__.extend([
-    "PoisoningType",
-    "RiskLevel",
-    "ContextChunk",
-    "PoisoningSignature",
-    "PoisoningFinding",
-    "PoisoningDetectionResult",
-    "RAGPoisoningSignatureDetector",
-    "create_rag_poisoning_detector"
+    "ThreatContextEnricher",
+    "ThreatSeverity",
+    "ThreatCategory",
+    "EnrichedContext"
 ])
-# Agent Memory Safety Guardian (June 17, 2026 Production Release)
-# Real-time memory access monitoring, extraction detection, and boundary protection
-from .agent_memory_safety_guardian_2026_june import (
-    MemoryAccessType,
-    MemoryViolationType,
-    RiskLevel,
-    MemoryAccessRecord,
-    MemoryViolation,
-    MemorySafetyReport,
-    AgentMemorySafetyGuardian,
-)
-__all__.extend([
-    "MemoryAccessType",
-    "MemoryViolationType",
-    "RiskLevel",
-    "MemoryAccessRecord",
-    "MemoryViolation",
-    "MemorySafetyReport",
-    "AgentMemorySafetyGuardian",
-])
-__version__ = "2026.6.17.42"
+__version__ = "2026.6.17.41"
