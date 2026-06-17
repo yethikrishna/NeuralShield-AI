@@ -718,4 +718,22 @@ __all__.extend([
     "BayesianConfidenceEngine",
     "AdaptivePatternLearner"
 ])
-__version__ = "2026.6.18.1"
+# Threat Intelligence Automated Feeder (June 18, 2026 Production Release)
+# Multi-source automated threat intelligence ingestion, normalization, deduplication, and health monitoring
+from .threat_intelligence_automated_feeder_2026_june import (
+    ThreatIntelligenceAutomatedFeeder,
+    FeedSource,
+    FeedStatus,
+    FeedConfiguration,
+    RawThreatIndicator,
+    FeedHealthMetrics
+)
+__all__.extend([
+    "ThreatIntelligenceAutomatedFeeder",
+    "FeedSource",
+    "FeedStatus",
+    "FeedConfiguration",
+    "RawThreatIndicator",
+    "FeedHealthMetrics"
+])
+__version__ = "2026.6.18.2"
