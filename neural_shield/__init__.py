@@ -534,3 +534,28 @@ __all__.extend([
     "create_integrity_verifier"
 ])
 __version__ = "2026.6.17.36"
+# Agent Memory Safety Monitor (June 17, 2026 Production Release)
+# Real-time agent memory access monitoring, boundary protection, and poisoning detection
+from .agent_memory_safety_monitor_2026_june import (
+    AgentMemorySafetyMonitor,
+    MemoryAccessType,
+    MemoryRiskLevel,
+    MemoryAttackType,
+    MemoryAccessEvent,
+    MemoryFinding,
+    MemorySafetyResult,
+    MemoryRegion,
+    create_memory_safety_monitor
+)
+__all__.extend([
+    "AgentMemorySafetyMonitor",
+    "MemoryAccessType",
+    "MemoryRiskLevel",
+    "MemoryAttackType",
+    "MemoryAccessEvent",
+    "MemoryFinding",
+    "MemorySafetyResult",
+    "MemoryRegion",
+    "create_memory_safety_monitor"
+])
+__version__ = "2026.6.17.37"
