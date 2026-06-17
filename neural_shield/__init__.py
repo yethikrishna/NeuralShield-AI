@@ -796,3 +796,33 @@ __all__.extend([
     "HarmfulContentDetector",
     "create_safety_analyzer"
 ])
+
+# Threat Intelligence Vector Similarity Search (June 18, 2026 Production Release)
+# TF-IDF vector similarity search for threat pattern matching
+from .threat_intelligence_vector_similarity_search_2026_june import (
+    ThreatVectorSimilarityEngine,
+    SimilarityMethod,
+    ThreatSeverity,
+    ThreatCategory,
+    ThreatSignature,
+    SimilarityMatch,
+    SimilaritySearchResult,
+    TFIDFVectorizer,
+    SimilarityCalculator,
+    ThreatSignatureDatabase,
+    create_threat_similarity_engine
+)
+__all__.extend([
+    "ThreatVectorSimilarityEngine",
+    "SimilarityMethod",
+    "ThreatSeverity",
+    "ThreatCategory",
+    "ThreatSignature",
+    "SimilarityMatch",
+    "SimilaritySearchResult",
+    "TFIDFVectorizer",
+    "SimilarityCalculator",
+    "ThreatSignatureDatabase",
+    "create_threat_similarity_engine"
+])
+__version__ = "2026.6.18.1"
