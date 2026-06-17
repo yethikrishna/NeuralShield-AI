@@ -580,6 +580,27 @@ __all__.extend([
     "create_memory_safety_monitor"
 ])
 __version__ = "2026.6.17.37"
+# Threat Intelligence Threat Actor Profiler (June 18, 2026 Production Release)
+# Comprehensive threat actor profiling, TTP matching, and MITRE ATT&CK mapping
+from .threat_intelligence_threat_actor_profiler_2026_june import (
+    ThreatActorProfiler,
+    ThreatActorType,
+    ThreatActorSophistication,
+    ThreatMotivation,
+    ThreatActorProfile,
+    AttributionResult,
+    create_threat_actor_profiler
+)
+__all__.extend([
+    "ThreatActorProfiler",
+    "ThreatActorType",
+    "ThreatActorSophistication",
+    "ThreatMotivation",
+    "ThreatActorProfile",
+    "AttributionResult",
+    "create_threat_actor_profiler"
+])
+__version__ = "2026.6.18.3"
 from .security_rate_limiter_circuit_breaker_2026_june import SecurityRateLimiter, RateLimitResult, CircuitState
 # API Gateway Security Validator (June 17, 2026 Production Release)
 # Production-grade API security middleware for LLM endpoint protection
