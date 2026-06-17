@@ -246,3 +246,19 @@ __all__.extend([
     "ToolCallValidationResult"
 ])
 __version__ = "2026.6.17.16"
+# Multimodal Prompt Injection Detector (June 2026 Production Release)
+from .multimodal_prompt_injection_detector_2026_june import (
+    MultimodalPromptInjectionDetector,
+    MultimodalAttackType,
+    MultimodalRiskLevel,
+    MultimodalInjectionFinding,
+    MultimodalDetectionResult
+)
+__all__.extend([
+    "MultimodalPromptInjectionDetector",
+    "MultimodalAttackType",
+    "MultimodalRiskLevel",
+    "MultimodalInjectionFinding",
+    "MultimodalDetectionResult"
+])
+__version__ = "2026.6.17.17"

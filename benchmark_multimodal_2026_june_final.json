@@ -1,0 +1,9 @@
+{
+  "detector": "MultimodalPromptInjectionDetector",
+  "version": "2026.6.17",
+  "scans_per_second": 38501.046447585824,
+  "avg_latency_ms": 0.02597332000732422,
+  "total_scans": 100,
+  "elapsed_seconds": 0.002597332000732422,
+  "timestamp": "2026-06-17 12:03:21"
+}
