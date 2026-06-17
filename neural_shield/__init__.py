@@ -608,4 +608,24 @@ __all__.extend([
     "RAGPoisoningSignatureDetector",
     "create_rag_poisoning_detector"
 ])
-__version__ = "2026.6.17.41"
+# Agent Memory Safety Guardian (June 17, 2026 Production Release)
+# Real-time memory access monitoring, extraction detection, and boundary protection
+from .agent_memory_safety_guardian_2026_june import (
+    MemoryAccessType,
+    MemoryViolationType,
+    RiskLevel,
+    MemoryAccessRecord,
+    MemoryViolation,
+    MemorySafetyReport,
+    AgentMemorySafetyGuardian,
+)
+__all__.extend([
+    "MemoryAccessType",
+    "MemoryViolationType",
+    "RiskLevel",
+    "MemoryAccessRecord",
+    "MemoryViolation",
+    "MemorySafetyReport",
+    "AgentMemorySafetyGuardian",
+])
+__version__ = "2026.6.17.42"
