@@ -586,4 +586,26 @@ __all__.extend([
     "CacheEntry",
     "UpdateStatus",
 ])
-__version__ = "2026.6.17.40"
+# RAG Poisoning Signature Detector (June 17, 2026 Production Release)
+# Signature-based detection of poisoned context injections in RAG systems
+from .rag_poisoning_signature_detector_2026_june import (
+    PoisoningType,
+    RiskLevel,
+    ContextChunk,
+    PoisoningSignature,
+    PoisoningFinding,
+    PoisoningDetectionResult,
+    RAGPoisoningSignatureDetector,
+    create_rag_poisoning_detector
+)
+__all__.extend([
+    "PoisoningType",
+    "RiskLevel",
+    "ContextChunk",
+    "PoisoningSignature",
+    "PoisoningFinding",
+    "PoisoningDetectionResult",
+    "RAGPoisoningSignatureDetector",
+    "create_rag_poisoning_detector"
+])
+__version__ = "2026.6.17.41"
