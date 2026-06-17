@@ -825,4 +825,29 @@ __all__.extend([
     "ThreatSignatureDatabase",
     "create_threat_similarity_engine"
 ])
-__version__ = "2026.6.18.1"
+
+# Context-Aware Prompt Injection Defender (June 18, 2026 Production Release)
+# Multi-layered prompt injection detection with context awareness
+from .context_aware_prompt_injection_defender_2026_june import (
+    ContextAwarePromptInjectionDefender,
+    InjectionType,
+    RiskLevel,
+    InjectionFinding,
+    ConversationTurn,
+    InjectionDetectionResult,
+    PatternBasedDetector,
+    ObfuscationDetector,
+    ContextIntegrityMonitor
+)
+__all__.extend([
+    "ContextAwarePromptInjectionDefender",
+    "InjectionType",
+    "RiskLevel",
+    "InjectionFinding",
+    "ConversationTurn",
+    "InjectionDetectionResult",
+    "PatternBasedDetector",
+    "ObfuscationDetector",
+    "ContextIntegrityMonitor"
+])
+__version__ = "2026.6.18.2"
