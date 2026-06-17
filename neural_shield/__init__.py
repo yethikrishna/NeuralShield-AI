@@ -965,4 +965,20 @@ __all__.extend([
     "WatermarkResult",
     "VerificationResult"
 ])
+# Threat Intelligence Geolocation Enricher (June 18, 2026 Production Release)
+# IP geolocation enrichment, geographic risk assessment, and threat intelligence mapping
+from .threat_intelligence_geolocation_enricher_2026_june import (
+    ThreatIntelligenceGeolocationEnricher,
+    GeolocationData,
+    EnrichmentResult,
+    GeographicRiskLevel,
+    IPVersion
+)
+__all__.extend([
+    "ThreatIntelligenceGeolocationEnricher",
+    "GeolocationData",
+    "EnrichmentResult",
+    "GeographicRiskLevel",
+    "IPVersion"
+])
 __version__ = "2026.6.18.4"
