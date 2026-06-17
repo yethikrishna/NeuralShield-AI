@@ -343,4 +343,20 @@ __all__.extend([
     "FirewallFinding",
     "FirewallResult"
 ])
-__version__ = "2026.6.17.27"
+# LLM Backdoor Attack Detector (June 2026 Production Release)
+# Detects trojan triggers, character injection, and dataset poisoning
+from .llm_backdoor_detector_2026_june import (
+    LLMBackdoorDetector2026,
+    BackdoorType,
+    BackdoorRiskLevel,
+    BackdoorFinding,
+    BackdoorDetectionResult
+)
+__all__.extend([
+    "LLMBackdoorDetector2026",
+    "BackdoorType",
+    "BackdoorRiskLevel",
+    "BackdoorFinding",
+    "BackdoorDetectionResult"
+])
+__version__ = "2026.6.17.28"
