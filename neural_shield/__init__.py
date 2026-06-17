@@ -213,3 +213,20 @@ __all__.extend([
     "MembershipInferenceDetector"
 ])
 __version__ = "2026.6.17.13"
+
+# Prompt Confusion Matrix Detector (June 2026 Production Release)
+from .prompt_confusion_detector_2026_june import (
+    PromptConfusionDetector,
+    ConfusionAttackType,
+    ConfusionRiskLevel,
+    ConfusionFinding,
+    ConfusionDetectionResult
+)
+__all__.extend([
+    "PromptConfusionDetector",
+    "ConfusionAttackType",
+    "ConfusionRiskLevel",
+    "ConfusionFinding",
+    "ConfusionDetectionResult"
+])
+__version__ = "2026.6.17.14"
