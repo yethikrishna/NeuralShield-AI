@@ -261,4 +261,25 @@ __all__.extend([
     "MultimodalInjectionFinding",
     "MultimodalDetectionResult"
 ])
-__version__ = "2026.6.17.17"
+__version__ = "2026.6.17.18"
+
+# Behavioral Biometrics Anomaly Detector (June 2026 Production Release)
+from .behavioral_biometrics_anomaly_detector_2026_june import (
+    BehavioralBiometricsAnomalyDetector,
+    AnomalyType,
+    RiskLevel,
+    BehavioralFinding,
+    BehavioralDetectionResult,
+    InteractionEvent,
+    UserBehavioralBaseline,
+)
+__all__.extend([
+    "BehavioralBiometricsAnomalyDetector",
+    "AnomalyType",
+    "RiskLevel",
+    "BehavioralFinding",
+    "BehavioralDetectionResult",
+    "InteractionEvent",
+    "UserBehavioralBaseline",
+])
+__version__ = "2026.6.17.19"
