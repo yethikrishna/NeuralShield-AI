@@ -602,3 +602,19 @@ __all__.extend([
     "EnrichedContext"
 ])
 __version__ = "2026.6.17.41"
+
+# Threat Intelligence OSINT Enricher (June 17, 2026 Production Release)
+# Open Source Intelligence context enrichment with IP/domain reputation, geolocation, WHOIS, and threat actor attribution
+from .threat_intelligence_osint_enricher_2026_june import (
+    ThreatIntelligenceOSINTEnricher,
+    OSINTEnrichmentResult,
+    IOCType,
+    ThreatActorType,
+)
+__all__.extend([
+    "ThreatIntelligenceOSINTEnricher",
+    "OSINTEnrichmentResult",
+    "IOCType",
+    "ThreatActorType",
+])
+__version__ = "2026.6.17.42"
