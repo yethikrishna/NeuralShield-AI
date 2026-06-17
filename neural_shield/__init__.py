@@ -164,3 +164,18 @@ __all__.extend([
     "InjectionDetectionResult"
 ])
 __version__ = "2026.6.17.9"
+
+# Chain-of-Thought Prompt Injection Detector (June 2026 Production Release)
+from .cot_prompt_injection_detector_2026_june import (
+    ChainOfThoughtInjectionDetector,
+    CoTAttackType,
+    CoTDetectionResult,
+    InjectionFinding
+)
+__all__.extend([
+    "ChainOfThoughtInjectionDetector",
+    "CoTAttackType",
+    "CoTDetectionResult",
+    "InjectionFinding"
+])
+__version__ = "2026.6.17.10"
