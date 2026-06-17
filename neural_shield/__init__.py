@@ -282,4 +282,20 @@ __all__.extend([
     "InteractionEvent",
     "UserBehavioralBaseline",
 ])
-__version__ = "2026.6.17.19"
+__version__ = "2026.6.17.20"
+# Zero-Shot Threat Classifier (June 2026 Production Release)
+# Novel attack detection without training data
+from .zero_shot_threat_classifier_2026_june import (
+    ZeroShotThreatClassifier,
+    ThreatCategory,
+    ConfidenceLevel,
+    ThreatFinding,
+    ClassificationResult
+)
+__all__.extend([
+    "ZeroShotThreatClassifier",
+    "ThreatCategory",
+    "ConfidenceLevel",
+    "ThreatFinding",
+    "ClassificationResult"
+])
