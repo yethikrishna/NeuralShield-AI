@@ -981,4 +981,21 @@ __all__.extend([
     "GeographicRiskLevel",
     "IPVersion"
 ])
+# Threat Intelligence Whitelist Validator (June 18, 2026 Production Release)
+# IP, domain, and URL whitelist validation with CIDR support, caching, and confidence scoring
+from .threat_intelligence_whitelist_validator_2026_june import (
+    ThreatIntelligenceWhitelistValidator,
+    WhitelistType,
+    ValidationResult,
+    WhitelistEntry,
+    ValidationReport
+)
+__all__.extend([
+    "ThreatIntelligenceWhitelistValidator",
+    "WhitelistType",
+    "ValidationResult",
+    "WhitelistEntry",
+    "ValidationReport"
+])
+__version__ = "2026.6.18.5"
 __version__ = "2026.6.18.4"
