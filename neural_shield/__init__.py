@@ -560,3 +560,29 @@ __all__.extend([
 ])
 __version__ = "2026.6.17.37"
 from .security_rate_limiter_circuit_breaker_2026_june import SecurityRateLimiter, RateLimitResult, CircuitState
+
+# Security Audit Logging & Forensics Engine (June 17, 2026 Production Release)
+# Tamper-evident hash-chained audit logging with cryptographic integrity
+from .security_audit_forensics_engine_2026_june import (
+    SecurityAuditForensicsEngine,
+    AuditEventType,
+    AuditSeverity,
+    IntegrityStatus,
+    AuditEvent,
+    ForensicsQuery,
+    IntegrityReport,
+    AuditLogSummary,
+    create_audit_engine
+)
+__all__.extend([
+    "SecurityAuditForensicsEngine",
+    "AuditEventType",
+    "AuditSeverity",
+    "IntegrityStatus",
+    "AuditEvent",
+    "ForensicsQuery",
+    "IntegrityReport",
+    "AuditLogSummary",
+    "create_audit_engine"
+])
+__version__ = "2026.6.17.39"
