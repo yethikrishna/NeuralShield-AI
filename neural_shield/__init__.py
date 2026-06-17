@@ -465,4 +465,29 @@ __all__.extend([
     "WatermarkDetectionResult",
     "create_watermark_detector"
 ])
-__version__ = "2026.6.17.33"
+__version__ = "2026.6.17.34"
+# System Prompt Watermarking & Leakage Detector (June 2026 Production Release)
+# Invisible watermark embedding and system prompt leakage detection
+from .system_prompt_watermark_leakage_detector_2026_june import (
+    SystemPromptWatermarker,
+    SystemPromptLeakageDetector,
+    WatermarkStrategy,
+    LeakageType,
+    VerificationStatus,
+    WatermarkInfo,
+    LeakageFinding,
+    WatermarkDetectionResult,
+    create_watermark_protection
+)
+__all__.extend([
+    "SystemPromptWatermarker",
+    "SystemPromptLeakageDetector",
+    "WatermarkStrategy",
+    "LeakageType",
+    "VerificationStatus",
+    "WatermarkInfo",
+    "LeakageFinding",
+    "WatermarkDetectionResult",
+    "create_watermark_protection"
+])
+__version__ = "2026.6.17.35"
