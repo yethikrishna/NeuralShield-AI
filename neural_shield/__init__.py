@@ -750,6 +750,14 @@ from .realtime_prompt_sanitization_engine_2026_june import (
     HomoglyphDefender,
     create_prompt_sanitizer
 )
+from .threat_intelligence_auto_learning_classifier_2026_june import (
+    ThreatIntelligenceAutoLearningClassifier,
+    ThreatClass,
+    FeatureType,
+    FeatureWeight,
+    ClassificationResult,
+    LearningStats
+)
 __all__.extend([
     "PromptSanitizationEngine",
     "InjectionType",
@@ -757,5 +765,11 @@ __all__.extend([
     "InjectionFinding",
     "SanitizationResult",
     "HomoglyphDefender",
-    "create_prompt_sanitizer"
+    "create_prompt_sanitizer",
+    "ThreatIntelligenceAutoLearningClassifier",
+    "ThreatClass",
+    "FeatureType",
+    "FeatureWeight",
+    "ClassificationResult",
+    "LearningStats"
 ])
