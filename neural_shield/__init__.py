@@ -148,4 +148,19 @@ __all__.extend([
     "PIIDetection",
     "SanitizationResult"
 ])
-__version__ = "2026.6.17.8"
+# Semantic Prompt Injection Detector (June 2026 Production Release)
+from .semantic_prompt_injection_detector_2026_june import (
+    SemanticPromptInjectionDetector,
+    InjectionType,
+    RiskLevel,
+    InjectionFinding,
+    InjectionDetectionResult
+)
+__all__.extend([
+    "SemanticPromptInjectionDetector",
+    "InjectionType",
+    "RiskLevel",
+    "InjectionFinding",
+    "InjectionDetectionResult"
+])
+__version__ = "2026.6.17.9"
