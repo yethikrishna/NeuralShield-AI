@@ -579,7 +579,25 @@ __all__.extend([
     "MemoryRegion",
     "create_memory_safety_monitor"
 ])
-__version__ = "2026.6.17.37"
+# Threat Intelligence Signature Version Control & Rollback Manager (June 18, 2026 Production Release)
+# Semantic versioning, atomic rollback, deployment validation, and integrity verification
+from .threat_intelligence_signature_version_control_2026_june import (
+    ThreatIntelSignatureVersionControl,
+    SignatureType,
+    DeploymentStatus,
+    SignatureVersion,
+    RollbackResult,
+    VersionDiff
+)
+__all__.extend([
+    "ThreatIntelSignatureVersionControl",
+    "SignatureType",
+    "DeploymentStatus",
+    "SignatureVersion",
+    "RollbackResult",
+    "VersionDiff"
+])
+__version__ = "2026.6.18.7"
 # Threat Intelligence Batch Processor (June 18, 2026 Production Release)
 # Batch IOC processing, deduplication, enrichment, and parallel processing
 from .threat_intelligence_batch_processor_2026_june import (
