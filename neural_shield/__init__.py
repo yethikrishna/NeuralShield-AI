@@ -1396,4 +1396,19 @@ __all__.extend([
     "MovingAverageForecaster"
 ])
 
-__version__ = "2026.6.18.11"
+# Threat Intelligence CVE Lookup Scanner (June 18, 2026 Production Release)
+# CVE extraction, format validation, CVSS severity scoring, vulnerability assessment, caching
+from .threat_intelligence_cve_lookup_scanner_2026_june import (
+    ThreatIntelligenceCVELookupScanner,
+    CVSSSeverity,
+    CVEMatch,
+    VulnerabilityAssessment
+)
+__all__.extend([
+    "ThreatIntelligenceCVELookupScanner",
+    "CVSSSeverity",
+    "CVEMatch",
+    "VulnerabilityAssessment"
+])
+
+__version__ = "2026.6.18.12"
