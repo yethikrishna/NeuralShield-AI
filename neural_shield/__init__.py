@@ -1515,3 +1515,24 @@ __all__.extend([
     "create_vulnerability_scanner"
 ])
 __version__ = "2026.6.18.15"
+
+# Threat Intelligence Continuous Learning Pipeline (June 19, 2026 Production Release)
+# Incremental learning, automated feature extraction, model versioning,
+# continuous training with validation and performance monitoring
+from .threat_intelligence_continuous_learning_pipeline_2026_june import (
+    ThreatFeatureExtractor,
+    IncrementalThreatModel,
+    ContinuousLearningPipeline,
+    ThreatSample,
+    ModelVersion,
+    TrainingResult
+)
+__all__.extend([
+    "ThreatFeatureExtractor",
+    "IncrementalThreatModel",
+    "ContinuousLearningPipeline",
+    "ThreatSample",
+    "ModelVersion",
+    "TrainingResult"
+])
+__version__ = "2026.6.19.1"
