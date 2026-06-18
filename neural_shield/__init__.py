@@ -1379,4 +1379,21 @@ __all__.extend([
     "AnomalyResult"
 ])
 
-__version__ = "2026.6.18.10"
+# Threat Intelligence Predictive Forecaster (June 18, 2026 Production Release)
+# Time-series forecasting, exponential smoothing, anomaly prediction, risk forecasting
+from .threat_intelligence_predictive_forecaster_2026_june import (
+    ThreatIntelligencePredictiveForecaster,
+    ThreatDataPoint,
+    ForecastResult,
+    ExponentialSmoothing,
+    MovingAverageForecaster
+)
+__all__.extend([
+    "ThreatIntelligencePredictiveForecaster",
+    "ThreatDataPoint",
+    "ForecastResult",
+    "ExponentialSmoothing",
+    "MovingAverageForecaster"
+])
+
+__version__ = "2026.6.18.11"
