@@ -1365,4 +1365,18 @@ __all__.extend([
     "PatternType",
     "ThreatSeverity"
 ])
-__version__ = "2026.6.18.9"
+
+# Threat Intelligence Anomaly Sequence Detector (June 18, 2026 Production Release)
+# Sequence anomaly detection, sliding window analysis, Markov chain transitions, pattern rarity
+from .threat_intelligence_anomaly_sequence_detector_2026_june import (
+    ThreatIntelligenceAnomalySequenceDetector,
+    SecurityEvent,
+    AnomalyResult
+)
+__all__.extend([
+    "ThreatIntelligenceAnomalySequenceDetector",
+    "SecurityEvent",
+    "AnomalyResult"
+])
+
+__version__ = "2026.6.18.10"
