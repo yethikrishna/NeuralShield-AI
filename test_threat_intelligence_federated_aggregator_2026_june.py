@@ -1,401 +1,319 @@
-#!/usr/bin/env python3
 """
 Test suite for Threat Intelligence Federated Learning Aggregator
-June 18, 2026 - Real, verifiable tests
-
-All tests are real and verifiable. No fake performance numbers.
+Production-grade tests for NeuralShield-AI
 """
 
 import sys
-import json
-import tempfile
 import os
+import time
+import hashlib
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'neural_shield'))
 
-from neural_shield.threat_intelligence_federated_aggregator_2026_june import (
-    ThreatIntelFederatedAggregator,
-    AggregationStrategy,
+from threat_intelligence_federated_aggregator_2026_june import (
+    ThreatIntelligenceFederatedAggregator,
+    ClientUpdate,
     DifferentialPrivacyEngine,
-    NodeContribution,
-    AggregationResult
+    SecureWeightAggregator,
+    ModelDriftDetector
 )
 
 
-def run_test(name, test_func):
-    """Run a test and report results honestly."""
-    print(f"\n{'='*60}")
-    print(f"TEST: {name}")
-    print('='*60)
-    try:
-        result = test_func()
-        if result:
-            print(f"✓ PASSED: {name}")
-            return True
-        else:
-            print(f"✗ FAILED: {name}")
-            return False
-    except Exception as e:
-        print(f"✗ FAILED: {name} - Exception: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
+def generate_client_signature(client_id: str, sample_count: int, timestamp: float) -> str:
+    """Generate test client signature"""
+    message = f"{client_id}:{sample_count}:{timestamp}"
+    return hashlib.sha256(message.encode()).hexdigest()
 
 
 def test_differential_privacy_engine():
-    """Test real differential privacy implementation."""
-    dp = DifferentialPrivacyEngine(epsilon=2.0, delta=1e-5)
+    """Test Differential Privacy Engine"""
+    print("=== Testing Differential Privacy Engine ===")
+    
+    dp_engine = DifferentialPrivacyEngine(epsilon=1.0, delta=1e-5)
     
     # Test noise addition
-    params = [0.5, 1.0, -0.3, 0.8, 0.2]
-    noisy_params, budget_used = dp.add_gaussian_noise(params, sensitivity=1.0)
+    original = [1.0, 2.0, 3.0, 4.0, 5.0]
+    noisy = dp_engine.add_gaussian_noise(original)
     
-    # Verify noise was actually added
-    noise_added = any(a != b for a, b in zip(params, noisy_params))
-    assert noise_added, "Noise should be added to parameters"
+    assert len(noisy) == len(original), "Noise should preserve length"
+    assert dp_engine.privacy_budget_used > 0, "Privacy budget should be consumed"
     
-    # Verify budget tracking
-    assert budget_used > 0, "Privacy budget should be consumed"
-    assert dp.privacy_budget_used > 0, "Engine should track budget"
+    # Test gradient clipping
+    large_gradients = [10.0, 20.0, 30.0]
+    clipped = dp_engine.clip_gradients(large_gradients, clip_norm=5.0)
     
-    remaining = dp.get_remaining_budget()
-    assert remaining >= 0, "Remaining budget cannot be negative"
+    import math
+    norm = math.sqrt(sum(g * g for g in clipped))
+    assert norm <= 5.01, f"Gradients should be clipped, got norm {norm}"
     
-    print(f"  Original params: {params}")
-    print(f"  Noisy params:    {noisy_params}")
-    print(f"  Budget used:     {budget_used:.4f}")
-    print(f"  Remaining:       {remaining:.4f}")
+    # Test privacy budget check
+    status = dp_engine.get_privacy_status()
+    assert "epsilon_used" in status
+    assert "remaining_budget" in status
     
+    print("✓ Differential Privacy Engine tests passed")
     return True
 
 
-def test_contribution_submission():
-    """Test real contribution submission with validation."""
-    aggregator = ThreatIntelFederatedAggregator(min_contributing_nodes=2)
+def test_secure_weight_aggregator():
+    """Test Secure Weight Aggregator"""
+    print("\n=== Testing Secure Weight Aggregator ===")
     
-    # Valid contribution
-    model_params = {
-        "layer1": [0.1, 0.2, 0.3, 0.4, 0.5],
-        "layer2": [-0.1, 0.0, 0.1, 0.2]
+    aggregator = SecureWeightAggregator()
+    
+    # Test secret sharing
+    secret = [1.5, 2.5, 3.5]
+    shares = aggregator.generate_shares(secret, num_shares=3)
+    
+    assert len(shares) == 3, "Should generate 3 shares"
+    
+    reconstructed = aggregator.reconstruct_secret(shares)
+    
+    for i in range(len(secret)):
+        assert abs(reconstructed[i] - secret[i]) < 0.001, \
+            f"Reconstruction failed at index {i}: {reconstructed[i]} != {secret[i]}"
+    
+    print("✓ Secure Weight Aggregator tests passed")
+    return True
+
+
+def test_model_drift_detector():
+    """Test Model Drift Detector"""
+    print("\n=== Testing Model Drift Detector ===")
+    
+    detector = ModelDriftDetector()
+    
+    # Test cosine similarity
+    vec1 = [1.0, 0.0, 0.0]
+    vec2 = [1.0, 0.0, 0.0]
+    sim = detector.calculate_cosine_similarity(vec1, vec2)
+    assert abs(sim - 1.0) < 0.001, "Identical vectors should have similarity 1"
+    
+    vec3 = [0.0, 1.0, 0.0]
+    sim_ortho = detector.calculate_cosine_similarity(vec1, vec3)
+    assert abs(sim_ortho) < 0.001, "Orthogonal vectors should have similarity 0"
+    
+    # Test weight distance
+    weights1 = {"layer1": [1.0, 2.0], "layer2": [3.0, 4.0]}
+    weights2 = {"layer1": [1.0, 2.0], "layer2": [3.0, 4.0]}
+    distance = detector.calculate_weight_distance(weights1, weights2)
+    assert distance < 0.001, "Identical weights should have 0 distance"
+    
+    print("✓ Model Drift Detector tests passed")
+    return True
+
+
+def test_federated_aggregator_registration():
+    """Test client registration"""
+    print("\n=== Testing Federated Aggregator - Registration ===")
+    
+    aggregator = ThreatIntelligenceFederatedAggregator(min_clients=2)
+    
+    # Test client registration
+    result = aggregator.register_client("client_001")
+    assert result["success"] == True, "First registration should succeed"
+    
+    # Test duplicate registration
+    result_dup = aggregator.register_client("client_001")
+    assert result_dup["success"] == False, "Duplicate registration should fail"
+    
+    metrics = aggregator.get_metrics()
+    assert metrics["registered_clients"] == 1, "Should have 1 registered client"
+    
+    print("✓ Client registration tests passed")
+    return True
+
+
+def test_federated_aggregator_update_submission():
+    """Test update submission flow"""
+    print("\n=== Testing Federated Aggregator - Update Submission ===")
+    
+    aggregator = ThreatIntelligenceFederatedAggregator(min_clients=2)
+    
+    # Register clients
+    aggregator.register_client("client_001")
+    aggregator.register_client("client_002")
+    
+    # Create test update
+    timestamp = time.time()
+    weights = {
+        "dense_1": [0.1, 0.2, 0.3, 0.4],
+        "dense_2": [0.5, 0.6, 0.7]
     }
     
-    success, msg = aggregator.submit_contribution(
-        node_id="node_001",
-        model_parameters=model_params,
-        sample_count=1000
+    update = ClientUpdate(
+        client_id="client_001",
+        model_weights=weights,
+        sample_count=100,
+        timestamp=timestamp,
+        signature=generate_client_signature("client_001", 100, timestamp)
     )
-    assert success, f"Valid contribution should be accepted: {msg}"
-    assert len(aggregator.contributions) == 1
     
-    # Invalid: empty parameters
-    success, msg = aggregator.submit_contribution(
-        node_id="node_bad",
-        model_parameters={},
-        sample_count=100
+    result = aggregator.submit_update(update)
+    assert result["success"] == True, "Valid update should be accepted"
+    
+    # Test unregistered client
+    update_bad = ClientUpdate(
+        client_id="unregistered",
+        model_weights=weights,
+        sample_count=100,
+        timestamp=timestamp,
+        signature="bad_signature"
     )
-    assert not success, "Empty parameters should be rejected"
+    result_bad = aggregator.submit_update(update_bad)
+    assert result_bad["success"] == False, "Unregistered client should be rejected"
     
-    # Invalid: zero samples
-    success, msg = aggregator.submit_contribution(
-        node_id="node_bad2",
-        model_parameters=model_params,
-        sample_count=0
-    )
-    assert not success, "Zero samples should be rejected"
-    
-    print(f"  Contributions accepted: {len(aggregator.contributions)}")
-    print(f"  Validation score: {aggregator.contributions[0].validation_score:.4f}")
-    
+    print("✓ Update submission tests passed")
     return True
 
 
-def test_federated_averaging():
-    """Test real Federated Averaging aggregation."""
-    aggregator = ThreatIntelFederatedAggregator(
-        strategy=AggregationStrategy.FED_AVG,
-        min_contributing_nodes=3,
-        enable_dp=False
-    )
+def test_federated_aggregation():
+    """Test full federated aggregation flow"""
+    print("\n=== Testing Federated Aggregation ===")
     
-    # Submit 3 contributions with slightly different models
-    for i in range(3):
-        node_id = f"node_{i:03d}"
-        model_params = {
-            "dense_1": [0.1 + i*0.01, 0.2 + i*0.01, 0.3 - i*0.01],
-            "dense_2": [-0.1 + i*0.005, 0.05 - i*0.005]
-        }
-        aggregator.submit_contribution(
-            node_id=node_id,
-            model_parameters=model_params,
-            sample_count=1000 + i*100
-        )
+    aggregator = ThreatIntelligenceFederatedAggregator(min_clients=2, aggregation_interval=0)
     
-    result = aggregator.aggregate()
-    assert result is not None, "Aggregation should succeed"
-    assert len(result.contributing_nodes) == 3
-    assert result.total_samples == 3300
-    assert "dense_1" in result.aggregated_model
-    assert "dense_2" in result.aggregated_model
+    # Register clients
+    aggregator.register_client("client_001")
+    aggregator.register_client("client_002")
     
-    print(f"  Strategy: {result.strategy_used.value}")
-    print(f"  Contributing nodes: {result.contributing_nodes}")
-    print(f"  Total samples: {result.total_samples}")
-    print(f"  Quality score: {result.model_quality_score:.4f}")
-    print(f"  Aggregated layers: {list(result.aggregated_model.keys())}")
+    # Submit updates from both clients
+    timestamp = time.time()
     
-    return True
-
-
-def test_weighted_averaging():
-    """Test real weighted averaging with reputation."""
-    aggregator = ThreatIntelFederatedAggregator(
-        strategy=AggregationStrategy.WEIGHTED_AVG,
-        min_contributing_nodes=3,
-        enable_dp=False
-    )
-    
-    # Node with high reputation
-    aggregator.node_reputations["trusted_node"] = 0.95
-    # Node with low reputation
-    aggregator.node_reputations["suspicious_node"] = 0.2
-    
-    model_params = {
-        "layer": [0.1, 0.2, 0.3, 0.4, 0.5]
+    weights1 = {
+        "layer1": [0.1, 0.2, 0.3],
+        "layer2": [0.4, 0.5]
     }
+    update1 = ClientUpdate(
+        client_id="client_001",
+        model_weights=weights1,
+        sample_count=100,
+        timestamp=timestamp,
+        signature=generate_client_signature("client_001", 100, timestamp)
+    )
     
-    aggregator.submit_contribution("trusted_node", model_params, 5000)
-    aggregator.submit_contribution("normal_node", model_params, 1000)
-    aggregator.submit_contribution("suspicious_node", model_params, 10000)
+    weights2 = {
+        "layer1": [0.2, 0.3, 0.4],
+        "layer2": [0.5, 0.6]
+    }
+    update2 = ClientUpdate(
+        client_id="client_002",
+        model_weights=weights2,
+        sample_count=200,
+        timestamp=timestamp,
+        signature=generate_client_signature("client_002", 200, timestamp)
+    )
     
+    aggregator.submit_update(update1)
+    aggregator.submit_update(update2)
+    
+    # Perform aggregation
     result = aggregator.aggregate()
-    assert result is not None
     
-    print(f"  Strategy: {result.strategy_used.value}")
-    print(f"  Contributing nodes: {result.contributing_nodes}")
-    print(f"  Quality score: {result.model_quality_score:.4f}")
+    assert result.participating_clients == 2, "Should have 2 participating clients"
+    assert result.total_samples == 300, "Should have 300 total samples"
+    assert len(result.aggregated_weights) == 2, "Should have aggregated weights for 2 layers"
     
+    # Verify weights are averaged correctly (weighted by sample count)
+    # Expected: (100*0.1 + 200*0.2) / 300 = 0.166... for first weight
+    expected_first = (100 * 0.1 + 200 * 0.2) / 300
+    actual_first = result.aggregated_weights["layer1"][0]
+    
+    # Allow for DP noise difference
+    assert abs(actual_first - expected_first) < 0.1, "Weighted averaging should work correctly"
+    
+    metrics = aggregator.get_metrics()
+    assert metrics["aggregations_performed"] == 1, "Should have performed 1 aggregation"
+    
+    print("✓ Federated aggregation tests passed")
     return True
 
 
-def test_krum_byzantine_robust():
-    """Test Krum aggregation with Byzantine robustness."""
-    aggregator = ThreatIntelFederatedAggregator(
-        strategy=AggregationStrategy.KRUM,
-        min_contributing_nodes=4,
-        enable_dp=False
+def test_full_integration():
+    """Test full integration flow"""
+    print("\n=== Testing Full Integration ===")
+    
+    aggregator = ThreatIntelligenceFederatedAggregator(
+        epsilon=0.1,  # Smaller epsilon per aggregation
+        min_clients=2,
+        aggregation_interval=0
     )
     
-    # 3 honest nodes
-    for i in range(3):
-        aggregator.submit_contribution(
-            node_id=f"honest_{i}",
-            model_parameters={"layer": [0.1, 0.2, 0.3]},
-            sample_count=1000
-        )
+    # Simulate multi-round federated learning
+    num_rounds = 3
+    num_clients = 3
     
-    # 1 Byzantine node with extreme values
-    aggregator.submit_contribution(
-        node_id="byzantine_attacker",
-        model_parameters={"layer": [100.0, -200.0, 300.0]},
-        sample_count=1000,
-        reputation_override=0.1
-    )
+    for i in range(num_clients):
+        aggregator.register_client(f"client_{i:03d}")
     
-    result = aggregator.aggregate()
-    assert result is not None
-    
-    print(f"  Strategy: {result.strategy_used.value}")
-    print(f"  Byzantine detected: {result.byzantine_nodes_detected}")
-    print(f"  Valid contributors: {result.contributing_nodes}")
-    print(f"  Byzantine ratio: {result.validation_metrics['byzantine_ratio']:.4f}")
-    
-    return True
-
-
-def test_trimmed_mean():
-    """Test Trimmed Mean aggregation for outlier resistance."""
-    aggregator = ThreatIntelFederatedAggregator(
-        strategy=AggregationStrategy.TRIMMED_MEAN,
-        min_contributing_nodes=5,
-        enable_dp=False
-    )
-    
-    for i in range(5):
-        # Create slightly varied models
-        params = {"output": [0.1 + i*0.02, 0.2 - i*0.01, 0.3 + i*0.005]}
-        aggregator.submit_contribution(f"node_{i}", params, 1000)
-    
-    result = aggregator.aggregate()
-    assert result is not None
-    assert "output" in result.aggregated_model
-    
-    print(f"  Strategy: {result.strategy_used.value}")
-    print(f"  Aggregated params: {result.aggregated_model['output']}")
-    print(f"  Quality score: {result.model_quality_score:.4f}")
-    
-    return True
-
-
-def test_privacy_preserving_aggregation():
-    """Test aggregation with differential privacy enabled."""
-    aggregator = ThreatIntelFederatedAggregator(
-        strategy=AggregationStrategy.WEIGHTED_AVG,
-        min_contributing_nodes=3,
-        enable_dp=True,
-        dp_epsilon=3.0
-    )
-    
-    for i in range(3):
-        aggregator.submit_contribution(
-            node_id=f"privacy_node_{i}",
-            model_parameters={"fc1": [0.1, 0.2, 0.3], "fc2": [0.4, 0.5]},
-            sample_count=1000
-        )
-    
-    result = aggregator.aggregate()
-    assert result is not None
-    assert result.privacy_budget_remaining >= 0
-    
-    print(f"  DP enabled: True")
-    print(f"  Privacy budget remaining: {result.privacy_budget_remaining:.4f}")
-    print(f"  Quality score: {result.model_quality_score:.4f}")
-    
-    return True
-
-
-def test_model_export():
-    """Test real model export functionality."""
-    aggregator = ThreatIntelFederatedAggregator(
-        min_contributing_nodes=3,
-        enable_dp=False
-    )
-    
-    for i in range(3):
-        aggregator.submit_contribution(
-            node_id=f"export_node_{i}",
-            model_parameters={"layer": [0.1, 0.2, 0.3]},
-            sample_count=1000
-        )
-    
-    result = aggregator.aggregate()
-    assert result is not None
-    
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-        temp_path = f.name
-    
-    try:
-        export_success = aggregator.export_model(result, temp_path)
-        assert export_success, "Export should succeed"
+    for round_num in range(num_rounds):
+        timestamp = time.time()
         
-        # Verify file exists and is valid JSON
-        with open(temp_path, 'r') as f:
-            exported = json.load(f)
+        # Submit updates for this round
+        for i in range(num_clients):
+            client_id = f"client_{i:03d}"
+            weights = {
+                "layer1": [0.1 + round_num * 0.01 + i * 0.001] * 4,
+                "layer2": [0.5 + round_num * 0.01 + i * 0.001] * 3
+            }
+            update = ClientUpdate(
+                client_id=client_id,
+                model_weights=weights,
+                sample_count=50 + i * 25,
+                timestamp=timestamp,
+                signature=generate_client_signature(client_id, 50 + i * 25, timestamp)
+            )
+            aggregator.submit_update(update)
         
-        assert "model_parameters" in exported
-        assert "aggregation_info" in exported
-        assert "metadata" in exported
-        
-        print(f"  Export path: {temp_path}")
-        print(f"  Exported keys: {list(exported.keys())}")
-        print(f"  Model version: {exported['metadata']['version']}")
-        
-        return True
-    finally:
-        os.unlink(temp_path)
-
-
-def test_aggregation_statistics():
-    """Test real statistics tracking."""
-    aggregator = ThreatIntelFederatedAggregator(
-        min_contributing_nodes=3,
-        enable_dp=False
-    )
+        result = aggregator.aggregate()
+        print(f"  Round {round_num + 1}: {result.participating_clients} clients, "
+              f"{result.total_samples} samples, privacy budget: {result.privacy_budget_used:.2f}")
     
-    # First aggregation
-    for i in range(3):
-        aggregator.submit_contribution(f"stat_node_{i}", {"l": [0.1]}, 1000)
-    aggregator.aggregate()
+    final_metrics = aggregator.get_metrics()
+    assert final_metrics["aggregations_performed"] == num_rounds
     
-    # Second aggregation
-    for i in range(3):
-        aggregator.submit_contribution(f"stat2_node_{i}", {"l": [0.2]}, 1000)
-    aggregator.aggregate()
-    
-    stats = aggregator.get_aggregation_stats()
-    assert stats["aggregations_completed"] == 2
-    assert stats["average_quality_score"] > 0
-    
-    print(f"  Aggregations completed: {stats['aggregations_completed']}")
-    print(f"  Average quality: {stats['average_quality_score']:.4f}")
-    print(f"  Byzantine detected: {stats['total_byzantine_detected']}")
-    
-    return True
-
-
-def test_min_contribution_requirement():
-    """Test that minimum contributions are enforced."""
-    aggregator = ThreatIntelFederatedAggregator(
-        min_contributing_nodes=5,
-        enable_dp=False
-    )
-    
-    # Only submit 2 contributions
-    for i in range(2):
-        aggregator.submit_contribution(f"test_{i}", {"l": [0.1]}, 1000)
-    
-    result = aggregator.aggregate()
-    assert result is None, "Should fail with insufficient contributions"
-    
-    print(f"  Correctly rejected aggregation with insufficient nodes")
-    
+    print("✓ Full integration tests passed")
     return True
 
 
 def main():
-    """Run all tests and report honestly."""
-    print("="*60)
-    print("Threat Intelligence Federated Aggregator - Test Suite")
-    print("June 18, 2026 - Production Grade")
-    print("="*60)
+    """Run all tests"""
+    print("=" * 60)
+    print("Threat Intelligence Federated Learning Aggregator - Test Suite")
+    print("=" * 60)
     
     tests = [
-        ("Differential Privacy Engine", test_differential_privacy_engine),
-        ("Contribution Submission & Validation", test_contribution_submission),
-        ("Federated Averaging (FedAvg)", test_federated_averaging),
-        ("Reputation-Weighted Averaging", test_weighted_averaging),
-        ("Krum Byzantine-Robust Aggregation", test_krum_byzantine_robust),
-        ("Trimmed Mean Outlier Resistance", test_trimmed_mean),
-        ("Privacy-Preserving DP Aggregation", test_privacy_preserving_aggregation),
-        ("Model Export Functionality", test_model_export),
-        ("Aggregation Statistics Tracking", test_aggregation_statistics),
-        ("Minimum Contribution Enforcement", test_min_contribution_requirement),
+        test_differential_privacy_engine,
+        test_secure_weight_aggregator,
+        test_model_drift_detector,
+        test_federated_aggregator_registration,
+        test_federated_aggregator_update_submission,
+        test_federated_aggregation,
+        test_full_integration
     ]
     
     passed = 0
     failed = 0
     
-    for name, test_func in tests:
-        if run_test(name, test_func):
-            passed += 1
-        else:
+    for test in tests:
+        try:
+            if test():
+                passed += 1
+            else:
+                failed += 1
+        except Exception as e:
+            print(f"✗ {test.__name__} failed with exception: {e}")
+            import traceback
+            traceback.print_exc()
             failed += 1
     
-    print("\n" + "="*60)
-    print("TEST SUMMARY")
-    print("="*60)
-    print(f"Total Tests: {len(tests)}")
-    print(f"Passed:      {passed}")
-    print(f"Failed:      {failed}")
-    print(f"Success:     {passed/len(tests)*100:.1f}%")
-    print("="*60)
+    print("\n" + "=" * 60)
+    print(f"TEST SUMMARY: {passed} passed, {failed} failed")
+    print("=" * 60)
     
-    if failed == 0:
-        print("\n✓ ALL TESTS PASSED - Production Ready")
-        return 0
-    else:
-        print(f"\n✗ {failed} TEST(S) FAILED")
-        return 1
+    return failed == 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    success = main()
+    sys.exit(0 if success else 1)
