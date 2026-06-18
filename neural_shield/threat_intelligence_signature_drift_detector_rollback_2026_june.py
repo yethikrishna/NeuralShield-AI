@@ -1,483 +1,292 @@
 """
-Threat Intelligence Signature Drift Detector & Rollback Engine - NeuralShield-AI
-June 2026 - Production Grade Implementation
+Threat Intelligence Signature Drift Detector with Auto-Rollback
+Production-grade implementation for NeuralShield-AI
 
-REAL, WORKING FEATURE:
-- Detects performance drift in detection signatures
-- Tracks true positive / false positive rates over time
-- Automatically identifies degraded signatures
-- Provides versioned rollback capabilities
-- Generates drift analysis reports
+This module provides:
+1. Signature baseline tracking and versioning
+2. Drift detection using statistical analysis (KL divergence, cosine similarity)
+3. Automated rollback to stable signatures when drift exceeds threshold
+4. Audit logging and drift history
+5. Confidence scoring for signature validity
 """
 
-import json
 import hashlib
+import json
 import time
+import logging
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any, Tuple
-from enum import Enum
-from datetime import datetime, timedelta, timezone
+from typing import Dict, List, Optional, Tuple, Any
+from datetime import datetime, timedelta
 from collections import defaultdict
+import math
 
-
-class DriftSeverity(Enum):
-    NONE = "no_drift"
-    MINOR = "minor_drift"
-    MODERATE = "moderate_drift"
-    SEVERE = "severe_drift"
-    CRITICAL = "critical_drift"
-
-
-class SignatureStatus(Enum):
-    ACTIVE = "active"
-    DRIFTING = "drifting"
-    ROLLED_BACK = "rolled_back"
-    DEPRECATED = "deprecated"
-    TESTING = "testing"
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 @dataclass
 class SignatureVersion:
-    version_id: str
+    """Represents a versioned threat signature"""
     signature_id: str
-    version_number: str
-    signature_content: str
-    created_at: datetime
-    created_by: str
-    performance_baseline: Dict[str, float] = field(default_factory=dict)
-    checksum: str = ""
-    
+    version: str
+    pattern: str
+    created_at: float
+    confidence_score: float
+    is_stable: bool = False
+    hash_digest: str = ""
+
     def __post_init__(self):
-        if not self.checksum:
-            self.checksum = hashlib.sha256(
-                self.signature_content.encode()
-            ).hexdigest()
+        self.hash_digest = hashlib.sha256(
+            f"{self.signature_id}:{self.version}:{self.pattern}".encode()
+        ).hexdigest()
 
 
 @dataclass
-class SignaturePerformance:
+class DriftMetrics:
+    """Metrics for signature drift analysis"""
     signature_id: str
-    version_id: str
-    timestamp: datetime
-    true_positives: int = 0
-    false_positives: int = 0
-    true_negatives: int = 0
-    false_negatives: int = 0
-    total_alerts: int = 0
-    
-    @property
-    def precision(self) -> float:
-        total = self.true_positives + self.false_positives
-        return self.true_positives / total if total > 0 else 0.0
-    
-    @property
-    def recall(self) -> float:
-        total = self.true_positives + self.false_negatives
-        return self.true_positives / total if total > 0 else 0.0
-    
-    @property
-    def f1_score(self) -> float:
-        p, r = self.precision, self.recall
-        return 2 * (p * r) / (p + r) if (p + r) > 0 else 0.0
-    
-    @property
-    def false_positive_rate(self) -> float:
-        total = self.false_positives + self.true_negatives
-        return self.false_positives / total if total > 0 else 0.0
-
-
-@dataclass
-class DriftAlert:
-    alert_id: str
-    signature_id: str
-    version_id: str
-    drift_severity: DriftSeverity
-    metric_name: str
-    baseline_value: float
-    current_value: float
-    delta_percent: float
-    threshold: float
-    timestamp: datetime
-    message: str
+    previous_version: str
+    current_version: str
+    cosine_similarity: float
+    kl_divergence: float
+    edit_distance: int
+    drift_score: float
+    drift_detected: bool
+    timestamp: float = field(default_factory=time.time)
 
 
 class SignatureDriftDetector:
     """
-    Production-grade signature drift detection and rollback engine.
+    Detects drift in threat signatures and triggers auto-rollback.
     
-    REAL FUNCTIONALITY:
-    1. Track signature versions with content checksums
-    2. Record performance metrics over time
-    3. Detect statistically significant drift
-    4. Auto-rollback severely degraded signatures
-    5. Generate audit trails and reports
+    Uses multiple statistical methods to detect meaningful changes:
+    - Cosine similarity for vector space comparison
+    - KL divergence for probability distribution shift
+    - Levenshtein distance for pattern changes
     """
 
     def __init__(
         self,
-        drift_threshold_precision: float = -15.0,  # % drop allowed
-        drift_threshold_fpr: float = 20.0,  # % increase allowed
-        min_sample_size: int = 50
+        drift_threshold: float = 0.3,
+        similarity_threshold: float = 0.7,
+        max_versions: int = 10,
+        auto_rollback_enabled: bool = True
     ):
-        self.signatures: Dict[str, Dict[str, Any]] = {}
-        self.versions: Dict[str, List[SignatureVersion]] = defaultdict(list)
-        self.performance_history: Dict[str, List[SignaturePerformance]] = defaultdict(list)
-        self.drift_alerts: List[DriftAlert] = []
-        self.rollback_log: List[Dict[str, Any]] = []
+        self.drift_threshold = drift_threshold
+        self.similarity_threshold = similarity_threshold
+        self.max_versions = max_versions
+        self.auto_rollback_enabled = auto_rollback_enabled
         
-        # Configuration
-        self.drift_threshold_precision = drift_threshold_precision
-        self.drift_threshold_fpr = drift_threshold_fpr
-        self.min_sample_size = min_sample_size
-        self.auto_rollback_enabled = True
-        self.auto_rollback_severity = DriftSeverity.SEVERE
+        self.signature_versions: Dict[str, List[SignatureVersion]] = defaultdict(list)
+        self.stable_signatures: Dict[str, SignatureVersion] = {}
+        self.drift_history: List[DriftMetrics] = []
+        self.rollback_events: List[Dict[str, Any]] = []
+        self.baseline_signatures: Dict[str, Dict[str, float]] = {}
+
+    def _char_frequency_vector(self, text: str) -> Dict[str, float]:
+        """Create character frequency vector for similarity comparison"""
+        freq = defaultdict(int)
+        for c in text.lower():
+            freq[c] += 1
+        total = len(text) if text else 1
+        return {c: count / total for c, count in freq.items()}
+
+    def _cosine_similarity(self, vec1: Dict[str, float], vec2: Dict[str, float]) -> float:
+        """Calculate cosine similarity between two frequency vectors"""
+        all_chars = set(vec1.keys()) | set(vec2.keys())
+        dot_product = sum(vec1.get(c, 0) * vec2.get(c, 0) for c in all_chars)
+        norm1 = math.sqrt(sum(v * v for v in vec1.values()))
+        norm2 = math.sqrt(sum(v * v for v in vec2.values()))
+        
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+        return dot_product / (norm1 * norm2)
+
+    def _kl_divergence(self, p: Dict[str, float], q: Dict[str, float]) -> float:
+        """Calculate Kullback-Leibler divergence with smoothing"""
+        epsilon = 1e-10
+        divergence = 0.0
+        all_chars = set(p.keys()) | set(q.keys())
+        
+        for c in all_chars:
+            p_val = p.get(c, epsilon)
+            q_val = q.get(c, epsilon)
+            divergence += p_val * math.log((p_val + epsilon) / (q_val + epsilon))
+        
+        return min(abs(divergence), 10.0)  # Cap for stability
+
+    def _levenshtein_distance(self, s1: str, s2: str) -> int:
+        """Calculate edit distance between two strings"""
+        if len(s1) < len(s2):
+            return self._levenshtein_distance(s2, s1)
+        if len(s2) == 0:
+            return len(s1)
+        
+        previous_row = list(range(len(s2) + 1))
+        for i, c1 in enumerate(s1):
+            current_row = [i + 1]
+            for j, c2 in enumerate(s2):
+                insertions = previous_row[j + 1] + 1
+                deletions = current_row[j] + 1
+                substitutions = previous_row[j] + (c1 != c2)
+                current_row.append(min(insertions, deletions, substitutions))
+            previous_row = current_row
+        
+        return previous_row[-1]
 
     def register_signature(
         self,
         signature_id: str,
-        signature_content: str,
-        initial_baseline: Optional[Dict[str, float]] = None,
-        created_by: str = "system"
-    ) -> str:
-        """Register a new detection signature with baseline version."""
-        version_id = f"{signature_id}_v1_{int(time.time())}"
-        
-        version = SignatureVersion(
-            version_id=version_id,
+        pattern: str,
+        version: str,
+        confidence_score: float = 0.8
+    ) -> SignatureVersion:
+        """Register a new signature version"""
+        sig_version = SignatureVersion(
             signature_id=signature_id,
-            version_number="1.0.0",
-            signature_content=signature_content,
-            created_at=datetime.now(timezone.utc),
-            created_by=created_by,
-            performance_baseline=initial_baseline or {
-                "precision": 0.85,
-                "recall": 0.70,
-                "f1_score": 0.77,
-                "false_positive_rate": 0.05
-            }
+            version=version,
+            pattern=pattern,
+            created_at=time.time(),
+            confidence_score=confidence_score
         )
         
-        self.versions[signature_id].append(version)
-        self.signatures[signature_id] = {
-            "current_version": version_id,
-            "status": SignatureStatus.ACTIVE,
-            "registered_at": datetime.now(timezone.utc),
-            "last_evaluated": None
-        }
+        versions = self.signature_versions[signature_id]
+        versions.append(sig_version)
         
-        return version_id
+        # Keep only max_versions
+        if len(versions) > self.max_versions:
+            versions.pop(0)
+        
+        # Store baseline for first version
+        if len(versions) == 1:
+            self.baseline_signatures[signature_id] = self._char_frequency_vector(pattern)
+            sig_version.is_stable = True
+            self.stable_signatures[signature_id] = sig_version
+        
+        return sig_version
 
-    def update_signature(
-        self,
-        signature_id: str,
-        new_content: str,
-        updated_by: str,
-        new_baseline: Optional[Dict[str, float]] = None
-    ) -> str:
-        """Update signature and create new version."""
-        if signature_id not in self.signatures:
-            raise ValueError(f"Signature {signature_id} not registered")
+    def detect_drift(self, signature_id: str, new_pattern: str) -> Optional[DriftMetrics]:
+        """
+        Detect drift between new pattern and baseline/stable version.
+        Returns drift metrics if drift is detected.
+        """
+        if signature_id not in self.stable_signatures:
+            return None
         
-        current_versions = self.versions[signature_id]
-        next_major = len(current_versions) + 1
+        stable = self.stable_signatures[signature_id]
         
-        version_id = f"{signature_id}_v{next_major}_{int(time.time())}"
+        vec_stable = self._char_frequency_vector(stable.pattern)
+        vec_new = self._char_frequency_vector(new_pattern)
         
-        version = SignatureVersion(
-            version_id=version_id,
+        similarity = self._cosine_similarity(vec_stable, vec_new)
+        divergence = self._kl_divergence(vec_stable, vec_new)
+        edit_dist = self._levenshtein_distance(stable.pattern, new_pattern)
+        
+        # Normalize metrics
+        norm_edit = edit_dist / max(len(stable.pattern), len(new_pattern), 1)
+        drift_score = (
+            (1 - similarity) * 0.4 +
+            min(divergence / 5.0, 1.0) * 0.3 +
+            norm_edit * 0.3
+        )
+        
+        drift_detected = (
+            drift_score > self.drift_threshold or
+            similarity < self.similarity_threshold
+        )
+        
+        metrics = DriftMetrics(
             signature_id=signature_id,
-            version_number=f"{next_major}.0.0",
-            signature_content=new_content,
-            created_at=datetime.now(timezone.utc),
-            created_by=updated_by,
-            performance_baseline=new_baseline or current_versions[-1].performance_baseline
+            previous_version=stable.version,
+            current_version="new",
+            cosine_similarity=similarity,
+            kl_divergence=divergence,
+            edit_distance=edit_dist,
+            drift_score=drift_score,
+            drift_detected=drift_detected
         )
         
-        self.versions[signature_id].append(version)
-        self.signatures[signature_id]["current_version"] = version_id
-        self.signatures[signature_id]["status"] = SignatureStatus.TESTING
-        
-        return version_id
+        self.drift_history.append(metrics)
+        return metrics
 
-    def record_performance(
-        self,
-        signature_id: str,
-        true_positives: int,
-        false_positives: int,
-        true_negatives: int = 0,
-        false_negatives: int = 0
-    ) -> SignaturePerformance:
-        """Record performance data for a signature."""
-        if signature_id not in self.signatures:
-            raise ValueError(f"Signature {signature_id} not registered")
+    def should_rollback(self, signature_id: str, new_pattern: str) -> Tuple[bool, Optional[DriftMetrics]]:
+        """Determine if rollback is needed for a new signature pattern"""
+        metrics = self.detect_drift(signature_id, new_pattern)
+        if metrics is None:
+            return False, None
         
-        version_id = self.signatures[signature_id]["current_version"]
-        
-        perf = SignaturePerformance(
-            signature_id=signature_id,
-            version_id=version_id,
-            timestamp=datetime.now(timezone.utc),
-            true_positives=true_positives,
-            false_positives=false_positives,
-            true_negatives=true_negatives,
-            false_negatives=false_negatives,
-            total_alerts=true_positives + false_positives
-        )
-        
-        self.performance_history[signature_id].append(perf)
-        return perf
+        if self.auto_rollback_enabled and metrics.drift_detected:
+            return True, metrics
+        return False, metrics
 
-    def _calculate_drift_severity(
-        self,
-        delta_percent: float,
-        metric_type: str
-    ) -> DriftSeverity:
-        """Calculate drift severity based on percentage change."""
-        if metric_type == "precision":
-            # Negative delta is bad (precision dropped)
-            if delta_percent >= 0:
-                return DriftSeverity.NONE
-            abs_delta = abs(delta_percent)
-            if abs_delta < 5:
-                return DriftSeverity.NONE
-            elif abs_delta < 10:
-                return DriftSeverity.MINOR
-            elif abs_delta < 20:
-                return DriftSeverity.MODERATE
-            elif abs_delta < 35:
-                return DriftSeverity.SEVERE
-            else:
-                return DriftSeverity.CRITICAL
-        elif metric_type == "false_positive_rate":
-            # Positive delta is bad (FPR increased)
-            if delta_percent <= 0:
-                return DriftSeverity.NONE
-            if delta_percent < 10:
-                return DriftSeverity.NONE
-            elif delta_percent < 25:
-                return DriftSeverity.MINOR
-            elif delta_percent < 50:
-                return DriftSeverity.MODERATE
-            elif delta_percent < 100:
-                return DriftSeverity.SEVERE
-            else:
-                return DriftSeverity.CRITICAL
+    def rollback_to_stable(self, signature_id: str) -> Optional[SignatureVersion]:
+        """Rollback signature to last known stable version"""
+        if signature_id not in self.stable_signatures:
+            logger.warning(f"No stable version found for {signature_id}")
+            return None
         
-        return DriftSeverity.NONE
-
-    def evaluate_drift(self, signature_id: str) -> List[DriftAlert]:
-        """Evaluate a signature for performance drift."""
-        if signature_id not in self.signatures:
-            return []
+        stable = self.stable_signatures[signature_id]
         
-        history = self.performance_history.get(signature_id, [])
-        if len(history) < self.min_sample_size:
-            return []
-        
-        # Get baseline from current version
-        current_version_id = self.signatures[signature_id]["current_version"]
-        versions = self.versions[signature_id]
-        baseline = {}
-        for v in versions:
-            if v.version_id == current_version_id:
-                baseline = v.performance_baseline
-                break
-        
-        # Calculate recent performance (last 100 samples)
-        recent = history[-100:]
-        avg_precision = sum(p.precision for p in recent) / len(recent)
-        avg_fpr = sum(p.false_positive_rate for p in recent) / len(recent)
-        avg_f1 = sum(p.f1_score for p in recent) / len(recent)
-        
-        alerts = []
-        
-        # Check precision drift
-        baseline_precision = baseline.get("precision", 0.85)
-        precision_delta = ((avg_precision - baseline_precision) / baseline_precision) * 100
-        precision_severity = self._calculate_drift_severity(precision_delta, "precision")
-        
-        if precision_severity != DriftSeverity.NONE:
-            alert = DriftAlert(
-                alert_id=f"DRIFT-{hashlib.md5(f'{signature_id}{time.time()}'.encode()).hexdigest()[:8]}",
-                signature_id=signature_id,
-                version_id=current_version_id,
-                drift_severity=precision_severity,
-                metric_name="precision",
-                baseline_value=baseline_precision,
-                current_value=avg_precision,
-                delta_percent=precision_delta,
-                threshold=self.drift_threshold_precision,
-                timestamp=datetime.now(timezone.utc),
-                message=f"Precision drifted by {precision_delta:.1f}%: baseline={baseline_precision:.3f}, current={avg_precision:.3f}"
-            )
-            alerts.append(alert)
-            self.drift_alerts.append(alert)
-        
-        # Check FPR drift
-        baseline_fpr = baseline.get("false_positive_rate", 0.05)
-        if baseline_fpr > 0:
-            fpr_delta = ((avg_fpr - baseline_fpr) / baseline_fpr) * 100
-            fpr_severity = self._calculate_drift_severity(fpr_delta, "false_positive_rate")
-            
-            if fpr_severity != DriftSeverity.NONE:
-                alert = DriftAlert(
-                    alert_id=f"DRIFT-{hashlib.md5(f'{signature_id}{time.time()}fpr'.encode()).hexdigest()[:8]}",
-                    signature_id=signature_id,
-                    version_id=current_version_id,
-                    drift_severity=fpr_severity,
-                    metric_name="false_positive_rate",
-                    baseline_value=baseline_fpr,
-                    current_value=avg_fpr,
-                    delta_percent=fpr_delta,
-                    threshold=self.drift_threshold_fpr,
-                    timestamp=datetime.now(timezone.utc),
-                    message=f"False Positive Rate increased by {fpr_delta:.1f}%: baseline={baseline_fpr:.3f}, current={avg_fpr:.3f}"
-                )
-                alerts.append(alert)
-                self.drift_alerts.append(alert)
-        
-        # Update status
-        max_severity = max(
-            [a.drift_severity for a in alerts],
-            default=DriftSeverity.NONE
-        )
-        
-        if max_severity in [DriftSeverity.SEVERE, DriftSeverity.CRITICAL]:
-            self.signatures[signature_id]["status"] = SignatureStatus.DRIFTING
-            
-            # Auto-rollback if enabled
-            if self.auto_rollback_enabled and max_severity.value >= self.auto_rollback_severity.value:
-                self.rollback_signature(signature_id, reason="auto_drift_detection")
-        
-        self.signatures[signature_id]["last_evaluated"] = datetime.now(timezone.utc)
-        
-        return alerts
-
-    def rollback_signature(
-        self,
-        signature_id: str,
-        target_version: Optional[str] = None,
-        reason: str = "manual"
-    ) -> Dict[str, Any]:
-        """Rollback signature to a previous stable version."""
-        if signature_id not in self.signatures:
-            return {"success": False, "error": "Signature not found"}
-        
-        versions = self.versions[signature_id]
-        if len(versions) < 2:
-            return {"success": False, "error": "No previous version to rollback to"}
-        
-        # Default: rollback to previous version
-        if target_version is None:
-            target_version_obj = versions[-2]  # Second most recent
-        else:
-            target_version_obj = None
-            for v in versions:
-                if v.version_id == target_version or v.version_number == target_version:
-                    target_version_obj = v
-                    break
-            if not target_version_obj:
-                return {"success": False, "error": "Target version not found"}
-        
-        previous_version = self.signatures[signature_id]["current_version"]
-        
-        self.signatures[signature_id]["current_version"] = target_version_obj.version_id
-        self.signatures[signature_id]["status"] = SignatureStatus.ROLLED_BACK
-        
-        rollback_record = {
-            "rollback_id": hashlib.sha256(f"{signature_id}{time.time()}".encode()).hexdigest()[:12],
+        rollback_event = {
             "signature_id": signature_id,
-            "rolled_from": previous_version,
-            "rolled_to": target_version_obj.version_id,
-            "rolled_to_version_number": target_version_obj.version_number,
-            "reason": reason,
-            "timestamp": datetime.now(timezone.utc).isoformat()
+            "rolled_back_to_version": stable.version,
+            "timestamp": time.time(),
+            "reason": "signature_drift_detected"
         }
+        self.rollback_events.append(rollback_event)
         
-        self.rollback_log.append(rollback_record)
-        
-        return {
-            "success": True,
-            **rollback_record,
-            "message": f"Rolled back {signature_id} to version {target_version_obj.version_number}"
-        }
+        logger.info(
+            f"Rolled back signature {signature_id} to stable version {stable.version}"
+        )
+        return stable
+
+    def mark_as_stable(self, signature_id: str, version: str) -> bool:
+        """Mark a signature version as stable after validation"""
+        versions = self.signature_versions.get(signature_id, [])
+        for sig in versions:
+            if sig.version == version:
+                sig.is_stable = True
+                self.stable_signatures[signature_id] = sig
+                # Update baseline
+                self.baseline_signatures[signature_id] = self._char_frequency_vector(sig.pattern)
+                logger.info(f"Marked signature {signature_id} version {version} as stable")
+                return True
+        return False
 
     def get_drift_summary(self) -> Dict[str, Any]:
-        """Get comprehensive drift detection summary."""
-        drifting_count = sum(
-            1 for s in self.signatures.values()
-            if s["status"] == SignatureStatus.DRIFTING
-        )
+        """Get summary of drift detection statistics"""
+        total_checks = len(self.drift_history)
+        drift_detected_count = sum(1 for m in self.drift_history if m.drift_detected)
+        rollback_count = len(self.rollback_events)
         
-        rolled_back_count = sum(
-            1 for s in self.signatures.values()
-            if s["status"] == SignatureStatus.ROLLED_BACK
+        avg_similarity = (
+            sum(m.cosine_similarity for m in self.drift_history) / total_checks
+            if total_checks > 0 else 1.0
         )
-        
-        severity_counts = defaultdict(int)
-        for alert in self.drift_alerts:
-            severity_counts[alert.drift_severity.value] += 1
         
         return {
-            "total_signatures_registered": len(self.signatures),
-            "total_versions_tracked": sum(len(v) for v in self.versions.values()),
-            "total_performance_records": sum(len(h) for h in self.performance_history.values()),
-            "signatures_drifting": drifting_count,
-            "signatures_rolled_back": rolled_back_count,
-            "total_drift_alerts": len(self.drift_alerts),
-            "alerts_by_severity": dict(severity_counts),
-            "total_rollbacks": len(self.rollback_log),
-            "auto_rollback_enabled": self.auto_rollback_enabled,
-            "configuration": {
-                "drift_threshold_precision_percent": self.drift_threshold_precision,
-                "drift_threshold_fpr_percent": self.drift_threshold_fpr,
-                "minimum_sample_size": self.min_sample_size
-            }
+            "total_signature_checks": total_checks,
+            "drift_detected_count": drift_detected_count,
+            "drift_rate": drift_detected_count / total_checks if total_checks > 0 else 0,
+            "rollback_count": rollback_count,
+            "average_similarity": avg_similarity,
+            "active_stable_signatures": len(self.stable_signatures),
+            "auto_rollback_enabled": self.auto_rollback_enabled
         }
 
-    def generate_drift_report(self, signature_id: Optional[str] = None) -> Dict[str, Any]:
-        """Generate detailed drift analysis report."""
-        if signature_id:
-            alerts = [a for a in self.drift_alerts if a.signature_id == signature_id]
-            history = self.performance_history.get(signature_id, [])
-            versions = self.versions.get(signature_id, [])
-            sig_info = self.signatures.get(signature_id, {})
-            
-            return {
-                "signature_id": signature_id,
-                "status": sig_info.get("status", SignatureStatus.ACTIVE).value if sig_info else "unknown",
-                "versions_tracked": len(versions),
-                "performance_samples": len(history),
-                "drift_alerts": len(alerts),
-                "alerts": [
-                    {
-                        "severity": a.drift_severity.value,
-                        "metric": a.metric_name,
-                        "delta": f"{a.delta_percent:.1f}%",
-                        "message": a.message,
-                        "time": a.timestamp.isoformat()
-                    }
-                    for a in alerts[-10:]
-                ],
-                "rollback_history": [
-                    r for r in self.rollback_log if r["signature_id"] == signature_id
-                ]
-            }
-        
-        # Full report
-        return {
-            "summary": self.get_drift_summary(),
-            "signatures": [
-                self.generate_drift_report(sig_id)
-                for sig_id in self.signatures.keys()
-            ],
-            "recent_alerts": [
-                {
-                    "signature_id": a.signature_id,
-                    "severity": a.drift_severity.value,
-                    "metric": a.metric_name,
-                    "message": a.message
+    def export_state(self) -> str:
+        """Export detector state for persistence"""
+        state = {
+            "stable_signatures": {
+                k: {
+                    "signature_id": v.signature_id,
+                    "version": v.version,
+                    "pattern": v.pattern,
+                    "confidence_score": v.confidence_score
                 }
-                for a in sorted(self.drift_alerts, key=lambda x: x.timestamp, reverse=True)[:20]
-            ]
+                for k, v in self.stable_signatures.items()
+            },
+            "drift_summary": self.get_drift_summary(),
+            "exported_at": datetime.utcnow().isoformat()
         }
+        return json.dumps(state, indent=2)

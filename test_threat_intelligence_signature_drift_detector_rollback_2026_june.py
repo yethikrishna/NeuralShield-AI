@@ -1,261 +1,283 @@
 #!/usr/bin/env python3
 """
-Test Suite for Threat Intelligence Signature Drift Detector & Rollback Engine
-June 2026 - Production Grade Tests
-
-REAL TESTS - no mocking!
+Test suite for Threat Intelligence Signature Drift Detector with Auto-Rollback
+NeuralShield-AI - Production Grade Tests
 """
 
 import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'neural_shield'))
 
-from neural_shield.threat_intelligence_signature_drift_detector_rollback_2026_june import (
+from threat_intelligence_signature_drift_detector_rollback_2026_june import (
     SignatureDriftDetector,
-    DriftSeverity,
-    SignatureStatus
+    SignatureVersion,
+    DriftMetrics
 )
 
 
+def test_signature_registration():
+    """Test signature registration and baseline establishment"""
+    print("Test 1: Signature Registration and Baseline")
+    
+    detector = SignatureDriftDetector()
+    
+    sig = detector.register_signature(
+        signature_id="SQL_INJECTION_001",
+        pattern="(union|select|insert|delete|drop).*--",
+        version="1.0.0",
+        confidence_score=0.92
+    )
+    
+    assert sig.signature_id == "SQL_INJECTION_001"
+    assert sig.version == "1.0.0"
+    assert sig.is_stable == True
+    assert sig.hash_digest != ""
+    
+    print(f"  ✓ Registered signature: {sig.signature_id} v{sig.version}")
+    print(f"  ✓ Hash digest: {sig.hash_digest[:16]}...")
+    print("  ✓ PASS\n")
+
+
+def test_no_drift_detection():
+    """Test that similar patterns don't trigger drift"""
+    print("Test 2: No Drift Detection (Similar Patterns)")
+    
+    detector = SignatureDriftDetector()
+    
+    detector.register_signature(
+        signature_id="XSS_001",
+        pattern="<script.*>.*</script>",
+        version="1.0.0"
+    )
+    
+    # Very similar pattern - should NOT trigger drift
+    new_pattern = "<script.*src.*>.*</script>"
+    should_rollback, metrics = detector.should_rollback("XSS_001", new_pattern)
+    
+    assert metrics is not None
+    assert metrics.cosine_similarity > 0.8  # High similarity
+    assert should_rollback == False
+    
+    print(f"  ✓ Cosine similarity: {metrics.cosine_similarity:.3f}")
+    print(f"  ✓ KL divergence: {metrics.kl_divergence:.3f}")
+    print(f"  ✓ Drift score: {metrics.drift_score:.3f}")
+    print(f"  ✓ Rollback needed: {should_rollback}")
+    print("  ✓ PASS\n")
+
+
+def test_significant_drift_detection():
+    """Test that significantly different patterns DO trigger drift"""
+    print("Test 3: Significant Drift Detection")
+    
+    detector = SignatureDriftDetector(drift_threshold=0.3)
+    
+    detector.register_signature(
+        signature_id="CMD_INJECTION_001",
+        pattern=";.*(rm|cp|mv|chmod|wget|curl)",
+        version="1.0.0"
+    )
+    
+    # Completely different pattern - SHOULD trigger drift
+    new_pattern = "javascript:alert\\(.*\\)"
+    should_rollback, metrics = detector.should_rollback("CMD_INJECTION_001", new_pattern)
+    
+    assert metrics is not None
+    assert metrics.drift_detected == True
+    assert metrics.cosine_similarity < 0.7  # Low similarity
+    assert should_rollback == True
+    
+    print(f"  ✓ Cosine similarity: {metrics.cosine_similarity:.3f}")
+    print(f"  ✓ Drift score: {metrics.drift_score:.3f}")
+    print(f"  ✓ Drift detected: {metrics.drift_detected}")
+    print(f"  ✓ Auto-rollback triggered: {should_rollback}")
+    print("  ✓ PASS\n")
+
+
+def test_rollback_functionality():
+    """Test rollback to stable version functionality"""
+    print("Test 4: Rollback to Stable Version")
+    
+    detector = SignatureDriftDetector()
+    
+    detector.register_signature(
+        signature_id="PATH_TRAVERSAL_001",
+        pattern="../|..\\|%2e%2e%2f",
+        version="1.0.0",
+        confidence_score=0.95
+    )
+    
+    # Register new version
+    detector.register_signature(
+        signature_id="PATH_TRAVERSAL_001",
+        pattern="../|..\\|%2e%2e%2f|~",
+        version="1.0.1",
+        confidence_score=0.90
+    )
+    
+    # Mark as stable
+    detector.mark_as_stable("PATH_TRAVERSAL_001", "1.0.1")
+    
+    # Now trigger rollback
+    rolled_back = detector.rollback_to_stable("PATH_TRAVERSAL_001")
+    
+    assert rolled_back is not None
+    assert rolled_back.version == "1.0.1"
+    assert rolled_back.is_stable == True
+    assert len(detector.rollback_events) == 1
+    
+    print(f"  ✓ Rolled back to version: {rolled_back.version}")
+    print(f"  ✓ Stable confidence: {rolled_back.confidence_score}")
+    print(f"  ✓ Rollback events logged: {len(detector.rollback_events)}")
+    print("  ✓ PASS\n")
+
+
+def test_drift_summary_metrics():
+    """Test drift summary and statistics reporting"""
+    print("Test 5: Drift Summary and Statistics")
+    
+    detector = SignatureDriftDetector()
+    
+    # Register multiple signatures
+    detector.register_signature("SIG_1", "pattern1.*", "1.0.0")
+    detector.register_signature("SIG_2", "pattern2.*", "1.0.0")
+    
+    # Generate some drift checks
+    detector.detect_drift("SIG_1", "pattern1.*modified")
+    detector.detect_drift("SIG_1", "completely_different")
+    detector.detect_drift("SIG_2", "pattern2.*v2")
+    
+    summary = detector.get_drift_summary()
+    
+    assert summary["total_signature_checks"] == 3
+    assert summary["active_stable_signatures"] == 2
+    assert summary["average_similarity"] > 0
+    
+    print(f"  ✓ Total checks: {summary['total_signature_checks']}")
+    print(f"  ✓ Stable signatures: {summary['active_stable_signatures']}")
+    print(f"  ✓ Avg similarity: {summary['average_similarity']:.3f}")
+    print(f"  ✓ Drift rate: {summary['drift_rate']:.2%}")
+    print("  ✓ PASS\n")
+
+
+def test_edit_distance_calculation():
+    """Test Levenshtein edit distance calculation"""
+    print("Test 6: Edit Distance Calculation")
+    
+    detector = SignatureDriftDetector()
+    
+    dist1 = detector._levenshtein_distance("kitten", "sitting")
+    dist2 = detector._levenshtein_distance("same", "same")
+    dist3 = detector._levenshtein_distance("", "test")
+    
+    assert dist1 == 3  # kitten -> sitting requires 3 edits
+    assert dist2 == 0  # identical strings
+    assert dist3 == 4  # empty to test
+    
+    print(f"  ✓ kitten -> sitting: {dist1} edits")
+    print(f"  ✓ same -> same: {dist2} edits")
+    print(f"  ✓ empty -> test: {dist3} edits")
+    print("  ✓ PASS\n")
+
+
+def test_cosine_similarity():
+    """Test cosine similarity between vectors"""
+    print("Test 7: Cosine Similarity")
+    
+    detector = SignatureDriftDetector()
+    
+    vec1 = detector._char_frequency_vector("hello world")
+    vec2 = detector._char_frequency_vector("hello world")
+    vec3 = detector._char_frequency_vector("xyz abc")
+    
+    sim_identical = detector._cosine_similarity(vec1, vec2)
+    sim_different = detector._cosine_similarity(vec1, vec3)
+    
+    assert abs(sim_identical - 1.0) < 0.001  # Almost identical
+    assert sim_different < 0.5  # Different
+    
+    print(f"  ✓ Identical similarity: {sim_identical:.3f}")
+    print(f"  ✓ Different similarity: {sim_different:.3f}")
+    print("  ✓ PASS\n")
+
+
+def test_state_export():
+    """Test state export functionality"""
+    print("Test 8: State Export")
+    
+    detector = SignatureDriftDetector()
+    
+    detector.register_signature("EXPORT_TEST", "export.*pattern", "2.0.0", 0.88)
+    detector.detect_drift("EXPORT_TEST", "export.*pattern.v2")
+    
+    state_json = detector.export_state()
+    
+    assert "stable_signatures" in state_json
+    assert "drift_summary" in state_json
+    assert "EXPORT_TEST" in state_json
+    
+    print("  ✓ State exported as JSON")
+    print("  ✓ Contains stable signatures")
+    print("  ✓ Contains drift summary")
+    print("  ✓ PASS\n")
+
+
+def test_unknown_signature_handling():
+    """Test handling of unknown signatures"""
+    print("Test 9: Unknown Signature Handling")
+    
+    detector = SignatureDriftDetector()
+    
+    # Should return None for unknown signatures
+    metrics = detector.detect_drift("UNKNOWN_SIG", "any pattern")
+    rolled_back = detector.rollback_to_stable("UNKNOWN_SIG")
+    
+    assert metrics is None
+    assert rolled_back is None
+    
+    print("  ✓ Unknown signature returns None for drift detection")
+    print("  ✓ Unknown signature returns None for rollback")
+    print("  ✓ PASS\n")
+
+
 def run_all_tests():
-    print("=" * 70)
-    print("NeuralShield-AI: Signature Drift Detector & Rollback Engine Tests")
-    print("=" * 70)
+    """Run all test cases"""
+    print("=" * 60)
+    print("NeuralShield-AI: Signature Drift Detector - Test Suite")
+    print("=" * 60 + "\n")
     
-    test_results = []
+    tests_passed = 0
+    tests_failed = 0
     
-    # Test 1: Initialize detector
-    print("\n[TEST 1] Initialize SignatureDriftDetector")
-    try:
-        detector = SignatureDriftDetector(
-            drift_threshold_precision=-15.0,
-            drift_threshold_fpr=20.0,
-            min_sample_size=10
-        )
-        print("  ✓ Detector initialized successfully")
-        test_results.append(("Initialize detector", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Initialize detector", False))
+    test_functions = [
+        test_signature_registration,
+        test_no_drift_detection,
+        test_significant_drift_detection,
+        test_rollback_functionality,
+        test_drift_summary_metrics,
+        test_edit_distance_calculation,
+        test_cosine_similarity,
+        test_state_export,
+        test_unknown_signature_handling
+    ]
     
-    # Test 2: Register signature
-    print("\n[TEST 2] Register new detection signature")
-    try:
-        sig_id = "SIG-MALWARE-001"
-        sig_content = """
-        rule Malware_Detection {
-            strings: $a = "malicious_pattern"
-            condition: $a
-        }
-        """
-        version_id = detector.register_signature(
-            signature_id=sig_id,
-            signature_content=sig_content,
-            initial_baseline={
-                "precision": 0.90,
-                "recall": 0.80,
-                "f1_score": 0.85,
-                "false_positive_rate": 0.03
-            },
-            created_by="threat_intel_team"
-        )
-        print(f"  ✓ Signature registered: {sig_id}")
-        print(f"    Version ID: {version_id}")
-        test_results.append(("Register signature", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Register signature", False))
+    for test_func in test_functions:
+        try:
+            test_func()
+            tests_passed += 1
+        except AssertionError as e:
+            print(f"  ✗ FAILED: {e}")
+            tests_failed += 1
+        except Exception as e:
+            print(f"  ✗ ERROR: {e}")
+            tests_failed += 1
     
-    # Test 3: Record performance data
-    print("\n[TEST 3] Record performance metrics")
-    try:
-        # Record good performance (matches baseline)
-        for i in range(15):
-            detector.record_performance(
-                signature_id=sig_id,
-                true_positives=90,
-                false_positives=10,
-                true_negatives=900,
-                false_negatives=10
-            )
-        
-        history = detector.performance_history[sig_id]
-        print(f"  ✓ Recorded {len(history)} performance samples")
-        print(f"    Last sample precision: {history[-1].precision:.3f}")
-        print(f"    Last sample FPR: {history[-1].false_positive_rate:.3f}")
-        test_results.append(("Record performance", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Record performance", False))
+    print("=" * 60)
+    print(f"TEST RESULTS: {tests_passed} PASSED, {tests_failed} FAILED")
+    print("=" * 60)
     
-    # Test 4: Evaluate drift (no drift expected)
-    print("\n[TEST 4] Evaluate drift (baseline performance)")
-    try:
-        alerts = detector.evaluate_drift(sig_id)
-        print(f"  ✓ Drift evaluation complete")
-        print(f"    Alerts generated: {len(alerts)}")
-        if len(alerts) == 0:
-            print("    No drift detected (as expected for baseline performance)")
-        test_results.append(("Evaluate no-drift scenario", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Evaluate no-drift scenario", False))
-    
-    # Test 5: Simulate drift and detect it
-    print("\n[TEST 5] Detect precision drift (degraded performance)")
-    try:
-        # Simulate degraded performance - lots of false positives
-        for i in range(15):
-            detector.record_performance(
-                signature_id=sig_id,
-                true_positives=40,  # Dropped from 90
-                false_positives=60,  # Increased from 10
-                true_negatives=900,
-                false_negatives=10
-            )
-        
-        alerts = detector.evaluate_drift(sig_id)
-        print(f"  ✓ Drift evaluation with degraded performance")
-        print(f"    Alerts generated: {len(alerts)}")
-        for alert in alerts:
-            print(f"    - [{alert.drift_severity.value}] {alert.message}")
-        
-        if len(alerts) > 0:
-            print("    Drift correctly detected!")
-        test_results.append(("Detect precision drift", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Detect precision drift", False))
-    
-    # Test 6: Update signature to new version
-    print("\n[TEST 6] Update signature (create new version)")
-    try:
-        new_content = """
-        rule Malware_Detection_v2 {
-            strings: 
-                $a = "malicious_pattern"
-                $b = "new_indicator"
-            condition: any of them
-        }
-        """
-        new_version = detector.update_signature(
-            signature_id=sig_id,
-            new_content=new_content,
-            updated_by="analyst_john",
-            new_baseline={
-                "precision": 0.92,
-                "recall": 0.85,
-                "f1_score": 0.88,
-                "false_positive_rate": 0.02
-            }
-        )
-        print(f"  ✓ Signature updated")
-        print(f"    New version ID: {new_version}")
-        print(f"    Total versions: {len(detector.versions[sig_id])}")
-        test_results.append(("Update signature version", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Update signature version", False))
-    
-    # Test 7: Manual rollback
-    print("\n[TEST 7] Manual rollback to previous version")
-    try:
-        result = detector.rollback_signature(
-            signature_id=sig_id,
-            reason="new_version_causes_too_many_false_positives"
-        )
-        if result["success"]:
-            print(f"  ✓ Rollback successful")
-            print(f"    Rollback ID: {result['rollback_id']}")
-            print(f"    Rolled from: {result['rolled_from']}")
-            print(f"    Rolled to: {result['rolled_to_version_number']}")
-            print(f"    Reason: {result['reason']}")
-        test_results.append(("Manual rollback", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Manual rollback", False))
-    
-    # Test 8: Get drift summary
-    print("\n[TEST 8] Generate drift detection summary")
-    try:
-        summary = detector.get_drift_summary()
-        print(f"  ✓ Summary generated")
-        print(f"    Total signatures: {summary['total_signatures_registered']}")
-        print(f"    Total versions: {summary['total_versions_tracked']}")
-        print(f"    Performance records: {summary['total_performance_records']}")
-        print(f"    Drift alerts: {summary['total_drift_alerts']}")
-        print(f"    Rollbacks: {summary['total_rollbacks']}")
-        test_results.append(("Generate summary", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Generate summary", False))
-    
-    # Test 9: Generate full drift report
-    print("\n[TEST 9] Generate detailed drift report")
-    try:
-        report = detector.generate_drift_report(sig_id)
-        print(f"  ✓ Report generated for {sig_id}")
-        print(f"    Status: {report['status']}")
-        print(f"    Versions tracked: {report['versions_tracked']}")
-        print(f"    Performance samples: {report['performance_samples']}")
-        print(f"    Drift alerts: {report['drift_alerts']}")
-        print(f"    Rollback history entries: {len(report['rollback_history'])}")
-        test_results.append(("Generate drift report", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Generate drift report", False))
-    
-    # Test 10: Multiple signatures test
-    print("\n[TEST 10] Multi-signature drift monitoring")
-    try:
-        # Register additional signatures
-        detector.register_signature(
-            "SIG-PHI-001",
-            "rule PHI_Detection { condition: true }",
-            created_by="compliance_team"
-        )
-        detector.register_signature(
-            "SIG-RANSOM-002",
-            "rule Ransomware_Detect { condition: true }",
-            created_by="threat_intel"
-        )
-        
-        # Record performance
-        for i in range(12):
-            detector.record_performance("SIG-PHI-001", 85, 15, 900, 5)
-            detector.record_performance("SIG-RANSOM-002", 95, 5, 950, 2)
-        
-        full_report = detector.generate_drift_report()
-        print(f"  ✓ Multi-signature monitoring active")
-        print(f"    Total signatures in system: {full_report['summary']['total_signatures_registered']}")
-        print(f"    System-wide drift alerts: {full_report['summary']['total_drift_alerts']}")
-        test_results.append(("Multi-signature monitoring", True))
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results.append(("Multi-signature monitoring", False))
-    
-    # Summary
-    print("\n" + "=" * 70)
-    print("TEST SUMMARY")
-    print("=" * 70)
-    
-    passed = sum(1 for _, result in test_results if result)
-    total = len(test_results)
-    
-    for test_name, result in test_results:
-        status = "✓ PASS" if result else "✗ FAIL"
-        print(f"  {status} - {test_name}")
-    
-    print(f"\n  Total: {passed}/{total} tests passed")
-    
-    if passed == total:
-        print("\n  🎉 ALL TESTS PASSED!")
-        return 0
-    else:
-        print(f"\n  ⚠️  {total - passed} test(s) failed")
-        return 1
+    return tests_passed, tests_failed
 
 
 if __name__ == "__main__":
-    exit_code = run_all_tests()
-    sys.exit(exit_code)
+    passed, failed = run_all_tests()
+    sys.exit(0 if failed == 0 else 1)
