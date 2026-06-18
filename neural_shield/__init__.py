@@ -1446,3 +1446,21 @@ __all__.extend([
     "HashValidationStatus",
     "HashValidationResult"
 ])
+
+# Prompt Obfuscation Decoder & Detector (June 18, 2026 Production Release)
+# Base64/Hex/ROT13/URL encoding detection, nested obfuscation decoding,
+# Unicode/character substitution detection, hidden injection analysis
+from .prompt_obfuscation_decoder_detector_2026_june import (
+    PromptObfuscationDecoderDetector,
+    ThreatLevel,
+    ObfuscationType,
+    ObfuscationMatch,
+    ObfuscationAnalysisResult
+)
+__all__.extend([
+    "PromptObfuscationDecoderDetector",
+    "ThreatLevel",
+    "ObfuscationType",
+    "ObfuscationMatch",
+    "ObfuscationAnalysisResult"
+])
