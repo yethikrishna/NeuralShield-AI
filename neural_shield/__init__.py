@@ -583,16 +583,18 @@ __version__ = "2026.6.17.37"
 # Threat Intelligence Batch Processor (June 18, 2026 Production Release)
 # Batch IOC processing, deduplication, enrichment, and parallel processing
 from .threat_intelligence_batch_processor_2026_june import (
-    BatchProcessorConfig,
-    IOCEntry,
-    ThreatIntelligenceBatchProcessor,
-    create_threat_intelligence_batch_processor
+    BatchStatus,
+    IOCType,
+    BatchResult,
+    BatchJob,
+    ThreatIntelligenceBatchProcessor
 )
 __all__.extend([
-    "BatchProcessorConfig",
-    "IOCEntry",
-    "ThreatIntelligenceBatchProcessor",
-    "create_threat_intelligence_batch_processor"
+    "BatchStatus",
+    "IOCType",
+    "BatchResult",
+    "BatchJob",
+    "ThreatIntelligenceBatchProcessor"
 ])
 __version__ = "2026.6.18.3"
 # Threat Intelligence Threat Actor Profiler (June 18, 2026 Production Release)
@@ -1246,4 +1248,21 @@ __all__.extend([
     "IncidentType"
 ])
 __version__ = "2026.6.18.4"
+# Threat Intelligence Historical Anomaly Detector (June 18, 2026 Production Release)
+# Real-time historical baseline tracking, Z-score & IQR outlier detection, multi-dimensional anomaly scoring
+from .threat_intelligence_historical_anomaly_detector_2026_june import (
+    HistoricalAnomalyDetector,
+    BaselineWindow,
+    AnomalyType,
+    AnomalySeverity,
+    AnomalyDetectionResult
+)
+__all__.extend([
+    "HistoricalAnomalyDetector",
+    "BaselineWindow",
+    "AnomalyType",
+    "AnomalySeverity",
+    "AnomalyDetectionResult"
+])
+__version__ = "2026.6.18.5"
 
