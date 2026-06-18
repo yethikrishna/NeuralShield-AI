@@ -1412,3 +1412,18 @@ __all__.extend([
 ])
 
 __version__ = "2026.6.18.12"
+
+# Threat Intelligence IOC Hash Validator (June 18, 2026 Production Release)
+# Hash format validation, type auto-detection, whitelist/blacklist, duplicate detection, enrichment
+from .threat_intelligence_ioc_hash_validator_2026_june import (
+    IOCHashValidator,
+    HashType,
+    HashValidationStatus,
+    HashValidationResult
+)
+__all__.extend([
+    "IOCHashValidator",
+    "HashType",
+    "HashValidationStatus",
+    "HashValidationResult"
+])
