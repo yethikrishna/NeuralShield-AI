@@ -1161,3 +1161,32 @@ __all__.extend([
 ])
 __version__ = "2026.6.18.4"
 
+
+# Threat Intelligence Automated Response Orchestrator (June 18, 2026 Production Release)
+# Automated security incident response, playbook execution, and mitigation workflow
+from .threat_intelligence_automated_response_orchestrator_2026_june import (
+    AutomatedResponseOrchestrator,
+    IncidentSeverity,
+    ResponseStatus,
+    ResponseActionType,
+    PlaybookTrigger,
+    ThreatIndicator,
+    ResponseAction,
+    SecurityIncident,
+    ResponsePlaybook,
+    create_response_orchestrator
+)
+__all__.extend([
+    "AutomatedResponseOrchestrator",
+    "IncidentSeverity",
+    "ResponseStatus",
+    "ResponseActionType",
+    "PlaybookTrigger",
+    "ThreatIndicator",
+    "ResponseAction",
+    "SecurityIncident",
+    "ResponsePlaybook",
+    "create_response_orchestrator"
+])
+__version__ = "2026.6.18.3"
+
