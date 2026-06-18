@@ -286,14 +286,14 @@ __version__ = "2026.6.17.20"
 # Zero-Shot Threat Classifier (June 2026 Production Release)
 # Novel attack detection without training data
 from .zero_shot_threat_classifier_2026_june import (
-    ZeroShotThreatClassifier,
+    ZeroShotThreatCategoryifier,
     ThreatCategory,
     ConfidenceLevel,
     ThreatFinding,
     ClassificationResult
 )
 __all__.extend([
-    "ZeroShotThreatClassifier",
+    "ZeroShotThreatCategoryifier",
     "ThreatCategory",
     "ConfidenceLevel",
     "ThreatFinding",
@@ -827,9 +827,9 @@ from .realtime_prompt_sanitization_engine_2026_june import (
 )
 from .threat_intelligence_auto_learning_classifier_2026_june import (
     ThreatIntelligenceAutoLearningClassifier,
-    ThreatClass,
-    FeatureType,
-    FeatureWeight,
+    ThreatCategory,
+    ThreatCategory,
+    LearningOutcome,
     ClassificationResult,
     LearningStats
 )
@@ -842,9 +842,9 @@ __all__.extend([
     "HomoglyphDefender",
     "create_prompt_sanitizer",
     "ThreatIntelligenceAutoLearningClassifier",
-    "ThreatClass",
-    "FeatureType",
-    "FeatureWeight",
+    "ThreatCategory",
+    "ThreatCategory",
+    "LearningOutcome",
     "ClassificationResult",
     "LearningStats"
 ])
@@ -1329,4 +1329,21 @@ __all__.extend([
     "IOType",
     "DefangMethod"
 ])
-__version__ = "2026.6.18.7"
+
+# Threat Intelligence MITRE Heatmap Generator (June 18, 2026 Production Release)
+# MITRE ATT&CK heatmap generation, risk scoring, color coding, dashboard export
+from .threat_intelligence_mitre_heatmap_generator_2026_june import (
+    MITREHeatmapGenerator,
+    HeatmapGenerationResult,
+    HeatmapCell,
+    HeatmapColor,
+    MITRETactic
+)
+__all__.extend([
+    "MITREHeatmapGenerator",
+    "HeatmapGenerationResult",
+    "HeatmapCell",
+    "HeatmapColor",
+    "MITRETactic"
+])
+__version__ = "2026.6.18.8"
