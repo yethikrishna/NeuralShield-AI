@@ -1464,3 +1464,17 @@ __all__.extend([
     "ObfuscationMatch",
     "ObfuscationAnalysisResult"
 ])
+
+# Threat Intelligence Signature Pattern Learner (June 18, 2026)
+from .threat_intelligence_signature_pattern_learner_2026_june import (
+    ThreatSignaturePatternLearner,
+    SignatureType,
+    ConfidenceLevel,
+    LearnedSignature
+)
+__all__.extend([
+    "ThreatSignaturePatternLearner",
+    "SignatureType",
+    "ConfidenceLevel",
+    "LearnedSignature"
+])
