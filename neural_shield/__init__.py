@@ -1266,3 +1266,17 @@ __all__.extend([
 ])
 __version__ = "2026.6.18.5"
 
+
+# Threat Intelligence Historical Baseline Analyzer (June 18, 2026 Production Release)
+# Statistical baseline establishment, real-time anomaly detection, baseline drift monitoring
+from .threat_intelligence_historical_baseline_analyzer_2026_june import (
+    ThreatIntelligenceHistoricalBaselineAnalyzer,
+    BaselineMetrics,
+    AnomalyResult
+)
+__all__.extend([
+    "ThreatIntelligenceHistoricalBaselineAnalyzer",
+    "BaselineMetrics",
+    "AnomalyResult"
+])
+__version__ = "2026.6.18.6"
