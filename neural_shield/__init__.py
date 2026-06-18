@@ -579,6 +579,25 @@ __all__.extend([
     "MemoryRegion",
     "create_memory_safety_monitor"
 ])
+# Conversation History Poisoning Detector (June 18, 2026 Production Release)
+# Multi-turn conversation poisoning detection with gradual attack recognition
+from .conversation_history_poisoning_detector_2026_june import (
+    ConversationHistoryPoisoningDetector,
+    ConversationTurn,
+    PoisoningAttackType,
+    PoisoningIndicator,
+    PoisoningDetectionResult,
+    SeverityLevel
+)
+__all__.extend([
+    "ConversationHistoryPoisoningDetector",
+    "ConversationTurn",
+    "PoisoningAttackType",
+    "PoisoningIndicator",
+    "PoisoningDetectionResult",
+    "SeverityLevel"
+])
+__version__ = "2026.6.18.3"
 # Threat Intelligence Signature Version Control & Rollback Manager (June 18, 2026 Production Release)
 # Semantic versioning, atomic rollback, deployment validation, and integrity verification
 from .threat_intelligence_signature_version_control_2026_june import (
