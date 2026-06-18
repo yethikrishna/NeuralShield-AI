@@ -1312,4 +1312,21 @@ __all__.extend([
     "FalsePositiveCategory",
     "HistoricalFalsePositive"
 ])
-__version__ = "2026.6.18.6"
+
+# Threat Intelligence IOC Normalizer (June 18, 2026 Production Release)
+# IOC normalization, validation, defanging/refanging, type detection, batch processing
+from .threat_intelligence_ioc_normalizer_2026_june import (
+    ThreatIntelligenceIOCNormalizer,
+    NormalizedIOC,
+    NormalizationStats,
+    IOType,
+    DefangMethod
+)
+__all__.extend([
+    "ThreatIntelligenceIOCNormalizer",
+    "NormalizedIOC",
+    "NormalizationStats",
+    "IOType",
+    "DefangMethod"
+])
+__version__ = "2026.6.18.7"
