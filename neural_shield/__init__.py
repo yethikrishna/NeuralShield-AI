@@ -1279,4 +1279,19 @@ __all__.extend([
     "BaselineMetrics",
     "AnomalyResult"
 ])
+
+# Threat Intelligence False Positive Reducer (June 18, 2026 Production Release)
+# Statistical false positive reduction, historical pattern matching, multi-detector consensus
+from .threat_intelligence_false_positive_reducer_2026_june import (
+    ThreatIntelligenceFalsePositiveReducer,
+    ReductionResult,
+    FalsePositiveCategory,
+    HistoricalFalsePositive
+)
+__all__.extend([
+    "ThreatIntelligenceFalsePositiveReducer",
+    "ReductionResult",
+    "FalsePositiveCategory",
+    "HistoricalFalsePositive"
+])
 __version__ = "2026.6.18.6"
