@@ -1096,3 +1096,24 @@ __all__.extend([
     "create_mitre_executive_reporter"
 ])
 __version__ = "2026.6.18.7"
+
+# MITRE ATT&CK Executive Dashboard Reporter (June 18, 2026 Production Release)
+# Executive-level cybersecurity reporting, risk scoring, and C-suite dashboard
+from .threat_intelligence_mitre_executive_dashboard_2026_june import (
+    MITREExecutiveDashboardReporter,
+    RiskLevel,
+    MITRETactic,
+    ThreatEvent,
+    ExecutiveSummary,
+    create_executive_dashboard
+)
+__all__.extend([
+    "MITREExecutiveDashboardReporter",
+    "RiskLevel",
+    "MITRETactic",
+    "ThreatEvent",
+    "ExecutiveSummary",
+    "create_executive_dashboard"
+])
+__version__ = "2026.6.18.4"
+
