@@ -580,6 +580,21 @@ __all__.extend([
     "create_memory_safety_monitor"
 ])
 __version__ = "2026.6.17.37"
+# Threat Intelligence Batch Processor (June 18, 2026 Production Release)
+# Batch IOC processing, deduplication, enrichment, and parallel processing
+from .threat_intelligence_batch_processor_2026_june import (
+    BatchProcessorConfig,
+    IOCEntry,
+    ThreatIntelligenceBatchProcessor,
+    create_threat_intelligence_batch_processor
+)
+__all__.extend([
+    "BatchProcessorConfig",
+    "IOCEntry",
+    "ThreatIntelligenceBatchProcessor",
+    "create_threat_intelligence_batch_processor"
+])
+__version__ = "2026.6.18.3"
 # Threat Intelligence Threat Actor Profiler (June 18, 2026 Production Release)
 # Comprehensive threat actor profiling, TTP matching, and MITRE ATT&CK mapping
 from .threat_intelligence_threat_actor_profiler_2026_june import (
