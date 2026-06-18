@@ -1188,5 +1188,40 @@ __all__.extend([
     "ResponsePlaybook",
     "create_response_orchestrator"
 ])
+__version__ = "2026.6.18.5"
+# Threat Intelligence Incident Triage & Escalation Engine (June 18, 2026 Production Release)
+# Automated incident triage, severity scoring, SLA compliance, and escalation management
+from .threat_intelligence_incident_triage_escalation_2026_june import (
+    IncidentSeverity,
+    IncidentStatus,
+    IncidentCategory,
+    ResponseTeam,
+    ThreatIndicator,
+    EscalationEvent,
+    SLACompliance,
+    Incident,
+    TriageResult,
+    SeverityScoringEngine,
+    IncidentTriageEngine,
+    IncidentEscalationManager,
+    IncidentTriageEscalationEngine,
+    create_incident_triage_engine
+)
+__all__.extend([
+    "IncidentSeverity",
+    "IncidentStatus",
+    "IncidentCategory",
+    "ResponseTeam",
+    "ThreatIndicator",
+    "EscalationEvent",
+    "SLACompliance",
+    "Incident",
+    "TriageResult",
+    "SeverityScoringEngine",
+    "IncidentTriageEngine",
+    "IncidentEscalationManager",
+    "IncidentTriageEscalationEngine",
+    "create_incident_triage_engine"
+])
 __version__ = "2026.6.18.3"
 
