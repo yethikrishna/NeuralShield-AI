@@ -589,7 +589,6 @@ from .threat_intelligence_threat_actor_profiler_2026_june import (
     ThreatMotivation,
     ThreatActorProfile,
     AttributionResult,
-    create_threat_actor_profiler
 )
 __all__.extend([
     "ThreatActorProfiler",
@@ -598,7 +597,6 @@ __all__.extend([
     "ThreatMotivation",
     "ThreatActorProfile",
     "AttributionResult",
-    "create_threat_actor_profiler"
 ])
 __version__ = "2026.6.18.3"
 from .security_rate_limiter_circuit_breaker_2026_june import SecurityRateLimiter, RateLimitResult, CircuitState
@@ -1068,5 +1066,33 @@ __all__.extend([
     "ConstitutionalHeuristicDetector",
     "EnsembleThreatDetector",
     "create_ensemble_threat_detector",
+])
+__version__ = "2026.6.18.7"
+
+# Threat Intelligence MITRE ATT&CK Executive Report Generator (June 18, 2026 Production Release)
+# Executive-level security reporting with risk scoring, compliance assessment, and mitigation roadmap
+from .threat_intelligence_mitre_executive_reporter_2026_june import (
+    ThreatIntelligenceMITREExecutiveReporter,
+    ReportSeverity,
+    MITRETactic,
+    ComplianceFramework,
+    MITRETechniqueFinding,
+    ExecutiveSummary,
+    RiskTrend,
+    ComplianceGap,
+    ExecutiveReportResult,
+    create_mitre_executive_reporter
+)
+__all__.extend([
+    "ThreatIntelligenceMITREExecutiveReporter",
+    "ReportSeverity",
+    "MITRETactic",
+    "ComplianceFramework",
+    "MITRETechniqueFinding",
+    "ExecutiveSummary",
+    "RiskTrend",
+    "ComplianceGap",
+    "ExecutiveReportResult",
+    "create_mitre_executive_reporter"
 ])
 __version__ = "2026.6.18.7"
