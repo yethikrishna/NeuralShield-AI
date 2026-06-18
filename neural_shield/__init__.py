@@ -1478,3 +1478,40 @@ __all__.extend([
     "ConfidenceLevel",
     "LearnedSignature"
 ])
+
+# Threat Intelligence Vulnerability Priority Scanner (June 18, 2026 Production Release)
+# CVSS v3.1 scoring, exploit maturity assessment, business impact analysis,
+# intelligent remediation prioritization with SLA windows
+from .threat_intelligence_vulnerability_priority_scanner_2026_june import (
+    VulnerabilityPriorityScanner,
+    CVSSAttackVector,
+    CVSSAttackComplexity,
+    CVSSPrivilegesRequired,
+    CVSSUserInteraction,
+    CVSSScope,
+    CVSSImpact,
+    ExploitMaturity,
+    AssetCriticality,
+    RemediationPriority,
+    CVSSVector,
+    Vulnerability,
+    VulnerabilityAssessment,
+    create_vulnerability_scanner
+)
+__all__.extend([
+    "VulnerabilityPriorityScanner",
+    "CVSSAttackVector",
+    "CVSSAttackComplexity",
+    "CVSSPrivilegesRequired",
+    "CVSSUserInteraction",
+    "CVSSScope",
+    "CVSSImpact",
+    "ExploitMaturity",
+    "AssetCriticality",
+    "RemediationPriority",
+    "CVSSVector",
+    "Vulnerability",
+    "VulnerabilityAssessment",
+    "create_vulnerability_scanner"
+])
+__version__ = "2026.6.18.15"
