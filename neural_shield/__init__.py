@@ -1223,5 +1223,27 @@ __all__.extend([
     "IncidentTriageEscalationEngine",
     "create_incident_triage_engine"
 ])
-__version__ = "2026.6.18.3"
+from .threat_intelligence_incident_playbook_executor_2026_june import (
+    IncidentPlaybookExecutor,
+    IncidentContext,
+    PlaybookExecution,
+    PlaybookStep,
+    PlaybookLibrary,
+    PlaybookStatus,
+    StepStatus,
+    SeverityLevel,
+    IncidentType
+)
+__all__.extend([
+    "IncidentPlaybookExecutor",
+    "IncidentContext",
+    "PlaybookExecution",
+    "PlaybookStep",
+    "PlaybookLibrary",
+    "PlaybookStatus",
+    "StepStatus",
+    "SeverityLevel",
+    "IncidentType"
+])
+__version__ = "2026.6.18.4"
 
