@@ -1130,5 +1130,34 @@ __all__.extend([
     "ExecutiveSummary",
     "create_executive_dashboard"
 ])
+__version__ = "2026.6.18.8"
+# Threat Intelligence Webhook Alert Dispatcher (June 18, 2026 Production Release)
+# Multi-platform security alert dispatcher with Slack, Teams, Discord support
+from .threat_intelligence_webhook_alert_dispatcher_2026_june import (
+    ThreatIntelligenceWebhookAlertDispatcher,
+    WebhookPlatform,
+    AlertSeverity,
+    AlertStatus,
+    AuthenticationType,
+    WebhookEndpoint,
+    SecurityAlert,
+    AlertDeliveryRecord,
+    CircuitBreaker,
+    RateLimiter,
+    create_webhook_dispatcher
+)
+__all__.extend([
+    "ThreatIntelligenceWebhookAlertDispatcher",
+    "WebhookPlatform",
+    "AlertSeverity",
+    "AlertStatus",
+    "AuthenticationType",
+    "WebhookEndpoint",
+    "SecurityAlert",
+    "AlertDeliveryRecord",
+    "CircuitBreaker",
+    "RateLimiter",
+    "create_webhook_dispatcher"
+])
 __version__ = "2026.6.18.4"
 
