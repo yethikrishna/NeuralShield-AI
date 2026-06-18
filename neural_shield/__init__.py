@@ -286,14 +286,14 @@ __version__ = "2026.6.17.20"
 # Zero-Shot Threat Classifier (June 2026 Production Release)
 # Novel attack detection without training data
 from .zero_shot_threat_classifier_2026_june import (
-    ZeroShotThreatCategoryifier,
+    ZeroShotThreatClassifier,
     ThreatCategory,
     ConfidenceLevel,
     ThreatFinding,
     ClassificationResult
 )
 __all__.extend([
-    "ZeroShotThreatCategoryifier",
+    "ZeroShotThreatClassifier",
     "ThreatCategory",
     "ConfidenceLevel",
     "ThreatFinding",
@@ -1346,4 +1346,23 @@ __all__.extend([
     "HeatmapColor",
     "MITRETactic"
 ])
-__version__ = "2026.6.18.8"
+
+# Threat Intelligence Temporal Pattern Analyzer (June 18, 2026 Production Release)
+# Time-based pattern detection, anomaly spikes, periodic patterns, emerging trends, burst detection
+from .threat_intelligence_temporal_pattern_analyzer_2026_june import (
+    TemporalPatternAnalyzer,
+    TemporalEvent,
+    DetectedPattern,
+    AnomalyResult,
+    PatternType,
+    ThreatSeverity
+)
+__all__.extend([
+    "TemporalPatternAnalyzer",
+    "TemporalEvent",
+    "DetectedPattern",
+    "AnomalyResult",
+    "PatternType",
+    "ThreatSeverity"
+])
+__version__ = "2026.6.18.9"
