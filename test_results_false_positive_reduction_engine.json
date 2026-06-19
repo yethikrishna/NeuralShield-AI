@@ -1,8 +1,8 @@
 {
-  "test_suite": "FalsePositiveReductionEngine",
+  "test_suite": "False Positive Reduction Engine",
+  "date": "2026-06-19T16:19:49.938265",
   "total_tests": 10,
   "passed": 10,
   "failed": 0,
-  "success_rate": 1.0,
-  "timestamp": 1781855011.4026582
+  "success_rate": 1.0
 }
