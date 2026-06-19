@@ -1394,14 +1394,10 @@ __all__.extend([
 # Threat Intelligence Anomaly Sequence Detector (June 18, 2026 Production Release)
 # Sequence anomaly detection, sliding window analysis, Markov chain transitions, pattern rarity
 from .threat_intelligence_anomaly_sequence_detector_2026_june import (
-    ThreatIntelligenceAnomalySequenceDetector,
-    SecurityEvent,
-    AnomalyResult
+    ThreatIntelligenceAnomalySequenceDetector
 )
 __all__.extend([
-    "ThreatIntelligenceAnomalySequenceDetector",
-    "SecurityEvent",
-    "AnomalyResult"
+    "ThreatIntelligenceAnomalySequenceDetector"
 ])
 
 # Threat Intelligence Predictive Forecaster (June 18, 2026 Production Release)
@@ -1683,3 +1679,22 @@ __all__.extend([
     "PromptChainingAttackDetector"
 ])
 __version__ = "2026.6.20.2"
+
+
+# Threat Intelligence Threat Feed Health Monitor (June 20, 2026 Production Release)
+# Real-time threat feed health monitoring, anomaly detection, and health scoring
+from .threat_intelligence_threat_feed_health_monitor_2026_june import (
+    ThreatFeedHealthMonitor,
+    FeedStatus,
+    HealthIssueType,
+    FeedHealthMetrics,
+    FeedPullResult
+)
+__all__.extend([
+    "ThreatFeedHealthMonitor",
+    "FeedStatus",
+    "HealthIssueType",
+    "FeedHealthMetrics",
+    "FeedPullResult"
+])
+__version__ = "2026.6.20.3"

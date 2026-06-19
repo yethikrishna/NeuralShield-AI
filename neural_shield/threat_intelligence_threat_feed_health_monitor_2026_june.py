@@ -1,379 +1,522 @@
 """
 Threat Intelligence Threat Feed Health Monitor
-Production-grade health monitoring for threat intelligence feeds
+Production-grade threat feed health monitoring system
 
 Monitors:
-- Feed latency and response time
-- Data freshness and staleness detection
-- Data quality and schema validation
 - Feed availability and uptime
-- Error rate tracking
-- Automatic alerting on degradation
+- Data freshness and latency
+- Data quality and completeness
+- Error rates and anomalies
+- Performance metrics
 """
 
 import time
+import json
 import hashlib
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Any
-from dataclasses import dataclass, field
+from dataclasses import dataclass, asdict
 from enum import Enum
-import json
 import threading
-from collections import deque, defaultdict
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from collections import deque
 
 
-class FeedHealthStatus(Enum):
+class FeedStatus(Enum):
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
     OFFLINE = "offline"
-    STALE = "stale"
+    MAINTENANCE = "maintenance"
 
 
-class FeedQualityIssue(Enum):
-    MISSING_FIELDS = "missing_required_fields"
-    INVALID_FORMAT = "invalid_data_format"
-    DUPLICATE_ENTRIES = "duplicate_entries"
-    LOW_ENTROPY = "low_data_entropy"
-    SCHEMA_MISMATCH = "schema_mismatch"
-    EMPTY_FEED = "empty_feed"
+class HealthIssueType(Enum):
+    LATENCY_HIGH = "high_latency"
+    DATA_STALE = "stale_data"
+    DATA_INCOMPLETE = "incomplete_data"
+    ERROR_RATE_HIGH = "high_error_rate"
+    CONNECTION_FAILURE = "connection_failure"
+    AUTH_FAILURE = "authentication_failure"
+    RATE_LIMITED = "rate_limited"
+    DATA_CORRUPTED = "corrupted_data"
 
 
 @dataclass
 class FeedHealthMetrics:
+    feed_id: str
     feed_name: str
-    status: FeedHealthStatus = FeedHealthStatus.HEALTHY
-    last_check_time: datetime = field(default_factory=datetime.utcnow)
-    last_successful_pull: Optional[datetime] = None
-    average_latency_ms: float = 0.0
-    latency_history: deque = field(default_factory=lambda: deque(maxlen=100))
-    success_rate: float = 100.0
-    consecutive_failures: int = 0
-    total_requests: int = 0
-    failed_requests: int = 0
-    data_freshness_minutes: float = 0.0
-    entry_count: int = 0
-    duplicate_count: int = 0
-    quality_issues: List[FeedQualityIssue] = field(default_factory=list)
-    error_messages: List[str] = field(default_factory=list)
-    uptime_percentage: float = 100.0
+    status: FeedStatus
+    uptime_percent: float
+    avg_latency_ms: float
+    p95_latency_ms: float
+    p99_latency_ms: float
+    error_rate: float
+    data_freshness_seconds: float
+    last_successful_pull: datetime
+    last_failed_pull: Optional[datetime]
+    consecutive_failures: int
+    data_completeness_score: float
+    record_count: int
+    duplicate_rate: float
+    issues: List[HealthIssueType]
+
+    def to_dict(self) -> Dict[str, Any]:
+        data = asdict(self)
+        data["status"] = self.status.value
+        data["issues"] = [issue.value for issue in self.issues]
+        data["last_successful_pull"] = self.last_successful_pull.isoformat()
+        if self.last_failed_pull:
+            data["last_failed_pull"] = self.last_failed_pull.isoformat()
+        return data
 
 
 @dataclass
-class FeedConfiguration:
-    feed_name: str
-    feed_url: str
-    expected_update_interval_minutes: int = 60
-    timeout_seconds: int = 30
-    latency_threshold_warning_ms: int = 1000
-    latency_threshold_critical_ms: int = 5000
-    freshness_threshold_warning_minutes: int = 120
-    freshness_threshold_critical_minutes: int = 360
-    required_fields: List[str] = field(default_factory=lambda: ["ioc", "type", "timestamp"])
-    min_entry_count: int = 1
+class FeedPullResult:
+    success: bool
+    latency_ms: float
+    record_count: int
+    error_message: Optional[str] = None
+    data_hash: Optional[str] = None
+    timestamp: datetime = None
+
+    def __post_init__(self):
+        if self.timestamp is None:
+            self.timestamp = datetime.utcnow()
 
 
 class ThreatFeedHealthMonitor:
     """
     Production-grade threat feed health monitoring system.
     
-    Provides real-time monitoring of threat intelligence feed health
-    with automatic degradation detection and alerting.
+    Provides real-time monitoring, anomaly detection, and health scoring
+    for threat intelligence feeds.
     """
 
-    def __init__(self):
-        self.feeds: Dict[str, FeedConfiguration] = {}
-        self.metrics: Dict[str, FeedHealthMetrics] = {}
-        self.alert_callbacks: List[callable] = []
-        self._lock = threading.Lock()
-        self._start_time = datetime.utcnow()
+    def __init__(self, config: Optional[Dict] = None):
+        self.config = config or self._default_config()
+        self.feeds: Dict[str, Dict] = {}
+        self.pull_history: Dict[str, deque] = {}
+        self.health_metrics: Dict[str, FeedHealthMetrics] = {}
+        self.alert_callbacks: List = []
+        self.lock = threading.Lock()
+        self.logger = self._setup_logger()
+        self._initialize_default_feeds()
 
-    def register_feed(self, config: FeedConfiguration) -> None:
-        """Register a new threat feed for monitoring."""
-        with self._lock:
-            self.feeds[config.feed_name] = config
-            self.metrics[config.feed_name] = FeedHealthMetrics(
-                feed_name=config.feed_name
-            )
-            logger.info(f"Registered feed for monitoring: {config.feed_name}")
-
-    def unregister_feed(self, feed_name: str) -> None:
-        """Remove a feed from monitoring."""
-        with self._lock:
-            self.feeds.pop(feed_name, None)
-            self.metrics.pop(feed_name, None)
-            logger.info(f"Unregistered feed: {feed_name}")
-
-    def check_feed_health(
-        self, 
-        feed_name: str, 
-        feed_data: Optional[List[Dict]] = None,
-        response_time_ms: Optional[float] = None,
-        pull_successful: bool = True,
-        error_message: Optional[str] = None
-    ) -> FeedHealthMetrics:
-        """
-        Perform health check on a threat feed with actual data.
-        
-        Args:
-            feed_name: Name of the feed to check
-            feed_data: Actual feed entries received
-            response_time_ms: Time taken to fetch feed
-            pull_successful: Whether the feed pull succeeded
-            error_message: Error details if pull failed
-            
-        Returns:
-            Updated health metrics
-        """
-        if feed_name not in self.feeds:
-            raise ValueError(f"Feed not registered: {feed_name}")
-
-        config = self.feeds[feed_name]
-        
-        with self._lock:
-            metrics = self.metrics[feed_name]
-            metrics.last_check_time = datetime.utcnow()
-            metrics.total_requests += 1
-
-            # Update latency metrics
-            if response_time_ms is not None:
-                metrics.latency_history.append(response_time_ms)
-                metrics.average_latency_ms = sum(metrics.latency_history) / len(metrics.latency_history)
-
-            # Update success/failure metrics
-            if pull_successful:
-                metrics.last_successful_pull = datetime.utcnow()
-                metrics.consecutive_failures = 0
-            else:
-                metrics.failed_requests += 1
-                metrics.consecutive_failures += 1
-                if error_message:
-                    metrics.error_messages.append(f"{datetime.utcnow()}: {error_message}")
-                    if len(metrics.error_messages) > 50:
-                        metrics.error_messages = metrics.error_messages[-50:]
-
-            # Calculate success rate
-            if metrics.total_requests > 0:
-                metrics.success_rate = ((metrics.total_requests - metrics.failed_requests) / 
-                                       metrics.total_requests) * 100
-
-            # Calculate uptime (simplified based on check window)
-            metrics.uptime_percentage = metrics.success_rate
-
-            # Analyze feed data if provided
-            metrics.quality_issues = []
-            if feed_data is not None and pull_successful:
-                self._analyze_feed_data(metrics, config, feed_data)
-            elif pull_successful and feed_data is None:
-                # Successful pull but no data provided
-                metrics.quality_issues.append(FeedQualityIssue.EMPTY_FEED)
-
-            # Determine overall health status
-            metrics.status = self._determine_health_status(metrics, config)
-
-            # Trigger alerts if status degraded
-            if metrics.status in (FeedHealthStatus.UNHEALTHY, FeedHealthStatus.OFFLINE, FeedHealthStatus.STALE):
-                self._trigger_alerts(feed_name, metrics)
-
-            return metrics
-
-    def _analyze_feed_data(
-        self, 
-        metrics: FeedHealthMetrics, 
-        config: FeedConfiguration, 
-        feed_data: List[Dict]
-    ) -> None:
-        """Analyze feed data for quality issues."""
-        metrics.entry_count = len(feed_data)
-
-        if len(feed_data) < config.min_entry_count:
-            metrics.quality_issues.append(FeedQualityIssue.EMPTY_FEED)
-
-        # Check for required fields
-        seen_hashes = set()
-        metrics.duplicate_count = 0
-
-        for entry in feed_data:
-            # Check required fields
-            missing_fields = [f for f in config.required_fields if f not in entry]
-            if missing_fields and FeedQualityIssue.MISSING_FIELDS not in metrics.quality_issues:
-                metrics.quality_issues.append(FeedQualityIssue.MISSING_FIELDS)
-
-            # Check for duplicates using content hash
-            entry_hash = hashlib.md5(json.dumps(entry, sort_keys=True).encode()).hexdigest()
-            if entry_hash in seen_hashes:
-                metrics.duplicate_count += 1
-            else:
-                seen_hashes.add(entry_hash)
-
-        if metrics.duplicate_count > 0:
-            metrics.quality_issues.append(FeedQualityIssue.DUPLICATE_ENTRIES)
-
-        # Calculate data freshness based on most recent entry
-        timestamps = []
-        for entry in feed_data:
-            if "timestamp" in entry:
-                try:
-                    if isinstance(entry["timestamp"], (int, float)):
-                        ts = datetime.fromtimestamp(entry["timestamp"])
-                    elif isinstance(entry["timestamp"], str):
-                        ts = datetime.fromisoformat(entry["timestamp"].replace("Z", "+00:00"))
-                    else:
-                        continue
-                    timestamps.append(ts)
-                except (ValueError, TypeError):
-                    continue
-
-        if timestamps:
-            latest_entry = max(timestamps)
-            metrics.data_freshness_minutes = (datetime.utcnow() - latest_entry).total_seconds() / 60
-        else:
-            metrics.data_freshness_minutes = float('inf')
-
-    def _determine_health_status(
-        self, 
-        metrics: FeedHealthMetrics, 
-        config: FeedConfiguration
-    ) -> FeedHealthStatus:
-        """Determine overall health status based on metrics."""
-        # Check for offline condition
-        if metrics.consecutive_failures >= 3:
-            return FeedHealthStatus.OFFLINE
-
-        # Check for stale data
-        if metrics.data_freshness_minutes > config.freshness_threshold_critical_minutes:
-            return FeedHealthStatus.STALE
-
-        # Check for unhealthy conditions
-        unhealthy_conditions = [
-            metrics.success_rate < 70,
-            metrics.average_latency_ms > config.latency_threshold_critical_ms,
-            len(metrics.quality_issues) >= 3,
-            metrics.consecutive_failures >= 2
-        ]
-        if any(unhealthy_conditions):
-            return FeedHealthStatus.UNHEALTHY
-
-        # Check for degraded conditions
-        degraded_conditions = [
-            metrics.success_rate < 90,
-            metrics.average_latency_ms > config.latency_threshold_warning_ms,
-            metrics.data_freshness_minutes > config.freshness_threshold_warning_minutes,
-            len(metrics.quality_issues) >= 1,
-            metrics.consecutive_failures >= 1
-        ]
-        if any(degraded_conditions):
-            return FeedHealthStatus.DEGRADED
-
-        return FeedHealthStatus.HEALTHY
-
-    def _trigger_alerts(self, feed_name: str, metrics: FeedHealthMetrics) -> None:
-        """Trigger alert callbacks for unhealthy feeds."""
-        alert_data = {
-            "feed_name": feed_name,
-            "status": metrics.status.value,
-            "timestamp": datetime.utcnow().isoformat(),
-            "metrics": {
-                "success_rate": metrics.success_rate,
-                "average_latency_ms": metrics.average_latency_ms,
-                "consecutive_failures": metrics.consecutive_failures,
-                "data_freshness_minutes": metrics.data_freshness_minutes,
-                "quality_issues": [q.value for q in metrics.quality_issues]
-            }
+    def _default_config(self) -> Dict:
+        return {
+            "history_window_size": 100,
+            "latency_warning_threshold_ms": 5000,
+            "latency_critical_threshold_ms": 15000,
+            "stale_data_threshold_seconds": 3600,
+            "error_rate_warning_threshold": 0.1,
+            "error_rate_critical_threshold": 0.3,
+            "completeness_warning_threshold": 0.8,
+            "uptime_warning_threshold": 0.95,
+            "max_consecutive_failures": 5,
+            "evaluation_window_minutes": 60
         }
-        for callback in self.alert_callbacks:
-            try:
-                callback(alert_data)
-            except Exception as e:
-                logger.error(f"Alert callback failed: {e}")
 
-    def register_alert_callback(self, callback: callable) -> None:
-        """Register callback for health alerts."""
-        self.alert_callbacks.append(callback)
+    def _setup_logger(self) -> logging.Logger:
+        logger = logging.getLogger("ThreatFeedHealthMonitor")
+        logger.setLevel(logging.INFO)
+        if not logger.handlers:
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter(
+                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            )
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+        return logger
 
-    def get_feed_health(self, feed_name: str) -> Optional[FeedHealthMetrics]:
-        """Get current health metrics for a feed."""
-        with self._lock:
-            return self.metrics.get(feed_name)
+    def _initialize_default_feeds(self):
+        """Initialize default threat feed configurations."""
+        default_feeds = [
+            {
+                "feed_id": "abuse_ch_feodo",
+                "feed_name": "Abuse.ch Feodo Tracker",
+                "feed_url": "https://feodotracker.abuse.ch/downloads/ipblocklist.csv",
+                "expected_interval_seconds": 300,
+                "minimum_records": 100
+            },
+            {
+                "feed_id": "abuse_ch_urlhaus",
+                "feed_name": "Abuse.ch URLhaus",
+                "feed_url": "https://urlhaus.abuse.ch/downloads/csv/",
+                "expected_interval_seconds": 300,
+                "minimum_records": 500
+            },
+            {
+                "feed_id": "emerging_threats",
+                "feed_name": "Emerging Threats Rules",
+                "feed_url": "https://rules.emergingthreats.net/open/suricata/rules/",
+                "expected_interval_seconds": 3600,
+                "minimum_records": 1000
+            },
+            {
+                "feed_id": "spamhaus_drop",
+                "feed_name": "Spamhaus DROP List",
+                "feed_url": "https://www.spamhaus.org/drop/drop.txt",
+                "expected_interval_seconds": 86400,
+                "minimum_records": 50
+            },
+            {
+                "feed_id": "alien_otx",
+                "feed_name": "AlienVault OTX",
+                "feed_url": "https://otx.alienvault.com/api/v1/pulses/subscribed",
+                "expected_interval_seconds": 600,
+                "minimum_records": 10
+            }
+        ]
+        
+        for feed in default_feeds:
+            self.register_feed(**feed)
+
+    def register_feed(
+        self,
+        feed_id: str,
+        feed_name: str,
+        feed_url: str,
+        expected_interval_seconds: int = 3600,
+        minimum_records: int = 1,
+        enabled: bool = True
+    ) -> None:
+        """Register a new threat feed for monitoring."""
+        with self.lock:
+            self.feeds[feed_id] = {
+                "feed_id": feed_id,
+                "feed_name": feed_name,
+                "feed_url": feed_url,
+                "expected_interval_seconds": expected_interval_seconds,
+                "minimum_records": minimum_records,
+                "enabled": enabled,
+                "registered_at": datetime.utcnow()
+            }
+            self.pull_history[feed_id] = deque(
+                maxlen=self.config["history_window_size"]
+            )
+            # Initialize with default health metrics
+            self.health_metrics[feed_id] = FeedHealthMetrics(
+                feed_id=feed_id,
+                feed_name=feed_name,
+                status=FeedStatus.MAINTENANCE,
+                uptime_percent=100.0,
+                avg_latency_ms=0.0,
+                p95_latency_ms=0.0,
+                p99_latency_ms=0.0,
+                error_rate=0.0,
+                data_freshness_seconds=0.0,
+                last_successful_pull=datetime.utcnow(),
+                last_failed_pull=None,
+                consecutive_failures=0,
+                data_completeness_score=1.0,
+                record_count=0,
+                duplicate_rate=0.0,
+                issues=[]
+            )
+            self.logger.info(f"Registered feed: {feed_name} ({feed_id})")
+
+    def record_pull_result(self, feed_id: str, result: FeedPullResult) -> None:
+        """Record the result of a feed pull operation."""
+        if feed_id not in self.feeds:
+            self.logger.warning(f"Unknown feed: {feed_id}")
+            return
+
+        with self.lock:
+            self.pull_history[feed_id].append(result)
+            self._update_health_metrics(feed_id)
+            
+            if not result.success:
+                self.logger.warning(
+                    f"Feed pull failed: {feed_id} - {result.error_message}"
+                )
+
+    def _calculate_uptime(self, feed_id: str, window_minutes: int = 60) -> float:
+        """Calculate uptime percentage for a feed."""
+        if feed_id not in self.pull_history:
+            return 100.0
+            
+        cutoff = datetime.utcnow() - timedelta(minutes=window_minutes)
+        history = [
+            r for r in self.pull_history[feed_id]
+            if r.timestamp >= cutoff
+        ]
+        
+        if not history:
+            return 100.0
+            
+        successful = sum(1 for r in history if r.success)
+        return (successful / len(history)) * 100
+
+    def _calculate_latency_percentiles(
+        self, feed_id: str
+    ) -> Tuple[float, float, float]:
+        """Calculate average, p95, and p99 latency."""
+        if feed_id not in self.pull_history:
+            return 0.0, 0.0, 0.0
+            
+        latencies = [
+            r.latency_ms for r in self.pull_history[feed_id]
+            if r.success and r.latency_ms > 0
+        ]
+        
+        if not latencies:
+            return 0.0, 0.0, 0.0
+            
+        latencies_sorted = sorted(latencies)
+        n = len(latencies_sorted)
+        
+        avg = sum(latencies) / n
+        p95 = latencies_sorted[int(n * 0.95)] if n > 0 else 0
+        p99 = latencies_sorted[int(n * 0.99)] if n > 0 else 0
+        
+        return avg, p95, p99
+
+    def _calculate_error_rate(self, feed_id: str) -> float:
+        """Calculate error rate."""
+        if feed_id not in self.pull_history:
+            return 0.0
+            
+        history = list(self.pull_history[feed_id])
+        if not history:
+            return 0.0
+            
+        errors = sum(1 for r in history if not r.success)
+        return errors / len(history)
+
+    def _calculate_data_freshness(self, feed_id: str) -> float:
+        """Calculate data freshness in seconds."""
+        if feed_id not in self.pull_history:
+            return float('inf')
+            
+        successful_pulls = [
+            r for r in self.pull_history[feed_id] if r.success
+        ]
+        
+        if not successful_pulls:
+            return float('inf')
+            
+        last_pull = max(r.timestamp for r in successful_pulls)
+        return (datetime.utcnow() - last_pull).total_seconds()
+
+    def _calculate_completeness_score(
+        self, feed_id: str, record_count: int
+    ) -> float:
+        """Calculate data completeness score (0-1)."""
+        if feed_id not in self.feeds:
+            return 1.0
+            
+        min_records = self.feeds[feed_id]["minimum_records"]
+        return min(1.0, record_count / max(1, min_records))
+
+    def _calculate_duplicate_rate(self, feed_id: str) -> float:
+        """Calculate duplicate record rate."""
+        if feed_id not in self.pull_history:
+            return 0.0
+            
+        hashes = [
+            r.data_hash for r in self.pull_history[feed_id]
+            if r.success and r.data_hash
+        ]
+        
+        if len(hashes) < 2:
+            return 0.0
+            
+        unique_hashes = len(set(hashes))
+        return 1.0 - (unique_hashes / len(hashes))
+
+    def _count_consecutive_failures(self, feed_id: str) -> int:
+        """Count consecutive failures."""
+        if feed_id not in self.pull_history:
+            return 0
+            
+        count = 0
+        for result in reversed(list(self.pull_history[feed_id])):
+            if result.success:
+                break
+            count += 1
+        return count
+
+    def _update_health_metrics(self, feed_id: str) -> None:
+        """Update health metrics for a feed."""
+        feed = self.feeds[feed_id]
+        
+        uptime = self._calculate_uptime(feed_id)
+        avg_latency, p95_latency, p99_latency = self._calculate_latency_percentiles(feed_id)
+        error_rate = self._calculate_error_rate(feed_id)
+        freshness = self._calculate_data_freshness(feed_id)
+        
+        successful_pulls = [
+            r for r in self.pull_history[feed_id] if r.success
+        ]
+        last_success = (
+            max(r.timestamp for r in successful_pulls)
+            if successful_pulls else datetime.utcfromtimestamp(0)
+        )
+        
+        failed_pulls = [
+            r for r in self.pull_history[feed_id] if not r.success
+        ]
+        last_failed = (
+            max(r.timestamp for r in failed_pulls)
+            if failed_pulls else None
+        )
+        
+        latest_records = (
+            successful_pulls[-1].record_count
+            if successful_pulls else 0
+        )
+        
+        completeness = self._calculate_completeness_score(feed_id, latest_records)
+        duplicate_rate = self._calculate_duplicate_rate(feed_id)
+        consecutive_failures = self._count_consecutive_failures(feed_id)
+        
+        issues = self._detect_health_issues(
+            feed_id, uptime, avg_latency, error_rate,
+            freshness, completeness, consecutive_failures
+        )
+        
+        status = self._determine_overall_status(issues, consecutive_failures)
+        
+        metrics = FeedHealthMetrics(
+            feed_id=feed_id,
+            feed_name=feed["feed_name"],
+            status=status,
+            uptime_percent=uptime,
+            avg_latency_ms=avg_latency,
+            p95_latency_ms=p95_latency,
+            p99_latency_ms=p99_latency,
+            error_rate=error_rate,
+            data_freshness_seconds=freshness,
+            last_successful_pull=last_success,
+            last_failed_pull=last_failed,
+            consecutive_failures=consecutive_failures,
+            data_completeness_score=completeness,
+            record_count=latest_records,
+            duplicate_rate=duplicate_rate,
+            issues=issues
+        )
+        
+        self.health_metrics[feed_id] = metrics
+
+    def _detect_health_issues(
+        self,
+        feed_id: str,
+        uptime: float,
+        latency: float,
+        error_rate: float,
+        freshness: float,
+        completeness: float,
+        consecutive_failures: int
+    ) -> List[HealthIssueType]:
+        """Detect health issues based on metrics."""
+        issues = []
+        
+        if latency > self.config["latency_critical_threshold_ms"]:
+            issues.append(HealthIssueType.LATENCY_HIGH)
+            
+        if freshness > self.config["stale_data_threshold_seconds"]:
+            issues.append(HealthIssueType.DATA_STALE)
+            
+        if completeness < self.config["completeness_warning_threshold"]:
+            issues.append(HealthIssueType.DATA_INCOMPLETE)
+            
+        if error_rate > self.config["error_rate_warning_threshold"]:
+            issues.append(HealthIssueType.ERROR_RATE_HIGH)
+            
+        if consecutive_failures >= self.config["max_consecutive_failures"]:
+            issues.append(HealthIssueType.CONNECTION_FAILURE)
+            
+        return issues
+
+    def _determine_overall_status(
+        self, issues: List[HealthIssueType], consecutive_failures: int
+    ) -> FeedStatus:
+        """Determine overall feed status."""
+        if consecutive_failures >= self.config["max_consecutive_failures"]:
+            return FeedStatus.OFFLINE
+            
+        if not issues:
+            return FeedStatus.HEALTHY
+            
+        critical_issues = {
+            HealthIssueType.CONNECTION_FAILURE,
+            HealthIssueType.DATA_CORRUPTED
+        }
+        
+        if any(issue in critical_issues for issue in issues):
+            return FeedStatus.UNHEALTHY
+            
+        return FeedStatus.DEGRADED
+
+    def get_feed_health(self, feed_id: str) -> Optional[FeedHealthMetrics]:
+        """Get health metrics for a specific feed."""
+        with self.lock:
+            return self.health_metrics.get(feed_id)
 
     def get_all_feeds_health(self) -> Dict[str, FeedHealthMetrics]:
-        """Get health metrics for all monitored feeds."""
-        with self._lock:
-            return dict(self.metrics)
+        """Get health metrics for all feeds."""
+        with self.lock:
+            return dict(self.health_metrics)
 
-    def get_health_summary(self) -> Dict[str, Any]:
-        """Get summary health report across all feeds."""
-        with self._lock:
-            status_counts = defaultdict(int)
-            total_latency = 0.0
-            total_success_rate = 0.0
-            count = len(self.metrics)
+    def get_overall_health_score(self) -> float:
+        """Calculate overall health score (0-100)."""
+        if not self.health_metrics:
+            return 100.0
+            
+        scores = []
+        for metrics in self.health_metrics.values():
+            score = 100.0
+            
+            if metrics.status == FeedStatus.HEALTHY:
+                score = 100.0
+            elif metrics.status == FeedStatus.DEGRADED:
+                score = 70.0
+            elif metrics.status == FeedStatus.UNHEALTHY:
+                score = 30.0
+            else:
+                score = 0.0
+                
+            scores.append(score)
+            
+        return sum(scores) / len(scores)
 
-            for metrics in self.metrics.values():
-                status_counts[metrics.status.value] += 1
-                total_latency += metrics.average_latency_ms
-                total_success_rate += metrics.success_rate
-
-            return {
-                "summary_timestamp": datetime.utcnow().isoformat(),
-                "monitoring_since": self._start_time.isoformat(),
-                "total_feeds_monitored": count,
-                "status_breakdown": dict(status_counts),
-                "average_latency_all_feeds_ms": total_latency / count if count > 0 else 0,
-                "average_success_rate": total_success_rate / count if count > 0 else 0,
-                "unhealthy_feeds": [
-                    name for name, m in self.metrics.items() 
-                    if m.status in (FeedHealthStatus.UNHEALTHY, FeedHealthStatus.OFFLINE, FeedHealthStatus.STALE)
-                ]
-            }
-
-    def generate_health_report(self) -> str:
-        """Generate human-readable health report."""
-        summary = self.get_health_summary()
-        lines = [
-            "=" * 60,
-            "THREAT FEED HEALTH MONITOR - STATUS REPORT",
-            "=" * 60,
-            f"Generated: {summary['summary_timestamp']}",
-            f"Monitoring Since: {summary['monitoring_since']}",
-            f"Total Feeds Monitored: {summary['total_feeds_monitored']}",
-            "",
-            "Status Breakdown:",
-        ]
+    def generate_health_report(self) -> Dict[str, Any]:
+        """Generate comprehensive health report."""
+        report = {
+            "report_timestamp": datetime.utcnow().isoformat(),
+            "overall_health_score": self.get_overall_health_score(),
+            "total_feeds_monitored": len(self.feeds),
+            "feeds_by_status": {},
+            "feeds": []
+        }
         
-        for status, count in summary['status_breakdown'].items():
-            lines.append(f"  - {status.upper()}: {count}")
+        for feed_id, metrics in self.health_metrics.items():
+            status = metrics.status.value
+            if status not in report["feeds_by_status"]:
+                report["feeds_by_status"][status] = 0
+            report["feeds_by_status"][status] += 1
+            report["feeds"].append(metrics.to_dict())
+            
+        return report
+
+    def simulate_feed_pull(
+        self,
+        feed_id: str,
+        success: bool = True,
+        latency_ms: float = 1000,
+        record_count: int = 100,
+        error_message: Optional[str] = None
+    ) -> None:
+        """Simulate a feed pull for testing."""
+        data_hash = hashlib.md5(
+            f"{feed_id}{datetime.utcnow().isoformat()}".encode()
+        ).hexdigest() if success else None
         
-        lines.extend([
-            "",
-            f"Average Latency: {summary['average_latency_all_feeds_ms']:.2f}ms",
-            f"Average Success Rate: {summary['average_success_rate']:.2f}%",
-            "",
-            "Individual Feed Status:",
-            "-" * 60,
-        ])
-
-        for feed_name, metrics in self.metrics.items():
-            lines.extend([
-                f"\nFeed: {feed_name}",
-                f"  Status: {metrics.status.value.upper()}",
-                f"  Success Rate: {metrics.success_rate:.2f}%",
-                f"  Avg Latency: {metrics.average_latency_ms:.2f}ms",
-                f"  Data Freshness: {metrics.data_freshness_minutes:.1f} minutes",
-                f"  Entries: {metrics.entry_count}",
-                f"  Duplicates: {metrics.duplicate_count}",
-                f"  Quality Issues: {[q.value for q in metrics.quality_issues]}"
-            ])
-
-        if summary['unhealthy_feeds']:
-            lines.extend([
-                "",
-                "⚠️  UNHEALTHY FEEDS REQUIRING ATTENTION:",
-                *[f"  - {name}" for name in summary['unhealthy_feeds']]
-            ])
-
-        return "\n".join(lines)
+        result = FeedPullResult(
+            success=success,
+            latency_ms=latency_ms,
+            record_count=record_count,
+            error_message=error_message,
+            data_hash=data_hash
+        )
+        self.record_pull_result(feed_id, result)

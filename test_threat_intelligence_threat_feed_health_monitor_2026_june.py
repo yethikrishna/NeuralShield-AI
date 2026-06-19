@@ -1,314 +1,317 @@
-#!/usr/bin/env python3
 """
-Test suite for Threat Intelligence Threat Feed Health Monitor
-Production-grade testing with real assertions
+Test Suite for Threat Intelligence Threat Feed Health Monitor
+Production-grade testing of all functionality
 """
 
-import sys
 import json
-from datetime import datetime, timedelta
+import sys
+from datetime import datetime
+
+# Add the module path
+sys.path.insert(0, '/home/user/autonomous-developer/NeuralShield-AI')
+
 from neural_shield.threat_intelligence_threat_feed_health_monitor_2026_june import (
     ThreatFeedHealthMonitor,
-    FeedConfiguration,
-    FeedHealthStatus,
-    FeedQualityIssue
+    FeedPullResult,
+    FeedStatus,
+    HealthIssueType
 )
 
 
 def run_tests():
-    print("=" * 60)
-    print("THREAT FEED HEALTH MONITOR - TEST SUITE")
-    print("=" * 60)
+    """Run all production tests."""
+    print("=" * 70)
+    print("THREAT FEED HEALTH MONITOR - PRODUCTION TEST SUITE")
+    print("=" * 70)
+    print(f"Test started: {datetime.utcnow().isoformat()}")
     
-    test_results = {
-        "passed": 0,
-        "failed": 0,
-        "tests": []
-    }
-
-    # Test 1: Basic initialization
-    print("\n[TEST 1] Basic Initialization")
+    test_results = []
+    all_passed = True
+    
+    # Test 1: Monitor Initialization
+    print("\n[TEST 1] Monitor Initialization")
     try:
         monitor = ThreatFeedHealthMonitor()
-        assert monitor is not None
-        assert len(monitor.get_all_feeds_health()) == 0
-        print("  ✓ Monitor initialized correctly")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "initialization", "status": "passed"})
+        assert len(monitor.feeds) == 5
+        print("  ✓ Monitor initialized with 5 default feeds")
+        test_results.append(("Initialization", True))
     except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "initialization", "status": "failed", "error": str(e)})
-
-    # Test 2: Feed registration
-    print("\n[TEST 2] Feed Registration")
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Initialization", False))
+        all_passed = False
+    
+    # Test 2: Register New Feed
+    print("\n[TEST 2] Register New Feed")
     try:
         monitor = ThreatFeedHealthMonitor()
-        config = FeedConfiguration(
-            feed_name="test_abusech_feed",
-            feed_url="https://feeds.abuse.ch/urlhaus/",
-            expected_update_interval_minutes=15
+        monitor.register_feed(
+            feed_id="custom_feed_001",
+            feed_name="Custom Threat Feed",
+            feed_url="https://example.com/feed",
+            expected_interval_seconds=600,
+            minimum_records=50
         )
-        monitor.register_feed(config)
-        assert "test_abusech_feed" in monitor.get_all_feeds_health()
-        print("  ✓ Feed registered successfully")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "feed_registration", "status": "passed"})
+        assert "custom_feed_001" in monitor.feeds
+        print("  ✓ New feed registered successfully")
+        test_results.append(("Feed Registration", True))
     except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "feed_registration", "status": "failed", "error": str(e)})
-
-    # Test 3: Healthy feed check
-    print("\n[TEST 3] Healthy Feed Detection")
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Feed Registration", False))
+        all_passed = False
+    
+    # Test 3: Record Successful Pull
+    print("\n[TEST 3] Record Successful Pull")
     try:
         monitor = ThreatFeedHealthMonitor()
-        config = FeedConfiguration(feed_name="healthy_feed", feed_url="test://healthy")
-        monitor.register_feed(config)
-        
-        sample_feed_data = [
-            {"ioc": "192.168.1.1", "type": "ip", "timestamp": datetime.utcnow().timestamp()},
-            {"ioc": "10.0.0.1", "type": "ip", "timestamp": datetime.utcnow().timestamp()},
-            {"ioc": "malware.com", "type": "domain", "timestamp": datetime.utcnow().timestamp()}
-        ]
-        
-        metrics = monitor.check_feed_health(
-            feed_name="healthy_feed",
-            feed_data=sample_feed_data,
-            response_time_ms=150.0,
-            pull_successful=True
+        result = FeedPullResult(
+            success=True,
+            latency_ms=450,
+            record_count=150
         )
-        
-        assert metrics.status == FeedHealthStatus.HEALTHY
-        assert metrics.entry_count == 3
-        assert metrics.success_rate == 100.0
-        assert metrics.duplicate_count == 0
-        print("  ✓ Healthy feed correctly identified")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "healthy_feed", "status": "passed"})
+        monitor.record_pull_result("abuse_ch_feodo", result)
+        health = monitor.get_feed_health("abuse_ch_feodo")
+        assert health is not None
+        assert health.uptime_percent == 100.0
+        print("  ✓ Successful pull recorded and metrics updated")
+        test_results.append(("Successful Pull Recording", True))
     except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "healthy_feed", "status": "failed", "error": str(e)})
-
-    # Test 4: Duplicate detection
-    print("\n[TEST 4] Duplicate Entry Detection")
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Successful Pull Recording", False))
+        all_passed = False
+    
+    # Test 4: Record Failed Pull
+    print("\n[TEST 4] Record Failed Pull")
     try:
         monitor = ThreatFeedHealthMonitor()
-        config = FeedConfiguration(feed_name="dup_feed", feed_url="test://dup")
-        monitor.register_feed(config)
-        
-        duplicate_entry = {"ioc": "192.168.1.1", "type": "ip", "timestamp": 1234567890}
-        sample_feed_data = [
-            duplicate_entry,
-            duplicate_entry,  # Exact duplicate
-            {"ioc": "10.0.0.1", "type": "ip", "timestamp": 1234567890}
-        ]
-        
-        metrics = monitor.check_feed_health(
-            feed_name="dup_feed",
-            feed_data=sample_feed_data,
-            response_time_ms=200.0,
-            pull_successful=True
+        result = FeedPullResult(
+            success=False,
+            latency_ms=1000,
+            record_count=0,
+            error_message="Connection timeout"
         )
-        
-        assert metrics.duplicate_count == 1
-        assert FeedQualityIssue.DUPLICATE_ENTRIES in metrics.quality_issues
-        print(f"  ✓ Duplicate detection working: found {metrics.duplicate_count} duplicates")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "duplicate_detection", "status": "passed"})
+        monitor.record_pull_result("abuse_ch_urlhaus", result)
+        health = monitor.get_feed_health("abuse_ch_urlhaus")
+        assert health.consecutive_failures == 1
+        print("  ✓ Failed pull recorded correctly")
+        test_results.append(("Failed Pull Recording", True))
     except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "duplicate_detection", "status": "failed", "error": str(e)})
-
-    # Test 5: Missing fields detection
-    print("\n[TEST 5] Missing Required Fields Detection")
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Failed Pull Recording", False))
+        all_passed = False
+    
+    # Test 5: High Latency Detection
+    print("\n[TEST 5] High Latency Detection")
     try:
         monitor = ThreatFeedHealthMonitor()
-        config = FeedConfiguration(
-            feed_name="missing_fields_feed", 
-            feed_url="test://missing",
-            required_fields=["ioc", "type", "timestamp"]
-        )
-        monitor.register_feed(config)
-        
-        # Entry missing 'timestamp' field
-        sample_feed_data = [
-            {"ioc": "192.168.1.1", "type": "ip"}  # Missing timestamp
-        ]
-        
-        metrics = monitor.check_feed_health(
-            feed_name="missing_fields_feed",
-            feed_data=sample_feed_data,
-            response_time_ms=100.0,
-            pull_successful=True
-        )
-        
-        assert FeedQualityIssue.MISSING_FIELDS in metrics.quality_issues
-        assert metrics.status == FeedHealthStatus.DEGRADED
-        print("  ✓ Missing fields correctly detected")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "missing_fields", "status": "passed"})
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "missing_fields", "status": "failed", "error": str(e)})
-
-    # Test 6: Failure tracking and offline detection
-    print("\n[TEST 6] Consecutive Failure / Offline Detection")
-    try:
-        monitor = ThreatFeedHealthMonitor()
-        config = FeedConfiguration(feed_name="failing_feed", feed_url="test://failing")
-        monitor.register_feed(config)
-        
-        # Simulate 3 consecutive failures
-        for i in range(3):
-            metrics = monitor.check_feed_health(
-                feed_name="failing_feed",
-                feed_data=None,
-                response_time_ms=None,
-                pull_successful=False,
-                error_message=f"Connection timeout (attempt {i+1})"
+        for _ in range(5):
+            monitor.simulate_feed_pull(
+                feed_id="emerging_threats",
+                success=True,
+                latency_ms=20000,  # Well above 15s threshold
+                record_count=1000
             )
-        
-        assert metrics.consecutive_failures == 3
-        assert metrics.status == FeedHealthStatus.OFFLINE
-        assert metrics.success_rate < 100
-        print(f"  ✓ Offline detection working after {metrics.consecutive_failures} failures")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "offline_detection", "status": "passed"})
+        health = monitor.get_feed_health("emerging_threats")
+        assert HealthIssueType.LATENCY_HIGH in health.issues
+        print("  ✓ High latency correctly detected")
+        test_results.append(("High Latency Detection", True))
     except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "offline_detection", "status": "failed", "error": str(e)})
-
-    # Test 7: Stale data detection
-    print("\n[TEST 7] Stale Data Detection")
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("High Latency Detection", False))
+        all_passed = False
+    
+    # Test 6: Consecutive Failures → OFFLINE Status
+    print("\n[TEST 6] Consecutive Failures → OFFLINE Status")
     try:
         monitor = ThreatFeedHealthMonitor()
-        config = FeedConfiguration(
-            feed_name="stale_feed", 
-            feed_url="test://stale",
-            freshness_threshold_critical_minutes=60
-        )
-        monitor.register_feed(config)
-        
-        # Data from 24 hours ago (very stale)
-        stale_timestamp = (datetime.utcnow() - timedelta(hours=24)).timestamp()
-        sample_feed_data = [
-            {"ioc": "192.168.1.1", "type": "ip", "timestamp": stale_timestamp}
-        ]
-        
-        metrics = monitor.check_feed_health(
-            feed_name="stale_feed",
-            feed_data=sample_feed_data,
-            response_time_ms=100.0,
-            pull_successful=True
-        )
-        
-        assert metrics.data_freshness_minutes > 60
-        assert metrics.status == FeedHealthStatus.STALE
-        print(f"  ✓ Stale data detected: {metrics.data_freshness_minutes:.1f} minutes old")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "stale_detection", "status": "passed"})
-    except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "stale_detection", "status": "failed", "error": str(e)})
-
-    # Test 8: Latency tracking
-    print("\n[TEST 8] Latency History and Averaging")
-    try:
-        monitor = ThreatFeedHealthMonitor()
-        config = FeedConfiguration(feed_name="latency_feed", feed_url="test://latency")
-        monitor.register_feed(config)
-        
-        sample_data = [{"ioc": "192.168.1.1", "type": "ip", "timestamp": datetime.utcnow().timestamp()}]
-        
-        # Record varying latencies
-        latencies = [100.0, 200.0, 300.0, 400.0, 500.0]
-        for lat in latencies:
-            monitor.check_feed_health(
-                feed_name="latency_feed",
-                feed_data=sample_data,
-                response_time_ms=lat,
-                pull_successful=True
+        # 6 consecutive failures (threshold is 5)
+        for i in range(6):
+            monitor.simulate_feed_pull(
+                feed_id="spamhaus_drop",
+                success=False,
+                latency_ms=500,
+                record_count=0,
+                error_message=f"Connection failed attempt {i+1}"
             )
-        
-        metrics = monitor.get_feed_health("latency_feed")
-        expected_avg = sum(latencies) / len(latencies)
-        assert abs(metrics.average_latency_ms - expected_avg) < 0.01
-        print(f"  ✓ Latency averaging correct: avg={metrics.average_latency_ms:.1f}ms")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "latency_tracking", "status": "passed"})
+        health = monitor.get_feed_health("spamhaus_drop")
+        assert health.status == FeedStatus.OFFLINE
+        assert health.consecutive_failures >= 5
+        print("  ✓ OFFLINE status correctly triggered after 5 failures")
+        test_results.append(("Offline Status Detection", True))
     except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "latency_tracking", "status": "failed", "error": str(e)})
-
-    # Test 9: Health summary generation
-    print("\n[TEST 9] Health Summary Report")
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Offline Status Detection", False))
+        all_passed = False
+    
+    # Test 7: Overall Health Score Calculation
+    print("\n[TEST 7] Overall Health Score Calculation")
     try:
         monitor = ThreatFeedHealthMonitor()
-        
-        # Register multiple feeds with different statuses
-        monitor.register_feed(FeedConfiguration(feed_name="feed1", feed_url="test://1"))
-        monitor.register_feed(FeedConfiguration(feed_name="feed2", feed_url="test://2"))
-        
-        sample_data = [{"ioc": "192.168.1.1", "type": "ip", "timestamp": datetime.utcnow().timestamp()}]
-        
-        monitor.check_feed_health("feed1", sample_data, 100.0, True)
-        monitor.check_feed_health("feed2", sample_data, 150.0, True)
-        
-        summary = monitor.get_health_summary()
-        assert summary["total_feeds_monitored"] == 2
-        assert "status_breakdown" in summary
-        assert "average_latency_all_feeds_ms" in summary
-        print("  ✓ Health summary generated correctly")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "health_summary", "status": "passed"})
+        score = monitor.get_overall_health_score()
+        assert 0 <= score <= 100
+        print(f"  ✓ Overall health score calculated: {score:.1f}/100")
+        test_results.append(("Health Score Calculation", True))
     except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "health_summary", "status": "failed", "error": str(e)})
-
-    # Test 10: Full health report
-    print("\n[TEST 10] Human-Readable Health Report")
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Health Score Calculation", False))
+        all_passed = False
+    
+    # Test 8: Health Report Generation
+    print("\n[TEST 8] Health Report Generation")
     try:
         monitor = ThreatFeedHealthMonitor()
-        monitor.register_feed(FeedConfiguration(feed_name="report_feed", feed_url="test://report"))
-        sample_data = [{"ioc": "192.168.1.1", "type": "ip", "timestamp": datetime.utcnow().timestamp()}]
-        monitor.check_feed_health("report_feed", sample_data, 100.0, True)
-        
+        monitor.register_feed(
+            feed_id="test_feed",
+            feed_name="Test Feed",
+            feed_url="https://test.com"
+        )
         report = monitor.generate_health_report()
-        assert isinstance(report, str)
-        assert len(report) > 0
-        assert "THREAT FEED HEALTH MONITOR" in report
-        print("  ✓ Full health report generated")
-        test_results["passed"] += 1
-        test_results["tests"].append({"test": "health_report", "status": "passed"})
+        assert "overall_health_score" in report
+        assert "total_feeds_monitored" in report
+        assert "feeds_by_status" in report
+        assert "feeds" in report
+        assert report["total_feeds_monitored"] == 6  # 5 default + 1 custom
+        print("  ✓ Comprehensive health report generated")
+        print(f"    - Feeds monitored: {report['total_feeds_monitored']}")
+        print(f"    - Health score: {report['overall_health_score']:.1f}")
+        test_results.append(("Health Report Generation", True))
     except Exception as e:
-        print(f"  ✗ Failed: {e}")
-        test_results["failed"] += 1
-        test_results["tests"].append({"test": "health_report", "status": "failed", "error": str(e)})
-
-    # Print final results
-    print("\n" + "=" * 60)
-    print("TEST RESULTS SUMMARY")
-    print("=" * 60)
-    print(f"Passed: {test_results['passed']}")
-    print(f"Failed: {test_results['failed']}")
-    print(f"Total:  {test_results['passed'] + test_results['failed']}")
-    print(f"Success Rate: {(test_results['passed']/(test_results['passed']+test_results['failed'])*100):.1f}%")
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Health Report Generation", False))
+        all_passed = False
+    
+    # Test 9: Get all feeds health
+    print("\n[TEST 9] Get All Feeds Health")
+    try:
+        all_health = monitor.get_all_feeds_health()
+        assert len(all_health) >= 5
+        for feed_id, health in all_health.items():
+            assert health.feed_id == feed_id
+            assert hasattr(health, 'status')
+            assert hasattr(health, 'uptime_percent')
+        print(f"  ✓ Retrieved health for {len(all_health)} feeds")
+        test_results.append(("All Feeds Health Retrieval", True))
+    except Exception as e:
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("All Feeds Health Retrieval", False))
+        all_passed = False
+    
+    # Test 10: Incomplete data detection
+    print("\n[TEST 10] Incomplete Data Detection")
+    try:
+        # Feed expects min 10 records, only provide 1 (well below threshold)
+        for _ in range(5):
+            monitor.simulate_feed_pull(
+                feed_id="alien_otx",
+                success=True,
+                latency_ms=800,
+                record_count=1  # Way below minimum of 10
+            )
+        health = monitor.get_feed_health("alien_otx")
+        assert health.data_completeness_score < 0.8
+        assert HealthIssueType.DATA_INCOMPLETE in health.issues
+        print("  ✓ Incomplete data correctly detected")
+        test_results.append(("Incomplete Data Detection", True))
+    except Exception as e:
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Incomplete Data Detection", False))
+        all_passed = False
+    
+    # Test 11: Uptime percentage calculation
+    print("\n[TEST 11] Uptime Percentage Calculation")
+    try:
+        monitor = ThreatFeedHealthMonitor()
+        monitor.register_feed("custom_feed_001", "Test", "url")
+        # 9 successes, 1 failure = 90% uptime
+        for _ in range(9):
+            monitor.simulate_feed_pull("custom_feed_001", success=True)
+        for _ in range(1):
+            monitor.simulate_feed_pull("custom_feed_001", success=False)
+        health = monitor.get_feed_health("custom_feed_001")
+        assert abs(health.uptime_percent - 90.0) < 0.1  # Allow small float error
+        print(f"  ✓ Uptime calculated correctly: {health.uptime_percent:.1f}%")
+        test_results.append(("Uptime Calculation", True))
+    except Exception as e:
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Uptime Calculation", False))
+        all_passed = False
+    
+    # Test 12: Latency percentile calculation
+    print("\n[TEST 12] Latency Percentile Calculation")
+    try:
+        monitor = ThreatFeedHealthMonitor()
+        # Consistent latency around 600ms
+        for i in range(20):
+            monitor.simulate_feed_pull(
+                "abuse_ch_feodo",
+                success=True,
+                latency_ms=500 + (i * 10),
+                record_count=100
+            )
+        health = monitor.get_feed_health("abuse_ch_feodo")
+        assert health.avg_latency_ms > 0
+        assert health.p95_latency_ms >= health.avg_latency_ms
+        assert health.p99_latency_ms >= health.p95_latency_ms
+        print("  ✓ Latency percentiles calculated:")
+        print(f"    - Avg: {health.avg_latency_ms:.1f}ms")
+        print(f"    - P95: {health.p95_latency_ms:.1f}ms")
+        print(f"    - P99: {health.p99_latency_ms:.1f}ms")
+        test_results.append(("Latency Percentiles", True))
+    except Exception as e:
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Latency Percentiles", False))
+        all_passed = False
+    
+    # Test 13: Metrics serialization
+    print("\n[TEST 13] Metrics to_dict() Serialization")
+    try:
+        health = monitor.get_feed_health("abuse_ch_feodo")
+        data = health.to_dict()
+        # Verify JSON serialization works
+        json_str = json.dumps(data)
+        assert "feed_id" in data
+        assert "status" in data
+        assert "uptime_percent" in data
+        print("  ✓ Metrics successfully serialized to JSON-compatible dict")
+        test_results.append(("Metrics Serialization", True))
+    except Exception as e:
+        print(f"  ✗ FAILED: {e}")
+        test_results.append(("Metrics Serialization", False))
+        all_passed = False
+    
+    # Summary
+    print("\n" + "=" * 70)
+    print("TEST SUMMARY")
+    print("=" * 70)
+    
+    passed_count = 0
+    for name, passed in test_results:
+        status = "✓ PASS" if passed else "✗ FAIL"
+        print(f"  {status} - {name}")
+        if passed:
+            passed_count += 1
+    
+    print(f"\nTotal: {passed_count}/{len(test_results)} tests passed")
+    
+    if all_passed:
+        print("\n✅ ALL TESTS PASSED - Production ready!")
+    else:
+        print(f"\n❌ {len(test_results) - passed_count} TEST(S) FAILED")
     
     # Save results
-    with open("test_results_threat_feed_health_monitor.json", "w") as f:
-        json.dump(test_results, f, indent=2)
+    result_data = {
+        "test_timestamp": datetime.utcnow().isoformat(),
+        "total_tests": len(test_results),
+        "passed_tests": passed_count,
+        "all_passed": all_passed,
+        "results": [{"name": n, "passed": p} for n, p in test_results]
+    }
     
-    print("\nTest results saved to test_results_threat_feed_health_monitor.json")
+    with open("/home/user/autonomous-developer/NeuralShield-AI/test_results_threat_feed_health_monitor.json", "w") as f:
+        json.dump(result_data, f, indent=2)
     
-    return test_results["failed"] == 0
+    print(f"\nTest results saved to test_results_threat_feed_health_monitor.json")
+    
+    return all_passed
 
 
 if __name__ == "__main__":
