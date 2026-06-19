@@ -1,0 +1,586 @@
+{
+  "processing_timestamp": "2026-06-19T04:51:21.426530",
+  "alerts_processed": 6,
+  "ttps_extracted": [
+    {
+      "technique_id": "T1027",
+      "technique_name": "Obfuscated Files or Information",
+      "tactic": "Defense Evasion",
+      "confidence_score": 0.45,
+      "severity": "HIGH",
+      "evidence": [
+        "encrypt"
+      ],
+      "source_alert": "EDR System",
+      "timestamp": "2026-06-19T04:51:21.426557"
+    },
+    {
+      "technique_id": "T1003",
+      "technique_name": "OS Credential Dumping",
+      "tactic": "Credential Access",
+      "confidence_score": 0.45,
+      "severity": "CRITICAL",
+      "evidence": [
+        "lsass"
+      ],
+      "source_alert": "EDR System",
+      "timestamp": "2026-06-19T04:51:21.426557"
+    },
+    {
+      "technique_id": "T1021",
+      "technique_name": "Remote Services",
+      "tactic": "Lateral Movement",
+      "confidence_score": 0.45,
+      "severity": "HIGH",
+      "evidence": [
+        "smb"
+      ],
+      "source_alert": "EDR System",
+      "timestamp": "2026-06-19T04:51:21.426557"
+    },
+    {
+      "technique_id": "T1486",
+      "technique_name": "Data Encrypted for Impact",
+      "tactic": "Impact",
+      "confidence_score": 0.6,
+      "severity": "CRITICAL",
+      "evidence": [
+        "ransomwar",
+        "alert: ransomware detected! files being encrypted with .crypt"
+      ],
+      "source_alert": "EDR System",
+      "timestamp": "2026-06-19T04:51:21.426557"
+    },
+    {
+      "technique_id": "T1490",
+      "technique_name": "Inhibit System Recovery",
+      "tactic": "Impact",
+      "confidence_score": 0.45,
+      "severity": "CRITICAL",
+      "evidence": [
+        "vss shadow copies delete"
+      ],
+      "source_alert": "EDR System",
+      "timestamp": "2026-06-19T04:51:21.426557"
+    },
+    {
+      "technique_id": "T1059",
+      "technique_name": "Command and Scripting Interpreter",
+      "tactic": "Execution",
+      "confidence_score": 0.45,
+      "severity": "HIGH",
+      "evidence": [
+        "powershell"
+      ],
+      "source_alert": "Sysmon",
+      "timestamp": "2026-06-19T04:51:21.429462"
+    },
+    {
+      "technique_id": "T1547",
+      "technique_name": "Boot or Logon Autostart Execution",
+      "tactic": "Persistence",
+      "confidence_score": 0.6,
+      "severity": "HIGH",
+      "evidence": [
+        "registry run",
+        "persist"
+      ],
+      "source_alert": "Sysmon",
+      "timestamp": "2026-06-19T04:51:21.429462"
+    },
+    {
+      "technique_id": "T1562",
+      "technique_name": "Impair Defenses",
+      "tactic": "Defense Evasion",
+      "confidence_score": 0.45,
+      "severity": "CRITICAL",
+      "evidence": [
+        "disable windows defender"
+      ],
+      "source_alert": "Sysmon",
+      "timestamp": "2026-06-19T04:51:21.429462"
+    },
+    {
+      "technique_id": "T1027",
+      "technique_name": "Obfuscated Files or Information",
+      "tactic": "Defense Evasion",
+      "confidence_score": 0.6,
+      "severity": "HIGH",
+      "evidence": [
+        "base64",
+        "encode"
+      ],
+      "source_alert": "Sysmon",
+      "timestamp": "2026-06-19T04:51:21.429462"
+    },
+    {
+      "technique_id": "T1021",
+      "technique_name": "Remote Services",
+      "tactic": "Lateral Movement",
+      "confidence_score": 0.45,
+      "severity": "HIGH",
+      "evidence": [
+        "rdp"
+      ],
+      "source_alert": "SIEM Correlation",
+      "timestamp": "2026-06-19T04:51:21.429735"
+    },
+    {
+      "technique_id": "T1550",
+      "technique_name": "Use Alternate Authentication Material",
+      "tactic": "Lateral Movement",
+      "confidence_score": 0.45,
+      "severity": "CRITICAL",
+      "evidence": [
+        "pass-the-hash"
+      ],
+      "source_alert": "SIEM Correlation",
+      "timestamp": "2026-06-19T04:51:21.429735"
+    },
+    {
+      "technique_id": "T1566",
+      "technique_name": "Phishing",
+      "tactic": "Initial Access",
+      "confidence_score": 0.6,
+      "severity": "HIGH",
+      "evidence": [
+        "phish",
+        "email delivered to user inbox with malicious attach"
+      ],
+      "source_alert": "Email Security Gateway",
+      "timestamp": "2026-06-19T04:51:21.429992"
+    },
+    {
+      "technique_id": "T1204",
+      "technique_name": "User Execution",
+      "tactic": "Execution",
+      "confidence_score": 0.6,
+      "severity": "MEDIUM",
+      "evidence": [
+        "user inbox with malicious attachment. user click",
+        "user inbox with malicious attachment. user clicked and execut"
+      ],
+      "source_alert": "Email Security Gateway",
+      "timestamp": "2026-06-19T04:51:21.429992"
+    },
+    {
+      "technique_id": "T1071",
+      "technique_name": "Application Layer Protocol",
+      "tactic": "Command and Control",
+      "confidence_score": 0.75,
+      "severity": "HIGH",
+      "evidence": [
+        "http",
+        "https",
+        "dns tunnel"
+      ],
+      "source_alert": "Network IPS",
+      "timestamp": "2026-06-19T04:51:21.430227"
+    },
+    {
+      "technique_id": "T1041",
+      "technique_name": "Exfiltration Over C2 Channel",
+      "tactic": "Exfiltration",
+      "confidence_score": 0.75,
+      "severity": "CRITICAL",
+      "evidence": [
+        "data exfiltr",
+        "file upload",
+        "exfiltrat"
+      ],
+      "source_alert": "Network IPS",
+      "timestamp": "2026-06-19T04:51:21.430227"
+    },
+    {
+      "technique_id": "T1003",
+      "technique_name": "OS Credential Dumping",
+      "tactic": "Credential Access",
+      "confidence_score": 0.45,
+      "severity": "CRITICAL",
+      "evidence": [
+        "mimikatz"
+      ],
+      "source_alert": "Network Sensor",
+      "timestamp": "2026-06-19T04:51:21.430438"
+    },
+    {
+      "technique_id": "T1087",
+      "technique_name": "Account Discovery",
+      "tactic": "Discovery",
+      "confidence_score": 0.6,
+      "severity": "MEDIUM",
+      "evidence": [
+        "network services and user",
+        "enumerating network services and user"
+      ],
+      "source_alert": "Network Sensor",
+      "timestamp": "2026-06-19T04:51:21.430438"
+    },
+    {
+      "technique_id": "T1046",
+      "technique_name": "Network Service Scanning",
+      "tactic": "Discovery",
+      "confidence_score": 0.45,
+      "severity": "MEDIUM",
+      "evidence": [
+        "port scan"
+      ],
+      "source_alert": "Network Sensor",
+      "timestamp": "2026-06-19T04:51:21.430438"
+    }
+  ],
+  "tactic_distribution": {
+    "Defense Evasion": {
+      "count": 3,
+      "techniques": [
+        {
+          "id": "T1027",
+          "name": "Obfuscated Files or Information",
+          "confidence": 0.45,
+          "severity": "HIGH"
+        },
+        {
+          "id": "T1562",
+          "name": "Impair Defenses",
+          "confidence": 0.45,
+          "severity": "CRITICAL"
+        },
+        {
+          "id": "T1027",
+          "name": "Obfuscated Files or Information",
+          "confidence": 0.6,
+          "severity": "HIGH"
+        }
+      ],
+      "avg_confidence": 0.5
+    },
+    "Credential Access": {
+      "count": 2,
+      "techniques": [
+        {
+          "id": "T1003",
+          "name": "OS Credential Dumping",
+          "confidence": 0.45,
+          "severity": "CRITICAL"
+        },
+        {
+          "id": "T1003",
+          "name": "OS Credential Dumping",
+          "confidence": 0.45,
+          "severity": "CRITICAL"
+        }
+      ],
+      "avg_confidence": 0.45
+    },
+    "Lateral Movement": {
+      "count": 3,
+      "techniques": [
+        {
+          "id": "T1021",
+          "name": "Remote Services",
+          "confidence": 0.45,
+          "severity": "HIGH"
+        },
+        {
+          "id": "T1021",
+          "name": "Remote Services",
+          "confidence": 0.45,
+          "severity": "HIGH"
+        },
+        {
+          "id": "T1550",
+          "name": "Use Alternate Authentication Material",
+          "confidence": 0.45,
+          "severity": "CRITICAL"
+        }
+      ],
+      "avg_confidence": 0.45
+    },
+    "Impact": {
+      "count": 2,
+      "techniques": [
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "confidence": 0.6,
+          "severity": "CRITICAL"
+        },
+        {
+          "id": "T1490",
+          "name": "Inhibit System Recovery",
+          "confidence": 0.45,
+          "severity": "CRITICAL"
+        }
+      ],
+      "avg_confidence": 0.53
+    },
+    "Execution": {
+      "count": 2,
+      "techniques": [
+        {
+          "id": "T1059",
+          "name": "Command and Scripting Interpreter",
+          "confidence": 0.45,
+          "severity": "HIGH"
+        },
+        {
+          "id": "T1204",
+          "name": "User Execution",
+          "confidence": 0.6,
+          "severity": "MEDIUM"
+        }
+      ],
+      "avg_confidence": 0.53
+    },
+    "Persistence": {
+      "count": 1,
+      "techniques": [
+        {
+          "id": "T1547",
+          "name": "Boot or Logon Autostart Execution",
+          "confidence": 0.6,
+          "severity": "HIGH"
+        }
+      ],
+      "avg_confidence": 0.6
+    },
+    "Initial Access": {
+      "count": 1,
+      "techniques": [
+        {
+          "id": "T1566",
+          "name": "Phishing",
+          "confidence": 0.6,
+          "severity": "HIGH"
+        }
+      ],
+      "avg_confidence": 0.6
+    },
+    "Command and Control": {
+      "count": 1,
+      "techniques": [
+        {
+          "id": "T1071",
+          "name": "Application Layer Protocol",
+          "confidence": 0.75,
+          "severity": "HIGH"
+        }
+      ],
+      "avg_confidence": 0.75
+    },
+    "Exfiltration": {
+      "count": 1,
+      "techniques": [
+        {
+          "id": "T1041",
+          "name": "Exfiltration Over C2 Channel",
+          "confidence": 0.75,
+          "severity": "CRITICAL"
+        }
+      ],
+      "avg_confidence": 0.75
+    },
+    "Discovery": {
+      "count": 2,
+      "techniques": [
+        {
+          "id": "T1087",
+          "name": "Account Discovery",
+          "confidence": 0.6,
+          "severity": "MEDIUM"
+        },
+        {
+          "id": "T1046",
+          "name": "Network Service Scanning",
+          "confidence": 0.45,
+          "severity": "MEDIUM"
+        }
+      ],
+      "avg_confidence": 0.53
+    }
+  },
+  "risk_score": 0.53,
+  "critical_techniques": [
+    {
+      "technique_id": "T1041",
+      "technique_name": "Exfiltration Over C2 Channel",
+      "tactic": "Exfiltration",
+      "confidence": 0.75,
+      "severity": "CRITICAL",
+      "evidence": [
+        "data exfiltr",
+        "file upload",
+        "exfiltrat"
+      ]
+    },
+    {
+      "technique_id": "T1071",
+      "technique_name": "Application Layer Protocol",
+      "tactic": "Command and Control",
+      "confidence": 0.75,
+      "severity": "HIGH",
+      "evidence": [
+        "http",
+        "https",
+        "dns tunnel"
+      ]
+    }
+  ],
+  "attack_chain_analysis": "Attack Chain: Initial Access \u2192 Execution \u2192 Persistence \u2192 Defense Evasion \u2192 Credential Access \u2192 Discovery \u2192 Lateral Movement \u2192 Command and Control \u2192 Exfiltration \u2192 Impact | Maturity: FULL CHAIN DETECTED - Advanced persistent threat activity (10 stages detected)",
+  "executive_summary": {
+    "overall_risk_score": 0.53,
+    "top_tactics": [
+      {
+        "tactic": "Defense Evasion",
+        "count": 3,
+        "techniques": [
+          {
+            "id": "T1027",
+            "name": "Obfuscated Files or Information",
+            "confidence": 0.45,
+            "severity": "HIGH"
+          },
+          {
+            "id": "T1562",
+            "name": "Impair Defenses",
+            "confidence": 0.45,
+            "severity": "CRITICAL"
+          },
+          {
+            "id": "T1027",
+            "name": "Obfuscated Files or Information",
+            "confidence": 0.6,
+            "severity": "HIGH"
+          }
+        ],
+        "avg_confidence": 0.5
+      },
+      {
+        "tactic": "Lateral Movement",
+        "count": 3,
+        "techniques": [
+          {
+            "id": "T1021",
+            "name": "Remote Services",
+            "confidence": 0.45,
+            "severity": "HIGH"
+          },
+          {
+            "id": "T1021",
+            "name": "Remote Services",
+            "confidence": 0.45,
+            "severity": "HIGH"
+          },
+          {
+            "id": "T1550",
+            "name": "Use Alternate Authentication Material",
+            "confidence": 0.45,
+            "severity": "CRITICAL"
+          }
+        ],
+        "avg_confidence": 0.45
+      },
+      {
+        "tactic": "Credential Access",
+        "count": 2,
+        "techniques": [
+          {
+            "id": "T1003",
+            "name": "OS Credential Dumping",
+            "confidence": 0.45,
+            "severity": "CRITICAL"
+          },
+          {
+            "id": "T1003",
+            "name": "OS Credential Dumping",
+            "confidence": 0.45,
+            "severity": "CRITICAL"
+          }
+        ],
+        "avg_confidence": 0.45
+      },
+      {
+        "tactic": "Impact",
+        "count": 2,
+        "techniques": [
+          {
+            "id": "T1486",
+            "name": "Data Encrypted for Impact",
+            "confidence": 0.6,
+            "severity": "CRITICAL"
+          },
+          {
+            "id": "T1490",
+            "name": "Inhibit System Recovery",
+            "confidence": 0.45,
+            "severity": "CRITICAL"
+          }
+        ],
+        "avg_confidence": 0.53
+      },
+      {
+        "tactic": "Execution",
+        "count": 2,
+        "techniques": [
+          {
+            "id": "T1059",
+            "name": "Command and Scripting Interpreter",
+            "confidence": 0.45,
+            "severity": "HIGH"
+          },
+          {
+            "id": "T1204",
+            "name": "User Execution",
+            "confidence": 0.6,
+            "severity": "MEDIUM"
+          }
+        ],
+        "avg_confidence": 0.53
+      }
+    ],
+    "critical_techniques": [
+      {
+        "technique_id": "T1041",
+        "technique_name": "Exfiltration Over C2 Channel",
+        "tactic": "Exfiltration",
+        "confidence": 0.75,
+        "severity": "CRITICAL",
+        "evidence": [
+          "data exfiltr",
+          "file upload",
+          "exfiltrat"
+        ]
+      },
+      {
+        "technique_id": "T1071",
+        "technique_name": "Application Layer Protocol",
+        "tactic": "Command and Control",
+        "confidence": 0.75,
+        "severity": "HIGH",
+        "evidence": [
+          "http",
+          "https",
+          "dns tunnel"
+        ]
+      }
+    ],
+    "key_findings": [
+      "Overall Threat Risk Score: 0.53/100",
+      "Total TTPs Identified: 18 unique techniques",
+      "Critical/High Severity Techniques: 2",
+      "MITRE Tactics Detected: Command and Control, Credential Access, Defense Evasion, Discovery, Execution, Exfiltration, Impact, Initial Access, Lateral Movement, Persistence",
+      "Most Prevalent Technique: Obfuscated Files or Information (detected 2 times)"
+    ],
+    "mitigation_priorities": [
+      "Immediately isolate affected systems from the network",
+      "Initiate incident response procedures and notify leadership",
+      "Perform full forensic analysis and threat hunting",
+      "Reset all compromised credentials immediately",
+      "Deploy emergency threat containment measures"
+    ],
+    "attack_chain_analysis": "Attack Chain: Initial Access \u2192 Execution \u2192 Persistence \u2192 Defense Evasion \u2192 Credential Access \u2192 Discovery \u2192 Lateral Movement \u2192 Command and Control \u2192 Exfiltration \u2192 Impact | Maturity: FULL CHAIN DETECTED - Advanced persistent threat activity (10 stages detected)",
+    "recommendation_summary": "INFORMATIONAL: No immediate threat detected. Maintain standard security posture."
+  },
+  "processing_id": "78906a19bba9",
+  "ttps_count": 18
+}
