@@ -5,6 +5,15 @@ June 2026 - Enhanced with Jailbreak Detection, Constitutional Classifiers, Input
 + Threat Intelligence Geolocation Tracker (June 20, 2026)
 """
 from .system_prompt_leakage_detector_2026_june import SystemPromptLeakageDetector, LeakageType, LeakageDetectionResult
+from .prompt_injection_sandboxed_executor_2026_june import (
+    PromptInjectionSandbox,
+    SandboxSecurityLevel,
+    SandboxLimits,
+    ViolationSeverity,
+    ViolationType,
+    SandboxExecutionResult,
+    SecurityViolation
+)
 from .enhanced_mimetic_detector_2026 import EnhancedMimeticDetector2026
 from .threat_intelligence_geolocation_tracker_2026_june import (
     ThreatIntelligenceGeolocationTracker,
