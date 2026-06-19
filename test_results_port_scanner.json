@@ -1,0 +1,11 @@
+{
+  "test_timestamp": "2026-06-19T01:27:48Z",
+  "total_tests": 8,
+  "passed": 7,
+  "failed": 1,
+  "success_rate": "87.5%",
+  "failures": [
+    "test_port_lists: "
+  ],
+  "module": "threat_intelligence_port_scanner_engine_2026_june"
+}
