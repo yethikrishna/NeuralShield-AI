@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-06-20 00:59:28",
+  "total_tests": 4,
+  "average_time_ms": 0.075,
+  "results": [
+    {
+      "input_length": 17,
+      "layers_detected": 0,
+      "confidence": 0.0,
+      "time_ms": 0.04
+    },
+    {
+      "input_length": 76,
+      "layers_detected": 0,
+      "confidence": 0.0,
+      "time_ms": 0.077
+    },
+    {
+      "input_length": 96,
+      "layers_detected": 2,
+      "confidence": 0.45,
+      "time_ms": 0.099
+    },
+    {
+      "input_length": 61,
+      "layers_detected": 1,
+      "confidence": 0.15,
+      "time_ms": 0.083
+    }
+  ]
+}
