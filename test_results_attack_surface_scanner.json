@@ -1,0 +1,8 @@
+{
+  "test_suite": "threat_intelligence_attack_surface_scanner",
+  "timestamp": "2026-06-19T09:01:13.822933",
+  "total_tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "success_rate": "100.0%"
+}
