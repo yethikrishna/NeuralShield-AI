@@ -2,6 +2,21 @@
 NeuralShield-AI - AI Security Defense Framework
 June 2026 - Enhanced with Jailbreak Detection, Constitutional Classifiers, Input Purification
 + System Prompt Leakage Detection (June 19, 2026)
++ Model Drift Monitoring and Alerting System (June 20, 2026)
+"""
+
+# Model Drift Monitoring and Alerting System (June 20, 2026)
+from .model_drift_monitoring_alerting_system_2026_june import (
+    ModelDriftMonitor,
+    BaselineManager,
+    DistributionComparator,
+    DriftMetrics,
+    Alert,
+    create_drift_monitor,
+    verify_drift_monitor
+)
+
+"""
 + Threat Intelligence Geolocation Tracker (June 20, 2026)
 + Incident Response Automation Engine (June 20, 2026)
 """
