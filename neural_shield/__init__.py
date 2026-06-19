@@ -849,10 +849,7 @@ from .realtime_prompt_sanitization_engine_2026_june import (
 from .threat_intelligence_auto_learning_classifier_2026_june import (
     ThreatIntelligenceAutoLearningClassifier,
     ThreatCategory,
-    ThreatCategory,
-    LearningOutcome,
-    ClassificationResult,
-    LearningStats
+    LearningOutcome
 )
 __all__.extend([
     "PromptSanitizationEngine",
@@ -864,10 +861,7 @@ __all__.extend([
     "create_prompt_sanitizer",
     "ThreatIntelligenceAutoLearningClassifier",
     "ThreatCategory",
-    "ThreatCategory",
-    "LearningOutcome",
-    "ClassificationResult",
-    "LearningStats"
+    "LearningOutcome"
 ])
 
 from .llm_output_toxicity_bias_detector_2026_june import (
@@ -1642,3 +1636,25 @@ __all__.extend([
 ])
 __version__ = "2026.6.19.22"
 
+
+# Prompt Template Injection Detector (June 20, 2026 Production Release)
+# Detects Jinja2/Mustache template injection, variable poisoning, and filter attacks
+from .prompt_template_injection_detector_2026_june import (
+    TemplateInjectionType,
+    TemplateInjectionRiskLevel,
+    TemplateInjectionFinding,
+    TemplateVariable,
+    TemplateInjectionDetectionResult,
+    PromptTemplateInjectionDetector,
+    create_template_injection_detector
+)
+__all__.extend([
+    "TemplateInjectionType",
+    "TemplateInjectionRiskLevel",
+    "TemplateInjectionFinding",
+    "TemplateVariable",
+    "TemplateInjectionDetectionResult",
+    "PromptTemplateInjectionDetector",
+    "create_template_injection_detector"
+])
+__version__ = "2026.6.20.1"
