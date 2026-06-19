@@ -1535,4 +1535,21 @@ __all__.extend([
     "ModelVersion",
     "TrainingResult"
 ])
-__version__ = "2026.6.19.1"
+# Threat Intelligence Threat Actor Tracking Engine (June 19, 2026 Production Release)
+# Threat actor activity tracking, anomaly detection, campaign evolution,
+# velocity scoring, and predictive activity forecasting
+from .threat_intelligence_threat_actor_tracking_engine_2026_june import (
+    ThreatActorTrackingEngine,
+    ActivityType,
+    ActivitySeverity,
+    TrackedActivity,
+    ActorProfile
+)
+__all__.extend([
+    "ThreatActorTrackingEngine",
+    "ActivityType",
+    "ActivitySeverity",
+    "TrackedActivity",
+    "ActorProfile"
+])
+__version__ = "2026.6.19.8"
