@@ -1,0 +1,61 @@
+{
+  "test_timestamp": 1781891589.7208767,
+  "module": "threat_intelligence_security_control_gap_analyzer_2026_june",
+  "total_tests": 10,
+  "passed": 10,
+  "failed": 0,
+  "success_rate": 100.0,
+  "execution_time_ms": 2.3,
+  "test_results": [
+    {
+      "test": "Initialization",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Add Controls",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Add Threats",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Gap Analysis",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Coverage Calc",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Risk Scoring",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Report Gen",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Serialization",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Empty Data",
+      "status": "PASSED",
+      "error": ""
+    },
+    {
+      "test": "Threshold Filter",
+      "status": "PASSED",
+      "error": ""
+    }
+  ]
+}
