@@ -1,5 +1,5 @@
 {
-  "test_run_timestamp": "2026-06-19T04:38:49.291799Z",
+  "test_run_timestamp": "2026-06-19T08:11:32.861373Z",
   "module": "threat_intelligence_mitre_heatmap_executive_dashboard",
   "total_tests": 13,
   "passed_tests": 13,
