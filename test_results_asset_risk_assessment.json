@@ -1,0 +1,43 @@
+{
+  "test_suite": "Threat Intelligence Asset Risk Assessment Engine",
+  "timestamp": "2026-06-19T13:14:31.695859",
+  "passed": 7,
+  "total": 7,
+  "all_passed": true,
+  "results": [
+    {
+      "test": "cvss_basic",
+      "status": "PASS",
+      "score": 9.8
+    },
+    {
+      "test": "cvss_maturity",
+      "status": "PASS"
+    },
+    {
+      "test": "threat_scorer",
+      "status": "PASS",
+      "score": 8.17
+    },
+    {
+      "test": "full_assessment_critical",
+      "status": "PASS",
+      "risk_score": 8.56,
+      "risk_level": "critical"
+    },
+    {
+      "test": "batch_assessment",
+      "status": "PASS",
+      "count": 5
+    },
+    {
+      "test": "risk_summary",
+      "status": "PASS"
+    },
+    {
+      "test": "low_risk_asset",
+      "status": "PASS",
+      "score": 3.02
+    }
+  ]
+}
