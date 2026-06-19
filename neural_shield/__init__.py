@@ -1658,3 +1658,18 @@ __all__.extend([
     "create_template_injection_detector"
 ])
 __version__ = "2026.6.20.1"
+
+
+# Prompt Chaining Attack Detector (June 20, 2026 Production Release)
+# Detects multi-turn prompt chaining, split instructions, and gradual role takeover
+from .prompt_chaining_attack_detector_2026_june import (
+    ChainingAttackType,
+    ChainingDetectionResult,
+    PromptChainingAttackDetector
+)
+__all__.extend([
+    "ChainingAttackType",
+    "ChainingDetectionResult",
+    "PromptChainingAttackDetector"
+])
+__version__ = "2026.6.20.2"
