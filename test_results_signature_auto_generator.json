@@ -1,0 +1,26 @@
+{
+  "test_timestamp": 1781869950.8945892,
+  "all_tests_passed": true,
+  "final_statistics": {
+    "total_signatures": 20,
+    "by_quality": {
+      "production": 0,
+      "candidate": 9,
+      "experimental": 11,
+      "deprecated": 0
+    },
+    "by_category": {
+      "jailbreak_pattern": 3,
+      "prompt_injection": 17
+    },
+    "generation_stats": {
+      "total_generated": 20,
+      "promoted_to_production": 0,
+      "false_positives_detected": 0,
+      "clusters_found": 0
+    },
+    "unprocessed_samples": 0,
+    "total_samples_collected": 9,
+    "production_ready_count": 0
+  }
+}
