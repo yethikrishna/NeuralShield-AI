@@ -1752,4 +1752,21 @@ __all__.extend([
     "DecodedPayload",
     "EvasionDetectionResult"
 ])
-__version__ = "2026.6.20.3"
+
+# Threat Actor Campaign Tracker (June 20, 2026 Production Release)
+# Tracks and correlates threat actor campaigns across IOCs, timelines, and TTP patterns
+from .threat_intelligence_threat_actor_campaign_tracker_2026_june import (
+    ThreatActorCampaignTracker,
+    IndicatorOfCompromise,
+    ThreatCampaign,
+    CampaignStatus,
+    IOCType
+)
+__all__.extend([
+    "ThreatActorCampaignTracker",
+    "IndicatorOfCompromise",
+    "ThreatCampaign",
+    "CampaignStatus",
+    "IOCType"
+])
+__version__ = "2026.6.20.4"
