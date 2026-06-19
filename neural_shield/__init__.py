@@ -1625,3 +1625,20 @@ __all__.extend([
 ])
 
 __version__ = "2026.6.19.10"
+
+# Threat Intelligence Context Similarity Engine (June 19, 2026 Production Release)
+# TF-IDF based alert similarity scoring, duplicate detection, and false positive reduction
+from .threat_intelligence_context_similarity_engine_2026_june import (
+    AlertContext,
+    TFIDFVectorizer,
+    ContextSimilarityEngine,
+    cosine_similarity
+)
+__all__.extend([
+    "AlertContext",
+    "TFIDFVectorizer",
+    "ContextSimilarityEngine",
+    "cosine_similarity"
+])
+__version__ = "2026.6.19.22"
+
