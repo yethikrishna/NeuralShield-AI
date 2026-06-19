@@ -1,7 +1,9 @@
 """
 NeuralShield-AI - AI Security Defense Framework
 June 2026 - Enhanced with Jailbreak Detection, Constitutional Classifiers, Input Purification
++ System Prompt Leakage Detection (June 19, 2026)
 """
+from .system_prompt_leakage_detector_2026_june import SystemPromptLeakageDetector, LeakageType, LeakageDetectionResult
 from .enhanced_mimetic_detector_2026 import EnhancedMimeticDetector2026
 from .constitutional_classifier_2026 import (
     ConstitutionalClassifier2026,
