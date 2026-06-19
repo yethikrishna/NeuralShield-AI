@@ -1,0 +1,17 @@
+{
+  "test_suite": "threat_intelligence_realtime_ioc_feed_processor",
+  "timestamp": 1781865634.4112089,
+  "tests_passed": 8,
+  "tests_total": 8,
+  "elapsed_seconds": 0.0007836818695068359,
+  "results": {
+    "test_ioc_type_detection": true,
+    "test_ioc_validation": true,
+    "test_ioc_normalization": true,
+    "test_bloom_filter": true,
+    "test_feed_processing": true,
+    "test_threat_scoring": true,
+    "test_statistics": true,
+    "test_severity_filtering": true
+  }
+}
