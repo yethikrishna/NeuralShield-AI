@@ -1,0 +1,50 @@
+{
+  "test_timestamp": "2026-06-20T03:10:51.216101",
+  "module": "threat_intelligence_automated_false_positive_classifier_ml",
+  "passed": 10,
+  "total": 10,
+  "success_rate": 1.0,
+  "all_passed": true,
+  "test_details": [
+    {
+      "name": "Logistic Regression Basic",
+      "passed": true
+    },
+    {
+      "name": "Classifier Initialization",
+      "passed": true
+    },
+    {
+      "name": "Feature Extraction",
+      "passed": true
+    },
+    {
+      "name": "Legitimate Domain Classification",
+      "passed": true
+    },
+    {
+      "name": "Suspicious Domain Classification",
+      "passed": true
+    },
+    {
+      "name": "Feedback Recording",
+      "passed": true
+    },
+    {
+      "name": "Performance Metrics",
+      "passed": true
+    },
+    {
+      "name": "Batch Classification",
+      "passed": true
+    },
+    {
+      "name": "Singleton Pattern",
+      "passed": true
+    },
+    {
+      "name": "Model Persistence",
+      "passed": true
+    }
+  ]
+}
