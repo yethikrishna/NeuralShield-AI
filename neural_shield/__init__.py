@@ -1720,3 +1720,21 @@ __all__.extend([
     "FeedPullResult"
 ])
 __version__ = "2026.6.20.3"
+
+# Prompt Injection Evasion Technique Detector (June 20, 2026 Production Release)
+# Detects Base64/hex/URL encoding, homoglyphs, zero-width chars, leetspeak, ROT ciphers
+from .prompt_injection_evasion_technique_detector_2026_june import (
+    PromptInjectionEvasionTechniqueDetector,
+    EvasionTechniqueType,
+    EvasionThreatLevel,
+    DecodedPayload,
+    EvasionDetectionResult
+)
+__all__.extend([
+    "PromptInjectionEvasionTechniqueDetector",
+    "EvasionTechniqueType",
+    "EvasionThreatLevel",
+    "DecodedPayload",
+    "EvasionDetectionResult"
+])
+__version__ = "2026.6.20.3"

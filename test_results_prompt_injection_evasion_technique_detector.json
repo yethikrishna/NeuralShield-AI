@@ -1,0 +1,143 @@
+{
+  "test_timestamp": "2026-06-20",
+  "module": "prompt_injection_evasion_technique_detector",
+  "total_tests": 11,
+  "passed_tests": 8,
+  "failed_tests": 3,
+  "test_cases": [
+    {
+      "test_name": "Base64 encoded injection",
+      "passed": false,
+      "has_evasion": false,
+      "confidence": 0.0,
+      "threat_level": "safe",
+      "techniques_found": [],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "Hex encoded injection",
+      "passed": false,
+      "has_evasion": true,
+      "confidence": 0.8391,
+      "threat_level": "medium",
+      "techniques_found": [
+        "leetspeak"
+      ],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "URL encoded injection",
+      "passed": true,
+      "has_evasion": true,
+      "confidence": 0.8317,
+      "threat_level": "medium",
+      "techniques_found": [
+        "leetspeak",
+        "mixed_encoding",
+        "url_encoded"
+      ],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "Zero-width characters injection",
+      "passed": true,
+      "has_evasion": true,
+      "confidence": 1.0,
+      "threat_level": "medium",
+      "techniques_found": [
+        "zero_width_chars"
+      ],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "ROT13 encoded injection",
+      "passed": true,
+      "has_evasion": true,
+      "confidence": 1.0,
+      "threat_level": "critical",
+      "techniques_found": [
+        "rot_cipher"
+      ],
+      "decoded_count": 1
+    },
+    {
+      "test_name": "Leetspeak injection",
+      "passed": true,
+      "has_evasion": true,
+      "confidence": 0.8286,
+      "threat_level": "medium",
+      "techniques_found": [
+        "leetspeak"
+      ],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "Benign normal text",
+      "passed": true,
+      "has_evasion": false,
+      "confidence": 0.0,
+      "threat_level": "safe",
+      "techniques_found": [],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "Benign URL (should not flag)",
+      "passed": true,
+      "has_evasion": false,
+      "confidence": 0.0,
+      "threat_level": "safe",
+      "techniques_found": [],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "Mixed encoding suspicion",
+      "passed": false,
+      "has_evasion": false,
+      "confidence": 0.4896,
+      "threat_level": "safe",
+      "techniques_found": [
+        "leetspeak"
+      ],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "Empty input handling",
+      "passed": true,
+      "has_evasion": false,
+      "confidence": 0.0,
+      "threat_level": "safe",
+      "techniques_found": [],
+      "decoded_count": 0
+    },
+    {
+      "test_name": "Unicode homoglyph injection",
+      "passed": true,
+      "has_evasion": true,
+      "confidence": 1.0,
+      "threat_level": "medium",
+      "techniques_found": [
+        "unicode_homoglyph"
+      ],
+      "decoded_count": 0
+    }
+  ],
+  "detection_stats": {
+    "total_detections": 10,
+    "evasion_detected_count": 6,
+    "technique_distribution": {
+      "leetspeak": 4,
+      "mixed_encoding": 1,
+      "url_encoded": 1,
+      "zero_width_chars": 1,
+      "rot_cipher": 1,
+      "unicode_homoglyph": 1
+    },
+    "threat_level_distribution": {
+      "safe": 4,
+      "medium": 5,
+      "critical": 1
+    },
+    "average_confidence": 0.5989058284710458
+  },
+  "pass_rate": 72.73
+}
