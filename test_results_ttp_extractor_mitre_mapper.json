@@ -1,0 +1,42 @@
+{
+  "name": "NeuralShield TTP Detection",
+  "version": "4.6.1",
+  "domain": "enterprise-attack",
+  "techniques": [
+    {
+      "techniqueID": "T1003",
+      "score": 9.5,
+      "color": "",
+      "comment": "Confidence: 0.58, Severity: 9.5",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Confidence",
+          "value": "0.58"
+        },
+        {
+          "name": "Severity",
+          "value": "9.5"
+        },
+        {
+          "name": "Tactic",
+          "value": "credential-access"
+        }
+      ]
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ffffff",
+      "#ff6666"
+    ],
+    "minValue": 0,
+    "maxValue": 10
+  },
+  "legendItems": [
+    {
+      "label": "Severity Score",
+      "color": "#ff6666"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "test_suite": "ThreatIntelTTPExtractor",
+  "date": "2026-06-19",
+  "total_tests": 8,
+  "passed": 8,
+  "failed": 0,
+  "pass_rate": "100.0%"
+}
