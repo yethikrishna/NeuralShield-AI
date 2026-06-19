@@ -1552,4 +1552,19 @@ __all__.extend([
     "TrackedActivity",
     "ActorProfile"
 ])
+
+from .threat_intelligence_mitre_heatmap_visualizer_2026_june import (
+    MITREHeatmapVisualizer,
+    MITRETactic,
+    SeverityLevel,
+    HeatmapCell,
+    HeatmapResult
+)
+__all__.extend([
+    "MITREHeatmapVisualizer",
+    "MITRETactic",
+    "SeverityLevel",
+    "HeatmapCell",
+    "HeatmapResult"
+])
 __version__ = "2026.6.19.8"

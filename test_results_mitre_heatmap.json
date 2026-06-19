@@ -1,0 +1,20 @@
+{
+  "module": "MITRE Heatmap Visualizer",
+  "status": "PASSED",
+  "tests": {
+    "alert_processing": true,
+    "technique_detection": true,
+    "risk_scoring": true,
+    "heatmap_cells": true,
+    "top_techniques": true,
+    "dashboard_generation": true,
+    "json_export": true,
+    "risk_gauge": true
+  },
+  "metrics": {
+    "total_alerts": 8,
+    "unique_techniques": 5,
+    "overall_risk_score": 100.0,
+    "tactics_observed": 4
+  }
+}
