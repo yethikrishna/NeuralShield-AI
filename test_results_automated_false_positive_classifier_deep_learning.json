@@ -1,0 +1,59 @@
+{
+  "test_timestamp": "2026-06-20T06:23:10.029021",
+  "module_tested": "DeepLearningFalsePositiveClassifier",
+  "tests_passed": 10,
+  "tests_total": 10,
+  "success_rate": 1.0,
+  "individual_results": [
+    {
+      "test": "Initialization",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "Feature Extraction",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "Isolation Forest",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "Logistic Regression",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "FP Classification",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "TP Classification",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "Batch Classification",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "Statistics",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "Feedback Learning",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "test": "Confidence Calibration",
+      "passed": true,
+      "error": ""
+    }
+  ]
+}
