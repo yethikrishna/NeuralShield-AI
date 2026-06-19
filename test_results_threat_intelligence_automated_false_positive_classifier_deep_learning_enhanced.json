@@ -1,0 +1,16 @@
+{
+  "test_suite": "threat_intelligence_automated_false_positive_classifier_deep_learning_enhanced",
+  "timestamp": "2026-06-20T07:27:06.603517",
+  "tests_passed": 7,
+  "tests_total": 7,
+  "pass_rate": 1.0,
+  "individual_results": {
+    "test_logistic_regression_basic": true,
+    "test_mlp_neural_network": true,
+    "test_confidence_calibration": true,
+    "test_feature_engineering": true,
+    "test_full_classification": true,
+    "test_batch_classification": true,
+    "test_feature_contributions": true
+  }
+}
