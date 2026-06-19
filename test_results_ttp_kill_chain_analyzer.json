@@ -1,0 +1,8 @@
+{
+  "test_timestamp": "2026-06-20T06:39:31.243026",
+  "total_tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "success_rate": 100.0,
+  "module": "threat_intelligence_ttp_kill_chain_analyzer_2026_june"
+}
