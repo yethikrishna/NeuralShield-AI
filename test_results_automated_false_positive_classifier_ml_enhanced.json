@@ -1,0 +1,51 @@
+{
+  "test_timestamp": "2026-06-19T20:41:14.779369",
+  "module_tested": "threat_intelligence_automated_false_positive_classifier_ml_enhanced",
+  "total_tests": 10,
+  "passed_tests": 10,
+  "failed_tests": 0,
+  "success_rate": 1.0,
+  "all_passed": true,
+  "test_details": [
+    [
+      "Initialization",
+      "PASS"
+    ],
+    [
+      "Whitelist Detection",
+      "PASS"
+    ],
+    [
+      "Malicious Detection",
+      "PASS"
+    ],
+    [
+      "Feature Extraction",
+      "PASS"
+    ],
+    [
+      "Source Reputation",
+      "PASS"
+    ],
+    [
+      "Batch Classification",
+      "PASS"
+    ],
+    [
+      "Feature Contributions",
+      "PASS"
+    ],
+    [
+      "Entropy Calculation",
+      "PASS"
+    ],
+    [
+      "Model Export",
+      "PASS"
+    ],
+    [
+      "Singleton Factory",
+      "PASS"
+    ]
+  ]
+}
