@@ -3,7 +3,20 @@ NeuralShield-AI - AI Security Defense Framework
 June 2026 - Enhanced with Jailbreak Detection, Constitutional Classifiers, Input Purification
 + System Prompt Leakage Detection (June 19, 2026)
 + Threat Intelligence Geolocation Tracker (June 20, 2026)
++ Incident Response Automation Engine (June 20, 2026)
 """
+from .threat_intelligence_incident_response_automation_engine_2026_june import (
+    IncidentResponseAutomationEngine,
+    IncidentEvent,
+    IncidentType,
+    IncidentSeverity,
+    MITRETactic,
+    MITRETechnique,
+    ResponseActionType,
+    MITREMapping,
+    ResponseAction,
+    IncidentResponseResult
+)
 from .system_prompt_leakage_detector_2026_june import SystemPromptLeakageDetector, LeakageType, LeakageDetectionResult
 from .prompt_injection_sandboxed_executor_2026_june import (
     PromptInjectionSandbox,

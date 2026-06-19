@@ -1,0 +1,49 @@
+{
+  "test_date": "2026-06-20T05:26:16.929967",
+  "module": "threat_intelligence_incident_response_automation_engine",
+  "tests_passed": 8,
+  "tests_total": 8,
+  "success_rate": 1.0,
+  "results": [
+    {
+      "name": "test_basic_incident_processing",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_phishing_incident",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_prompt_injection_incident",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_mitre_attack_mapping",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_response_playbook_generation",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_json_export",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_incident_statistics",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_timeline_generation",
+      "passed": true,
+      "error": null
+    }
+  ]
+}
