@@ -1,0 +1,7 @@
+{
+  "test_date": "2026-06-19T19:01:47.472207",
+  "total_tests": 7,
+  "passed": 7,
+  "failed": 0,
+  "module": "threat_intelligence_realtime_ioc_feed_processor"
+}

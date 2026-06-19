@@ -1,0 +1,67 @@
+{
+  "tests_passed": 11,
+  "tests_failed": 1,
+  "test_details": [
+    {
+      "test": "Feed Registration",
+      "status": "PASSED",
+      "message": "Successfully registered feeds and rejected duplicate"
+    },
+    {
+      "test": "Record Poll Result - Success",
+      "status": "FAILED",
+      "message": ""
+    },
+    {
+      "test": "Record Poll Result - Failure",
+      "status": "PASSED",
+      "message": "Successfully recorded failure with error tracking"
+    },
+    {
+      "test": "Freshness Score Calculation",
+      "status": "PASSED",
+      "message": "Score: 100.0, Issues: 0"
+    },
+    {
+      "test": "Availability Score Calculation",
+      "status": "PASSED",
+      "message": "Score: 30.0, Issues: 1"
+    },
+    {
+      "test": "Quality Score Calculation",
+      "status": "PASSED",
+      "message": "Score: 100.0, Issues: 0"
+    },
+    {
+      "test": "Coverage Score Calculation",
+      "status": "PASSED",
+      "message": "Score: 85.0, Issues: 1"
+    },
+    {
+      "test": "Performance Score Calculation",
+      "status": "PASSED",
+      "message": "Score: 100.0, Issues: 0"
+    },
+    {
+      "test": "Comprehensive Health Assessment",
+      "status": "PASSED",
+      "message": "Overall: 77.5, Status: degraded, Tier: standard"
+    },
+    {
+      "test": "All Feeds Summary Dashboard",
+      "status": "PASSED",
+      "message": "Summary generated for 2 feeds"
+    },
+    {
+      "test": "Unregistered Feed Error Handling",
+      "status": "PASSED",
+      "message": "Correctly raised ValueError for unregistered feed"
+    },
+    {
+      "test": "Historical Data Storage",
+      "status": "PASSED",
+      "message": "Stored 5 historical data points"
+    }
+  ],
+  "timestamp": "2026-06-19T21:24:07.572032"
+}
