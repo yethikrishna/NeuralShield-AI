@@ -1590,3 +1590,38 @@ __all__.extend([
 
 __version__ = "2026.6.19.9"
 from .threat_intelligence_exploit_path_prediction_engine_2026_june import ExploitPathPredictionEngine, Vulnerability, Asset, ExploitPath, ExploitLikelihood, AttackVector
+
+# Threat Intelligence Alert Deduplication Engine (June 19, 2026 Production Release)
+# Real alert deduplication, noise reduction, alert storm detection
+from .threat_intelligence_alert_deduplication_engine_2026_june import (
+    Alert,
+    AlertSeverity,
+    AlertStatus,
+    DeduplicationStrategy,
+    NoiseType,
+    AlertGroup,
+    DeduplicationMetrics,
+    AlertBaseline,
+    AlertDeduplicationEngine,
+    ExactMatchDeduplicationPolicy,
+    FuzzySimilarityDeduplicationPolicy,
+    AlertStormDetectionPolicy,
+    create_alert_deduplication_engine
+)
+__all__.extend([
+    "Alert",
+    "AlertSeverity",
+    "AlertStatus",
+    "DeduplicationStrategy",
+    "NoiseType",
+    "AlertGroup",
+    "DeduplicationMetrics",
+    "AlertBaseline",
+    "AlertDeduplicationEngine",
+    "ExactMatchDeduplicationPolicy",
+    "FuzzySimilarityDeduplicationPolicy",
+    "AlertStormDetectionPolicy",
+    "create_alert_deduplication_engine"
+])
+
+__version__ = "2026.6.19.10"
