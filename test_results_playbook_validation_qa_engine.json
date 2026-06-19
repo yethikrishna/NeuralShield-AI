@@ -1,0 +1,38 @@
+{
+  "test_timestamp": "2026-06-19T11:17:13.242453",
+  "module": "threat_intelligence_playbook_validation_qa_engine_2026_june",
+  "total_tests": 7,
+  "passed": 7,
+  "failed": 0,
+  "success_rate": 100.0,
+  "results": [
+    [
+      "test_basic_validation",
+      "PASSED"
+    ],
+    [
+      "test_invalid_playbook_detection",
+      "PASSED"
+    ],
+    [
+      "test_mitre_validation",
+      "PASSED"
+    ],
+    [
+      "test_regex_validation",
+      "PASSED"
+    ],
+    [
+      "test_quality_scoring",
+      "PASSED"
+    ],
+    [
+      "test_batch_validation",
+      "PASSED"
+    ],
+    [
+      "test_quality_report_generation",
+      "PASSED"
+    ]
+  ]
+}
