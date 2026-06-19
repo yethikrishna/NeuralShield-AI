@@ -1569,5 +1569,24 @@ __all__.extend([
     "HeatmapCell",
     "HeatmapResult"
 ])
-__version__ = "2026.6.19.8"
+# Threat Intelligence Hunting Query Performance Optimizer (June 19, 2026 Production Release)
+# Real query optimization, cost analysis, execution benchmarking, performance tuning
+from .threat_intelligence_hunting_query_performance_optimizer_2026_june import (
+    ThreatHuntingQueryOptimizer,
+    QueryType,
+    OptimizationLevel,
+    QueryCostMetrics,
+    OptimizedQuery,
+    QueryBenchmarkResult
+)
+__all__.extend([
+    "ThreatHuntingQueryOptimizer",
+    "QueryType",
+    "OptimizationLevel",
+    "QueryCostMetrics",
+    "OptimizedQuery",
+    "QueryBenchmarkResult"
+])
+
+__version__ = "2026.6.19.9"
 from .threat_intelligence_exploit_path_prediction_engine_2026_june import ExploitPathPredictionEngine, Vulnerability, Asset, ExploitPath, ExploitLikelihood, AttackVector
