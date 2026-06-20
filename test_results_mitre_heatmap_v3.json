@@ -1,0 +1,25 @@
+{
+  "test_timestamp": "2026-06-21T06:06:59.938245",
+  "module": "MITRE Heatmap Generator v3",
+  "passed": 6,
+  "total": 7,
+  "results": {
+    "test_basic_functionality": true,
+    "test_heatmap_generation": false,
+    "test_html_export": true,
+    "test_json_export": true,
+    "test_csv_export": true,
+    "test_threat_actor_mapping": true,
+    "test_trend_calculation": true
+  },
+  "verification": {
+    "status": "success",
+    "observations_added": 8,
+    "tactics_covered": 13,
+    "html_export_ok": true,
+    "json_export_ok": true,
+    "csv_export_ok": true,
+    "threat_actors_identified": 2,
+    "total_detections": 60
+  }
+}
