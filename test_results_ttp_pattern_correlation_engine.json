@@ -1,0 +1,248 @@
+{
+  "test_timestamp": "2026-06-20T21:41:05.186844",
+  "total_alerts": 7,
+  "total_ttps": 7,
+  "patterns_found": 112,
+  "attack_chains": 3,
+  "high_risk_patterns": 13,
+  "analysis_time_ms": 4.760999999999999,
+  "patterns": [
+    {
+      "pattern_id": "pattern_50960",
+      "ttp_count": 2,
+      "ttp_ids": [
+        "T1003",
+        "T1550"
+      ],
+      "support": 1.0,
+      "confidence": 0.875,
+      "lift": 1.0,
+      "pattern_type": "Lateral Movement Campaign",
+      "campaign_hypothesis": "Credential harvesting -> Network lateral movement",
+      "risk_level": "MEDIUM",
+      "supporting_evidence": [
+        "OS Credential Dumping (T1003) from alert_004",
+        "Use Alternate Authentication Material (T1550) from alert_005"
+      ],
+      "first_seen": "2026-06-20T21:01:05.181739",
+      "last_seen": "2026-06-20T21:06:05.181739"
+    },
+    {
+      "pattern_id": "pattern_52933",
+      "ttp_count": 2,
+      "ttp_ids": [
+        "T1003",
+        "T1041"
+      ],
+      "support": 1.0,
+      "confidence": 0.875,
+      "lift": 1.0,
+      "pattern_type": "Multi-Technique Correlation",
+      "campaign_hypothesis": "Credential harvesting -> Data exfiltration in progress",
+      "risk_level": "MEDIUM",
+      "supporting_evidence": [
+        "OS Credential Dumping (T1003) from alert_004",
+        "Exfiltration Over C2 Channel (T1041) from alert_007"
+      ],
+      "first_seen": "2026-06-20T21:01:05.181739",
+      "last_seen": "2026-06-20T21:16:05.181739"
+    },
+    {
+      "pattern_id": "pattern_02056",
+      "ttp_count": 2,
+      "ttp_ids": [
+        "T1550",
+        "T1041"
+      ],
+      "support": 1.0,
+      "confidence": 0.875,
+      "lift": 1.0,
+      "pattern_type": "Multi-Technique Correlation",
+      "campaign_hypothesis": "Network lateral movement -> Data exfiltration in progress",
+      "risk_level": "HIGH",
+      "supporting_evidence": [
+        "Use Alternate Authentication Material (T1550) from alert_005",
+        "Exfiltration Over C2 Channel (T1041) from alert_007"
+      ],
+      "first_seen": "2026-06-20T21:06:05.181739",
+      "last_seen": "2026-06-20T21:16:05.181739"
+    },
+    {
+      "pattern_id": "pattern_91950",
+      "ttp_count": 3,
+      "ttp_ids": [
+        "T1003",
+        "T1550",
+        "T1041"
+      ],
+      "support": 1.0,
+      "confidence": 0.875,
+      "lift": 1.0,
+      "pattern_type": "Lateral Movement Campaign",
+      "campaign_hypothesis": "Credential harvesting -> Network lateral movement -> Data exfiltration in progress",
+      "risk_level": "HIGH",
+      "supporting_evidence": [
+        "OS Credential Dumping (T1003) from alert_004",
+        "Use Alternate Authentication Material (T1550) from alert_005",
+        "Exfiltration Over C2 Channel (T1041) from alert_007"
+      ],
+      "first_seen": "2026-06-20T21:01:05.181739",
+      "last_seen": "2026-06-20T21:16:05.181739"
+    },
+    {
+      "pattern_id": "pattern_06658",
+      "ttp_count": 4,
+      "ttp_ids": [
+        "T1003",
+        "T1550",
+        "T1071",
+        "T1041"
+      ],
+      "support": 1.0,
+      "confidence": 0.8438,
+      "lift": 1.0,
+      "pattern_type": "Lateral Movement Campaign",
+      "campaign_hypothesis": "Credential harvesting -> Network lateral movement -> C2 communication established -> Data exfiltration in progress",
+      "risk_level": "HIGH",
+      "supporting_evidence": [
+        "OS Credential Dumping (T1003) from alert_004",
+        "Use Alternate Authentication Material (T1550) from alert_005",
+        "Application Layer Protocol (T1071) from alert_006",
+        "Exfiltration Over C2 Channel (T1041) from alert_007"
+      ],
+      "first_seen": "2026-06-20T21:01:05.181739",
+      "last_seen": "2026-06-20T21:16:05.181739"
+    }
+  ],
+  "chains": [
+    {
+      "hypothesis_id": "chain_00407",
+      "chain_tactics": [
+        "Lateral Movement"
+      ],
+      "chain_techniques": [
+        "Use Alternate Authentication Material"
+      ],
+      "probability": 0.75,
+      "missing_ttps": [
+        "Reconnaissance",
+        "Initial Access",
+        "Execution",
+        "Persistence",
+        "Privilege Escalation"
+      ],
+      "completion_percentage": 7.69,
+      "estimated_next_steps": [
+        [
+          "Active Scanning",
+          0.3333
+        ],
+        [
+          "Phishing",
+          0.3333
+        ]
+      ],
+      "evidence_alerts": [
+        "alert_005"
+      ]
+    },
+    {
+      "hypothesis_id": "chain_86632",
+      "chain_tactics": [
+        "Command and Control",
+        "Exfiltration"
+      ],
+      "chain_techniques": [
+        "Application Layer Protocol",
+        "Exfiltration Over C2 Channel"
+      ],
+      "probability": 0.625,
+      "missing_ttps": [
+        "Reconnaissance",
+        "Initial Access",
+        "Execution",
+        "Persistence",
+        "Privilege Escalation"
+      ],
+      "completion_percentage": 15.38,
+      "estimated_next_steps": [
+        [
+          "Application Layer Protocol",
+          0.3333
+        ],
+        [
+          "Active Scanning",
+          0.3333
+        ],
+        [
+          "Phishing",
+          0.3333
+        ],
+        [
+          "Active Scanning",
+          0.3333
+        ],
+        [
+          "Phishing",
+          0.3333
+        ]
+      ],
+      "evidence_alerts": [
+        "alert_006",
+        "alert_007"
+      ]
+    },
+    {
+      "hypothesis_id": "chain_00311",
+      "chain_tactics": [
+        "Reconnaissance",
+        "Initial Access",
+        "Execution",
+        "Credential Access"
+      ],
+      "chain_techniques": [
+        "Active Scanning",
+        "Phishing",
+        "Command and Scripting Interpreter",
+        "OS Credential Dumping"
+      ],
+      "probability": 0.5625,
+      "missing_ttps": [
+        "Persistence",
+        "Privilege Escalation",
+        "Defense Evasion",
+        "Discovery",
+        "Lateral Movement"
+      ],
+      "completion_percentage": 30.77,
+      "estimated_next_steps": [
+        [
+          "Active Scanning",
+          0.3333
+        ],
+        [
+          "Application Layer Protocol",
+          0.3333
+        ],
+        [
+          "Active Scanning",
+          0.3333
+        ],
+        [
+          "Phishing",
+          0.3333
+        ],
+        [
+          "Application Layer Protocol",
+          0.3333
+        ]
+      ],
+      "evidence_alerts": [
+        "alert_001",
+        "alert_002",
+        "alert_003",
+        "alert_004"
+      ]
+    }
+  ]
+}
