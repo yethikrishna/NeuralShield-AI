@@ -1786,3 +1786,54 @@ __all__.extend([
     "ClassificationResult"
 ])
 
+
+
+# Vulnerability Exploit Prediction Engine (June 20, 2026)
+# CVSS v3.1 Scoring + EPSS Exploit Prediction + Risk Prioritization
+from .threat_intelligence_vulnerability_exploit_prediction_engine_2026_june import (
+    VulnerabilityExploitPredictor,
+    CVSSv31Scorer,
+    EPSSPredictor,
+    CVSSVector,
+    CVSSAttackVector,
+    CVSSAttackComplexity,
+    CVSSPrivilegesRequired,
+    CVSSUserInteraction,
+    CVSSScope,
+    CVSSImpact,
+    ExploitMaturity,
+    RemediationLevel,
+    ReportConfidence,
+    VulnerabilitySeverity,
+    ExploitStatus,
+    CVSSScores,
+    ExploitPrediction,
+    Vulnerability,
+    PredictionResult,
+    create_exploit_predictor,
+    verify_exploit_predictor
+)
+__all__.extend([
+    "VulnerabilityExploitPredictor",
+    "CVSSv31Scorer",
+    "EPSSPredictor",
+    "CVSSVector",
+    "CVSSAttackVector",
+    "CVSSAttackComplexity",
+    "CVSSPrivilegesRequired",
+    "CVSSUserInteraction",
+    "CVSSScope",
+    "CVSSImpact",
+    "ExploitMaturity",
+    "RemediationLevel",
+    "ReportConfidence",
+    "VulnerabilitySeverity",
+    "ExploitStatus",
+    "CVSSScores",
+    "ExploitPrediction",
+    "Vulnerability",
+    "PredictionResult",
+    "create_exploit_predictor",
+    "verify_exploit_predictor"
+])
+__version__ = "2026.6.20.5"
