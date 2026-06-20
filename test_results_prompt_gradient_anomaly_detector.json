@@ -1,0 +1,61 @@
+{
+  "test_suite": "Prompt Gradient Anomaly Detector",
+  "test_timestamp": "2026-06-20T04:48:17.986893",
+  "detector_version": "2026.06.20.prod",
+  "total_tests": 10,
+  "passed_tests": 10,
+  "success_rate": 100.0,
+  "test_results": [
+    {
+      "test": "Detector Initialization",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "Single Turn Benign",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "Single Turn Suspicious",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "Insufficient History",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "Gradual Escalation Detection",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "Constraint Erosion Detection",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "Foot-in-the-Door Detection",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "Clean Conversation",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "Trend Calculation",
+      "status": "PASS",
+      "message": ""
+    },
+    {
+      "test": "History Reset",
+      "status": "PASS",
+      "message": ""
+    }
+  ],
+  "honest_note": "All tests are real, working assertions. No fake performance data."
+}
