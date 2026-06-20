@@ -1,0 +1,57 @@
+{
+  "test_suite": "transformer_v8_fp_classifier",
+  "test_time": "2026-06-20T21:24:23.720396",
+  "model_version": "v8-transformer-2026-june",
+  "tests_passed": 7,
+  "tests_failed": 0,
+  "test_cases": [
+    {
+      "test_id": 1,
+      "name": "internal_ip_false_positive",
+      "passed": true,
+      "is_false_positive": true,
+      "confidence": 0.1204
+    },
+    {
+      "test_id": 2,
+      "name": "localhost_false_positive",
+      "passed": true,
+      "is_false_positive": true,
+      "confidence": 0.1277
+    },
+    {
+      "test_id": 3,
+      "name": "legitimate_service_domain",
+      "passed": true,
+      "is_false_positive": true,
+      "confidence": 0.1154
+    },
+    {
+      "test_id": 4,
+      "name": "suspicious_domain_true_positive",
+      "passed": true,
+      "is_false_positive": false,
+      "confidence": 0.067
+    },
+    {
+      "test_id": 5,
+      "name": "batch_processing",
+      "passed": true,
+      "batch_size": 5,
+      "fp_count": 5,
+      "tp_count": 0
+    },
+    {
+      "test_id": 6,
+      "name": "feature_importance",
+      "passed": true,
+      "features_tracked": 17
+    },
+    {
+      "test_id": 7,
+      "name": "model_statistics",
+      "passed": true,
+      "total_classifications": 9
+    }
+  ]
+}
