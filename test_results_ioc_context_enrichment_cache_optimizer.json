@@ -1,0 +1,18 @@
+{
+  "timestamp": 1781991418.2808332,
+  "test_module": "threat_intelligence_ioc_context_enrichment_cache_optimizer",
+  "passed": 9,
+  "failed": 0,
+  "total": 9,
+  "results": {
+    "test_basic_cache_functionality": "PASSED",
+    "test_force_refresh": "PASSED",
+    "test_batch_enrichment": "PASSED",
+    "test_performance_metrics": "PASSED",
+    "test_lru_eviction": "PASSED",
+    "test_ttl_expiration": "PASSED",
+    "test_thread_safety": "PASSED",
+    "test_different_ioc_types": "PASSED",
+    "test_context_manager": "PASSED"
+  }
+}
