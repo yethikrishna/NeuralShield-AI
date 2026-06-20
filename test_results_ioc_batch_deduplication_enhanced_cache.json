@@ -1,0 +1,26 @@
+{
+  "test_suite": "IOC Batch Deduplication Enhanced Cache Optimizer",
+  "timestamp": 1781996142.4506457,
+  "tests_passed": 10,
+  "tests_failed": 1,
+  "test_cases": {
+    "ioc_normalization": "FAILED: IP normalization failed: 192.168.001.001",
+    "ioc_type_detection": "PASSED",
+    "fingerprint_generation": "PASSED",
+    "temporal_decay": "PASSED",
+    "basic_deduplication": "PASSED",
+    "enrichment_caching": "PASSED",
+    "dict_input_metadata": "PASSED",
+    "statistics_tracking": "PASSED",
+    "input_validation": "PASSED",
+    "large_batch_performance": "PASSED",
+    "cache_eviction": "PASSED"
+  },
+  "performance_metrics": {
+    "basic_processing_ms": 0.204,
+    "avg_processing_ms": 0.05,
+    "throughput_iocs_per_sec": 36622.0,
+    "large_batch_ms": 32.76705741882324
+  },
+  "pass_rate_percent": 90.9
+}
