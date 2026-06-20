@@ -1,0 +1,11 @@
+{
+  "test_timestamp": "2026-06-20T06:52:52.330336",
+  "module_tested": "threat_intelligence_threat_actor_campaign_tracker_2026_june",
+  "tests_run": 18,
+  "tests_failed": 0,
+  "tests_errored": 0,
+  "tests_skipped": 0,
+  "all_passed": true,
+  "failures": [],
+  "errors": []
+}
