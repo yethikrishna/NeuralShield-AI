@@ -1,7 +1,75 @@
 {
-  "test_name": "threat_intelligence_ioc_batch_deduplication_normalization_engine",
-  "tests_passed": 6,
-  "tests_total": 7,
-  "success_rate": 0.8571428571428571,
-  "timestamp": 1781958090.0026596
+  "summary": {
+    "total_input": 2,
+    "unique_after_dedup": 2,
+    "duplicates_removed": 0,
+    "expired_removed": 0,
+    "normalized_count": 0,
+    "by_type": {
+      "IPV4": 1,
+      "DOMAIN": 1
+    },
+    "by_source": {
+      "test": 2
+    },
+    "processing_time_ms": 0.06,
+    "deduplication_rate": 0.0
+  },
+  "iocs": [
+    {
+      "value": "192.168.1.1",
+      "ioc_type": "IPV4",
+      "normalized_value": "192.168.1.1",
+      "source": "test",
+      "confidence": 0.8,
+      "first_seen": "2026-06-21T03:55:59.602197",
+      "last_seen": "2026-06-21T03:55:59.602197",
+      "ttl_days": 90,
+      "threat_types": [],
+      "tags": [],
+      "feed_ids": [
+        "default"
+      ],
+      "raw_entries": [
+        {
+          "value": "192.168.1.1",
+          "source": "test",
+          "confidence": 0.8,
+          "feed_id": "default"
+        }
+      ],
+      "is_expired": false,
+      "age_days": 0
+    },
+    {
+      "value": "example.com",
+      "ioc_type": "DOMAIN",
+      "normalized_value": "example.com",
+      "source": "test",
+      "confidence": 0.9,
+      "first_seen": "2026-06-21T03:55:59.602216",
+      "last_seen": "2026-06-21T03:55:59.602217",
+      "ttl_days": 90,
+      "threat_types": [],
+      "tags": [],
+      "feed_ids": [
+        "default"
+      ],
+      "raw_entries": [
+        {
+          "value": "example.com",
+          "source": "test",
+          "confidence": 0.9,
+          "feed_id": "default"
+        }
+      ],
+      "is_expired": false,
+      "age_days": 0
+    }
+  ],
+  "exported_at": "2026-06-21T03:55:59.602335",
+  "engine_config": {
+    "deduplication_strategy": "normalized_match",
+    "conflict_resolution": "merge_all"
+  }
 }
