@@ -1,17 +1,14 @@
 {
-  "test_timestamp": "2026-06-20 13:40:37",
-  "module": "threat_intelligence_signature_auto_generator_engine",
-  "total_tests": 7,
-  "passed": 7,
-  "failed": 0,
-  "success_rate": 100.0,
+  "test_timestamp": 1781934642.8814313,
+  "tests_passed": 6,
+  "tests_failed": 0,
+  "total_tests": 6,
   "results": {
-    "Pattern Extractor": "PASSED",
-    "YARA Generator": "PASSED",
-    "SNORT Generator": "PASSED",
-    "Basic Engine Functionality": "PASSED",
-    "Batch Processing": "PASSED",
-    "Signature Export": "PASSED",
-    "Engine Statistics": "PASSED"
+    "test_string_extraction": "PASSED",
+    "test_yara_rule_generation": "PASSED",
+    "test_snort_rule_generation": "PASSED",
+    "test_end_to_end_rule_generation": "PASSED",
+    "test_batch_generation": "PASSED",
+    "test_statistics_and_limitations": "PASSED"
   }
 }
