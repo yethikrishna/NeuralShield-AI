@@ -1,0 +1,89 @@
+{
+  "test_timestamp": 1781932147.8693037,
+  "total_tests": 20,
+  "passed": 20,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "tests": [
+    {
+      "name": "Engine initialization",
+      "status": "PASS"
+    },
+    {
+      "name": "IOC type detection",
+      "status": "PASS"
+    },
+    {
+      "name": "Quality scoring calculation",
+      "status": "PASS"
+    },
+    {
+      "name": "YARA MD5 rule generation",
+      "status": "PASS"
+    },
+    {
+      "name": "YARA SHA256 rule generation",
+      "status": "PASS"
+    },
+    {
+      "name": "Snort IP rule generation",
+      "status": "PASS"
+    },
+    {
+      "name": "Snort Domain DNS rule generation",
+      "status": "PASS"
+    },
+    {
+      "name": "Sigma network rule generation",
+      "status": "PASS"
+    },
+    {
+      "name": "Single IOC signature generation",
+      "status": "PASS"
+    },
+    {
+      "name": "IP generates multiple rule types (Snort + Sigma)",
+      "status": "PASS"
+    },
+    {
+      "name": "Batch processing multiple IOCs",
+      "status": "PASS"
+    },
+    {
+      "name": "Deduplication of duplicate IOCs",
+      "status": "PASS"
+    },
+    {
+      "name": "Statistics tracking",
+      "status": "PASS"
+    },
+    {
+      "name": "Domain hex conversion for Snort rules",
+      "status": "PASS"
+    },
+    {
+      "name": "UUID generation for Sigma rules",
+      "status": "PASS"
+    },
+    {
+      "name": "Rule SID generation",
+      "status": "PASS"
+    },
+    {
+      "name": "Cache clearing functionality",
+      "status": "PASS"
+    },
+    {
+      "name": "Rule export functionality",
+      "status": "PASS"
+    },
+    {
+      "name": "Error handling for edge cases",
+      "status": "PASS"
+    },
+    {
+      "name": "GeneratedSignature dataclass",
+      "status": "PASS"
+    }
+  ]
+}
