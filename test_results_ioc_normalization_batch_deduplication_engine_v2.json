@@ -1,0 +1,18 @@
+{
+  "test_suite": "IOC Normalization & Batch Deduplication Engine V2",
+  "tests_passed": 9,
+  "tests_total": 9,
+  "pass_rate": 1.0,
+  "execution_time_seconds": 0.020667076110839844,
+  "results": {
+    "test_lru_cache_basic": true,
+    "test_bloom_filter_basic": true,
+    "test_ioc_type_detection": true,
+    "test_ioc_normalization": true,
+    "test_single_ioc_processing": true,
+    "test_batch_deduplication": true,
+    "test_large_batch_performance": true,
+    "test_export_and_statistics": true,
+    "test_type_distribution": true
+  }
+}
