@@ -1,18 +1,27 @@
 {
-  "timestamp": 1781991418.2808332,
-  "test_module": "threat_intelligence_ioc_context_enrichment_cache_optimizer",
-  "passed": 9,
-  "failed": 0,
-  "total": 9,
-  "results": {
-    "test_basic_cache_functionality": "PASSED",
-    "test_force_refresh": "PASSED",
-    "test_batch_enrichment": "PASSED",
-    "test_performance_metrics": "PASSED",
-    "test_lru_eviction": "PASSED",
-    "test_ttl_expiration": "PASSED",
-    "test_thread_safety": "PASSED",
-    "test_different_ioc_types": "PASSED",
-    "test_context_manager": "PASSED"
-  }
+  "benchmark_timestamp": 1781992435.3109674,
+  "fill_1000_entries_ms": 6.42,
+  "lookup_2000_requests_ms": 11.83,
+  "avg_fill_per_entry_ms": 0.0064,
+  "avg_lookup_per_request_ms": 0.0059,
+  "metrics": {
+    "total_requests": 2000,
+    "cache_hits": 1600,
+    "cache_misses": 400,
+    "stale_hits": 0,
+    "evictions": 0,
+    "hit_rate_percent": 80.0,
+    "miss_rate_percent": 20.0,
+    "avg_latency_ms": 0.005,
+    "prefetch_hits": 0,
+    "current_size": 1000,
+    "max_size": 10000,
+    "utilization_percent": 10.0,
+    "prefetch_queue_size": 0
+  },
+  "memory_estimate": {
+    "estimated_entries": 1000,
+    "estimated_memory_mb": 1.95
+  },
+  "test_status": "PASSED"
 }
