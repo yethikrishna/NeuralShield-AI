@@ -1770,3 +1770,19 @@ __all__.extend([
     "IOCType"
 ])
 __version__ = "2026.6.20.4"
+
+
+# Threat Intelligence Automated Classification Engine (June 20, 2026)
+from .threat_intelligence_automated_classification_engine_2026_june import (
+    ThreatIntelligenceClassifier,
+    ThreatSeverity,
+    ThreatCategory,
+    ClassifiedThreat
+)
+__all__.extend([
+    "ThreatIntelligenceClassifier",
+    "ThreatSeverity",
+    "ThreatCategory",
+    "ClassifiedThreat"
+])
+
