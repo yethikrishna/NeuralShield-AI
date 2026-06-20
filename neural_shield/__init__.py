@@ -1898,5 +1898,28 @@ __all__.extend([
     "create_memory_safety_guardian",
     "verify_memory_guardian_works"
 ])
+# Threat Intelligence Semantic Search Cache Optimizer (June 20, 2026 Production Release)
+# Multi-layer caching, semantic similarity matching, intelligent prefetching, performance monitoring
+from .threat_intelligence_semantic_search_cache_optimizer_2026_june import (
+    SemanticSearchCacheOptimizer,
+    LRUCache,
+    CacheEntry,
+    CacheMetrics,
+    CacheStrategy,
+    CachePerformanceResult,
+    create_cache_optimizer,
+    run_semantic_cache_benchmark
+)
+__all__.extend([
+    "SemanticSearchCacheOptimizer",
+    "LRUCache",
+    "CacheEntry",
+    "CacheMetrics",
+    "CacheStrategy",
+    "CachePerformanceResult",
+    "create_cache_optimizer",
+    "run_semantic_cache_benchmark"
+])
+__version__ = "2026.6.20.8"
 __version__ = "2026.6.20.6"
 
