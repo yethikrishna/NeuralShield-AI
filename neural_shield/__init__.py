@@ -1837,3 +1837,26 @@ __all__.extend([
     "verify_exploit_predictor"
 ])
 __version__ = "2026.6.20.5"
+
+
+# Threat Intelligence TTP Extractor Engine (June 20, 2026 Production Release)
+# Extracts MITRE ATT&CK TTPs from threat intelligence text using pattern matching
+from .threat_intelligence_ttp_extractor_engine_2026_june import (
+    ThreatIntelligenceTTPExtractor,
+    TTPType,
+    ConfidenceLevel,
+    ExtractedTTP,
+    TTPExtractionResult,
+    create_ttp_extractor,
+    verify_ttp_extractor
+)
+__all__.extend([
+    "ThreatIntelligenceTTPExtractor",
+    "TTPType",
+    "ConfidenceLevel",
+    "ExtractedTTP",
+    "TTPExtractionResult",
+    "create_ttp_extractor",
+    "verify_ttp_extractor"
+])
+__version__ = "2026.6.20.7"
