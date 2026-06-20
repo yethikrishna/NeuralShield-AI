@@ -1,0 +1,53 @@
+{
+  "test_suite": "Transformer V5 False Positive Classifier",
+  "version": "5.0.0",
+  "timestamp": "2026-06-20",
+  "all_passed": true,
+  "passed_count": 8,
+  "total_count": 8,
+  "results": [
+    {
+      "test": "initialization",
+      "status": "PASSED"
+    },
+    {
+      "test": "legitimate_input",
+      "status": "PASSED",
+      "result": false
+    },
+    {
+      "test": "suspicious_input",
+      "status": "PASSED",
+      "result": false
+    },
+    {
+      "test": "empty_input",
+      "status": "PASSED"
+    },
+    {
+      "test": "attention_forward",
+      "status": "PASSED",
+      "shape": "(2, 10, 128)"
+    },
+    {
+      "test": "batch_processing",
+      "status": "PASSED",
+      "count": 5
+    },
+    {
+      "test": "statistics",
+      "status": "PASSED",
+      "stats": {
+        "total_processed": 7,
+        "false_positives_detected": 0,
+        "true_threats_detected": 7,
+        "avg_confidence": 0.5054040134557267,
+        "false_positive_rate": 0.0
+      }
+    },
+    {
+      "test": "config_export",
+      "status": "PASSED"
+    }
+  ]
+}
