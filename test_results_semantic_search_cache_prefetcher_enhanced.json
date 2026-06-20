@@ -1,29 +1,18 @@
 {
-  "test_timestamp": "2026-06-21 01:52:37",
-  "test_status": "PASSED",
-  "module": "threat_intelligence_semantic_search_cache_prefetcher_enhanced",
-  "statistics": {
-    "cache": {
-      "hit_count": 40,
-      "miss_count": 7,
-      "hit_rate": 0.851063829787234,
-      "eviction_count": 0,
-      "entry_count": 7,
-      "size_bytes": 924,
-      "max_size_bytes": 5242880
-    },
-    "prefetching": {
-      "attempts": 0,
-      "hits": 0,
-      "misses": 0,
-      "queue_size": 0,
-      "active_prefetches": 0
-    },
-    "patterns": {
-      "learned_queries": 7,
-      "history_size": 10
-    }
-  },
-  "cache_warmed_queries": 0,
-  "total_search_invocations": 7
+  "test_suite": "threat_intelligence_semantic_search_cache_prefetcher_enhanced",
+  "timestamp": "2026-06-21 02:26:37",
+  "total_tests": 8,
+  "passed_tests": 8,
+  "success_rate": 1.0,
+  "elapsed_seconds": 0.01,
+  "results": {
+    "test_simple_text_embedder": "PASSED",
+    "test_semantic_clustering": "PASSED",
+    "test_concept_extraction": "PASSED",
+    "test_query_embedding_recording": "PASSED",
+    "test_semantic_candidate_generation": "PASSED",
+    "test_prefetch_execution": "PASSED",
+    "test_concept_drift_detection": "PASSED",
+    "test_full_integration": "PASSED"
+  }
 }
