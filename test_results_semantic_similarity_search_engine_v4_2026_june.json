@@ -1,0 +1,46 @@
+{
+  "test_suite": "Semantic Search Engine v4",
+  "timestamp": "2026-06-20T23:02:50Z",
+  "total_tests": 7,
+  "passed": 7,
+  "failed": 0,
+  "success_rate": 1.0,
+  "elapsed_seconds": 1.1048803329467773,
+  "results": [
+    {
+      "name": "test_ioc_normalizer",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "name": "test_tfidf_vectorizer",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "name": "test_lru_cache",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "name": "test_search_engine_basic",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "name": "test_batch_search",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "name": "test_caching_performance",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "name": "test_engine_stats",
+      "status": "PASS",
+      "error": null
+    }
+  ]
+}
