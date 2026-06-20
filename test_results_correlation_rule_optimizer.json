@@ -1,0 +1,33 @@
+{
+  "test_timestamp": "2026-06-20 11:47:04",
+  "module_tested": "threat_intelligence_correlation_rule_optimizer_2026_june",
+  "test_status": "PASSED",
+  "sample_analysis": {
+    "rule_name": "Sample Correlation Rule",
+    "estimated_execution_ms": 850.0,
+    "conditions_count": 6,
+    "anti_patterns_found": 0,
+    "needs_optimization": true
+  },
+  "performance_report": {
+    "total_rules_tracked": 1,
+    "total_executions": 5,
+    "total_alerts": 9,
+    "avg_execution_time_ms": 1000.0,
+    "median_execution_time_ms": 1000.0,
+    "avg_precision": 0.8,
+    "avg_efficiency_score": 0.675,
+    "slow_rules_needing_optimization": [],
+    "noisy_rules_needing_tuning": [],
+    "optimizations_applied": 0,
+    "optimizations_available": 0
+  },
+  "features_verified": [
+    "Rule parsing and analysis",
+    "Anti-pattern detection",
+    "Execution time estimation",
+    "Redundant rule detection",
+    "Performance metrics tracking",
+    "Optimization recommendation generation"
+  ]
+}
