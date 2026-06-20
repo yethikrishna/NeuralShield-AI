@@ -1859,4 +1859,44 @@ __all__.extend([
     "create_ttp_extractor",
     "verify_ttp_extractor"
 ])
+
+# IOC Batch Processor with ML False Positive Reduction (June 20, 2026 - Session 32)
+from .threat_intelligence_ioc_batch_processor_ml_enhanced_2026_june import (
+    IOCBatchProcessor,
+    IOCTYPE,
+    IOCSeverity,
+    ProcessedIOC,
+)
+__all__.extend([
+    "IOCBatchProcessor",
+    "IOCTYPE",
+    "IOCSeverity",
+    "ProcessedIOC",
+])
 __version__ = "2026.6.20.7"
+
+
+# LLM Agent Memory Safety Guardian (June 20, 2026 Production Release)
+# Real working memory protection against poisoning, injection, and leakage
+from .llm_agent_memory_safety_guardian_2026_june import (
+    LLMAgentMemorySafetyGuardian,
+    MemoryThreatType,
+    MemorySafetyLevel,
+    MemoryChunk,
+    MemoryThreatFinding,
+    MemorySafetyResult,
+    create_memory_safety_guardian,
+    verify_memory_guardian_works
+)
+__all__.extend([
+    "LLMAgentMemorySafetyGuardian",
+    "MemoryThreatType",
+    "MemorySafetyLevel",
+    "MemoryChunk",
+    "MemoryThreatFinding",
+    "MemorySafetyResult",
+    "create_memory_safety_guardian",
+    "verify_memory_guardian_works"
+])
+__version__ = "2026.6.20.6"
+
