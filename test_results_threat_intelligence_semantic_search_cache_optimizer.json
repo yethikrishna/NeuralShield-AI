@@ -1,14 +1,1 @@
-{
-  "timestamp": 1781967047.1398604,
-  "test_date": "2026-06-20",
-  "benchmark_results": {
-    "hit_rate": 0.907,
-    "avg_latency_ms": 0.164,
-    "p95_latency_ms": 1.598,
-    "throughput_ops_sec": 6065,
-    "total_queries": 1000
-  },
-  "all_tests_passed": true,
-  "total_tests": 19,
-  "tests_passed": 19
-}
+{"tests_passed": true, "benchmark": "completed"}
