@@ -1920,6 +1920,18 @@ __all__.extend([
     "create_cache_optimizer",
     "run_semantic_cache_benchmark"
 ])
-__version__ = "2026.6.20.8"
+
+# Phishing URL Classifier Enhanced (June 21, 2026)
+from .threat_intelligence_phishing_url_classifier_enhanced_2026_june import (
+    PhishingURLClassifierEnhanced,
+    URLClassificationResult,
+    URLFeatures
+)
+__all__.extend([
+    "PhishingURLClassifierEnhanced",
+    "URLClassificationResult",
+    "URLFeatures"
+])
+__version__ = "2026.6.21.0"
 __version__ = "2026.6.20.6"
 
