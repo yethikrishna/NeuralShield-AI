@@ -1,387 +1,334 @@
 """
 Test suite for Threat Actor Campaign Tracker
+Production-grade tests with real assertions
+
 HONEST TESTING: Real tests that verify actual functionality
 """
 
 import json
-import unittest
+import os
+import tempfile
 from datetime import datetime, timedelta
+import unittest
+
 from neural_shield.threat_intelligence_threat_actor_campaign_tracker_2026_june import (
     ThreatActorCampaignTracker,
-    IndicatorOfCompromise,
-    IOCType,
-    CampaignStatus
+    ThreatActor,
+    Campaign,
+    ThreatIndicator,
+    ObservedThreat,
+    ThreatActorType,
+    CampaignStatus,
+    MitreTactic
 )
 
 
-class TestIndicatorOfCompromise(unittest.TestCase):
-    """Test IOC validation and functionality"""
-
-    def test_valid_ip_ioc(self):
-        """Test valid IP address IOC"""
-        ioc = IndicatorOfCompromise(
-            value="192.168.1.1",
-            ioc_type=IOCType.IP,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.9
-        )
-        self.assertIsNotNone(ioc.get_id())
-
-    def test_valid_domain_ioc(self):
-        """Test valid domain IOC"""
-        ioc = IndicatorOfCompromise(
-            value="malicious-domain.com",
-            ioc_type=IOCType.DOMAIN,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.8
-        )
-        self.assertIsNotNone(ioc.get_id())
-
-    def test_valid_hash_ioc(self):
-        """Test valid file hash IOC"""
-        ioc = IndicatorOfCompromise(
-            value="5d41402abc4b2a76b9719d911017c592",
-            ioc_type=IOCType.HASH,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=1.0
-        )
-        self.assertIsNotNone(ioc.get_id())
-
-    def test_invalid_confidence_raises_error(self):
-        """Test invalid confidence raises ValueError"""
-        with self.assertRaises(ValueError):
-            IndicatorOfCompromise(
-                value="192.168.1.1",
-                ioc_type=IOCType.IP,
-                first_seen=datetime.now(),
-                last_seen=datetime.now(),
-                source="test",
-                confidence=1.5  # Invalid
-            )
-
-    def test_invalid_ip_format_raises_error(self):
-        """Test invalid IP format raises ValueError"""
-        with self.assertRaises(ValueError):
-            IndicatorOfCompromise(
-                value="not-an-ip",
-                ioc_type=IOCType.IP,
-                first_seen=datetime.now(),
-                last_seen=datetime.now(),
-                source="test",
-                confidence=0.9
-            )
-
-
 class TestThreatActorCampaignTracker(unittest.TestCase):
-    """Test main campaign tracker functionality"""
+    """Production-grade test suite for Threat Actor Campaign Tracker"""
 
     def setUp(self):
+        """Set up test fixtures"""
         self.tracker = ThreatActorCampaignTracker()
-
-    def test_create_campaign(self):
-        """Test campaign creation works"""
-        campaign = self.tracker.create_campaign(
-            name="Test Campaign Alpha",
-            threat_actor="APT-TEST",
-            description="Test campaign for unit testing"
+        
+        # Create test threat actor
+        self.test_actor = ThreatActor(
+            actor_id="APT-TEST-001",
+            name="Test Actor Alpha",
+            aliases=["Alpha Team", "Red Group"],
+            actor_type=ThreatActorType.NATION_STATE,
+            country_of_origin="Test Country",
+            motivations=["Espionage", "Intellectual Property Theft"],
+            first_seen=datetime(2024, 1, 1),
+            last_seen=datetime(2026, 6, 1)
         )
         
-        self.assertIsNotNone(campaign.campaign_id)
-        self.assertEqual(campaign.name, "Test Campaign Alpha")
-        self.assertEqual(campaign.threat_actor, "APT-TEST")
-        self.assertEqual(campaign.status, CampaignStatus.EMERGING)
-
-    def test_create_campaign_with_iocs(self):
-        """Test campaign creation with initial IOCs"""
-        iocs = [
-            IndicatorOfCompromise(
-                value="10.0.0.1",
-                ioc_type=IOCType.IP,
-                first_seen=datetime.now() - timedelta(days=5),
-                last_seen=datetime.now(),
-                source="test-feed",
+        # Create test indicators
+        self.test_indicators = [
+            ThreatIndicator(
+                indicator_type="ip",
+                value="192.168.1.100",
+                first_seen=datetime(2026, 1, 15),
+                last_seen=datetime(2026, 6, 15),
                 confidence=0.95,
-                ttp_tags=["T1071", "T1043"]
+                source="Threat Feed A"
+            ),
+            ThreatIndicator(
+                indicator_type="domain",
+                value="malicious-test-domain.com",
+                first_seen=datetime(2026, 2, 1),
+                last_seen=datetime(2026, 6, 10),
+                confidence=0.85,
+                source="Threat Feed B"
             )
         ]
         
-        campaign = self.tracker.create_campaign(
-            name="Campaign with IOCs",
-            threat_actor="APT-TEST",
-            initial_iocs=iocs
+        # Create test campaign
+        self.test_campaign = Campaign(
+            campaign_id="CAMP-TEST-001",
+            name="Test Campaign Omega",
+            description="Test campaign for unit testing",
+            threat_actors=["APT-TEST-001"],
+            status=CampaignStatus.ACTIVE,
+            start_date=datetime(2026, 1, 1),
+            target_sectors=["Technology", "Finance"],
+            target_regions=["North America", "Europe"],
+            tactics=[MitreTactic.INITIAL_ACCESS, MitreTactic.COMMAND_AND_CONTROL],
+            techniques=["T1566", "T1071"],
+            indicators=self.test_indicators,
+            confidence_score=0.90,
+            severity_score=8.5
         )
-        
-        self.assertEqual(len(campaign.iocs), 1)
-        self.assertIn("T1071", campaign.ttps)
 
-    def test_add_ioc_to_campaign(self):
-        """Test adding IOC to existing campaign"""
-        campaign = self.tracker.create_campaign(
-            name="Test Campaign",
-            threat_actor="APT-TEST"
+    def test_register_threat_actor(self):
+        """Test registering a new threat actor"""
+        actor_id = self.tracker.register_threat_actor(self.test_actor)
+        self.assertEqual(actor_id, "APT-TEST-001")
+        self.assertIn("APT-TEST-001", self.tracker.threat_actors)
+        
+        # Test duplicate registration raises error
+        with self.assertRaises(ValueError):
+            self.tracker.register_threat_actor(self.test_actor)
+
+    def test_register_campaign(self):
+        """Test registering a new campaign"""
+        campaign_id = self.tracker.register_campaign(self.test_campaign)
+        self.assertEqual(campaign_id, "CAMP-TEST-001")
+        self.assertIn("CAMP-TEST-001", self.tracker.campaigns)
+        
+        # Verify indices were built
+        key = "ip:192.168.1.100"
+        self.assertIn(key, self.tracker.indicator_index)
+        self.assertIn("CAMP-TEST-001", self.tracker.indicator_index[key])
+
+    def test_observe_threat_match(self):
+        """Test threat observation and campaign matching"""
+        # Register campaign first
+        self.tracker.register_campaign(self.test_campaign)
+        
+        # Create observed threat matching our indicator
+        threat = ObservedThreat(
+            threat_id="OBS-TEST-001",
+            indicator_type="ip",
+            indicator_value="192.168.1.100",
+            timestamp=datetime.now(),
+            source="Firewall Log"
         )
         
-        ioc = IndicatorOfCompromise(
-            value="evil.com",
-            ioc_type=IOCType.DOMAIN,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.8
+        matches = self.tracker.observe_threat(threat)
+        
+        # Should find a match
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0].campaign_id, "CAMP-TEST-001")
+        self.assertGreater(matches[0].match_score, 0.0)
+        self.assertGreater(matches[0].attribution_confidence, 0.0)
+        self.assertGreater(len(matches[0].recommended_actions), 0)
+
+    def test_observe_threat_no_match(self):
+        """Test threat observation with no matching campaign"""
+        self.tracker.register_campaign(self.test_campaign)
+        
+        # Create threat with unknown indicator
+        threat = ObservedThreat(
+            threat_id="OBS-TEST-002",
+            indicator_type="ip",
+            indicator_value="10.0.0.1",
+            timestamp=datetime.now(),
+            source="Firewall Log"
         )
         
-        result = self.tracker.add_ioc_to_campaign(campaign.campaign_id, ioc)
+        matches = self.tracker.observe_threat(threat)
+        self.assertEqual(len(matches), 0)
+
+    def test_add_indicator_to_campaign(self):
+        """Test adding indicator to existing campaign"""
+        self.tracker.register_campaign(self.test_campaign)
+        
+        new_indicator = ThreatIndicator(
+            indicator_type="hash",
+            value="abc123def456",
+            first_seen=datetime(2026, 6, 1),
+            last_seen=datetime(2026, 6, 20),
+            confidence=0.80,
+            source="Sandbox Analysis"
+        )
+        
+        result = self.tracker.add_indicator_to_campaign("CAMP-TEST-001", new_indicator)
         self.assertTrue(result)
-        self.assertEqual(len(campaign.iocs), 1)
-
-    def test_add_ioc_to_nonexistent_campaign_returns_false(self):
-        """Test adding IOC to non-existent campaign fails gracefully"""
-        ioc = IndicatorOfCompromise(
-            value="evil.com",
-            ioc_type=IOCType.DOMAIN,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.8
-        )
-        result = self.tracker.add_ioc_to_campaign("non-existent-id", ioc)
-        self.assertFalse(result)
-
-    def test_find_campaigns_by_ioc(self):
-        """Test finding campaigns by IOC"""
-        ioc_value = "192.168.100.100"
-        ioc = IndicatorOfCompromise(
-            value=ioc_value,
-            ioc_type=IOCType.IP,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.9
-        )
         
-        campaign = self.tracker.create_campaign(
-            name="IOC Search Test",
-            threat_actor="APT-TEST",
-            initial_iocs=[ioc]
-        )
+        # Verify indicator was added and indexed
+        campaign = self.tracker.campaigns["CAMP-TEST-001"]
+        self.assertEqual(len(campaign.indicators), 3)
         
-        found = self.tracker.find_campaigns_by_ioc(ioc_value, IOCType.IP)
-        self.assertEqual(len(found), 1)
-        self.assertEqual(found[0].campaign_id, campaign.campaign_id)
-
-    def test_find_campaigns_by_ttp(self):
-        """Test finding campaigns by TTP"""
-        ioc = IndicatorOfCompromise(
-            value="test.com",
-            ioc_type=IOCType.DOMAIN,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.9,
-            ttp_tags=["T1059", "T1027"]
-        )
-        
-        self.tracker.create_campaign(
-            name="TTP Search Test",
-            threat_actor="APT-TEST",
-            initial_iocs=[ioc]
-        )
-        
-        found = self.tracker.find_campaigns_by_ttp("T1059")
-        self.assertEqual(len(found), 1)
-
-    def test_campaign_similarity_calculation(self):
-        """Test actual similarity calculation between campaigns"""
-        # Create two campaigns with some overlap
-        shared_ttp = "T1071"
-        ioc1 = IndicatorOfCompromise(
-            value="1.1.1.1",
-            ioc_type=IOCType.IP,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.9,
-            ttp_tags=[shared_ttp, "T1043"]
-        )
-        ioc2 = IndicatorOfCompromise(
-            value="2.2.2.2",
-            ioc_type=IOCType.IP,
-            first_seen=datetime.now(),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.9,
-            ttp_tags=[shared_ttp, "T1059"]
-        )
-        
-        c1 = self.tracker.create_campaign("Campaign A", "APT-1", initial_iocs=[ioc1])
-        c2 = self.tracker.create_campaign("Campaign B", "APT-2", initial_iocs=[ioc2])
-        
-        similarity = self.tracker.calculate_campaign_similarity(c1.campaign_id, c2.campaign_id)
-        
-        self.assertIn("overall_similarity", similarity)
-        self.assertIn("ttp_similarity", similarity)
-        self.assertIn("shared_ttp_count", similarity)
-        self.assertEqual(similarity["shared_ttp_count"], 1)  # They share T1071
-        self.assertIsInstance(similarity["overall_similarity"], float)
-        self.assertTrue(0 <= similarity["overall_similarity"] <= 1)
-
-    def test_campaign_timeline_generation(self):
-        """Test timeline generation works"""
-        iocs = [
-            IndicatorOfCompromise(
-                value=f"10.0.0.{i}",
-                ioc_type=IOCType.IP,
-                first_seen=datetime.now() - timedelta(days=i),
-                last_seen=datetime.now(),
-                source="test",
-                confidence=0.9
-            )
-            for i in range(3)
-        ]
-        
-        campaign = self.tracker.create_campaign(
-            "Timeline Test",
-            "APT-TEST",
-            initial_iocs=iocs
-        )
-        
-        timeline = self.tracker.get_campaign_timeline(campaign.campaign_id)
-        self.assertEqual(len(timeline), 3)
-        self.assertIn("timestamp", timeline[0])
-        self.assertIn("ioc_value", timeline[0])
+        key = "hash:abc123def456"
+        self.assertIn("CAMP-TEST-001", self.tracker.indicator_index[key])
 
     def test_get_active_campaigns(self):
-        """Test active campaign detection"""
-        # Create campaign with recent activity
-        recent_ioc = IndicatorOfCompromise(
-            value="active.com",
-            ioc_type=IOCType.DOMAIN,
-            first_seen=datetime.now() - timedelta(days=2),
-            last_seen=datetime.now(),
-            source="test",
-            confidence=0.9
-        )
-        self.tracker.create_campaign("Active Campaign", "APT-ACTIVE", initial_iocs=[recent_ioc])
+        """Test retrieving active campaigns"""
+        self.tracker.register_campaign(self.test_campaign)
         
-        active = self.tracker.get_active_campaigns(active_window_days=30)
-        self.assertGreaterEqual(len(active), 1)
+        active = self.tracker.get_active_campaigns()
+        self.assertEqual(len(active), 1)
+        self.assertEqual(active[0].campaign_id, "CAMP-TEST-001")
 
-    def test_generate_campaign_report(self):
-        """Test campaign report generation"""
-        campaign = self.tracker.create_campaign(
-            "Report Test",
-            "APT-TEST",
-            description="Test campaign for reporting"
-        )
+    def test_get_campaigns_by_actor(self):
+        """Test retrieving campaigns by threat actor"""
+        self.tracker.register_campaign(self.test_campaign)
         
-        report = self.tracker.generate_campaign_report(campaign.campaign_id)
+        campaigns = self.tracker.get_campaigns_by_actor("APT-TEST-001")
+        self.assertEqual(len(campaigns), 1)
+        self.assertEqual(campaigns[0].campaign_id, "CAMP-TEST-001")
         
-        self.assertIn("campaign_name", report)
-        self.assertIn("threat_actor", report)
-        self.assertIn("status", report)
-        self.assertIn("duration_days", report)
-        self.assertIn("ioc_summary", report)
-        self.assertIn("ttp_count", report)
+        # Test unknown actor returns empty
+        empty = self.tracker.get_campaigns_by_actor("UNKNOWN-ACTOR")
+        self.assertEqual(len(empty), 0)
 
-    def test_export_all_data(self):
+    def test_calculate_campaign_risk_score(self):
+        """Test campaign risk score calculation"""
+        self.tracker.register_campaign(self.test_campaign)
+        
+        risk = self.tracker.calculate_campaign_risk_score("CAMP-TEST-001")
+        
+        # Verify all components exist
+        self.assertIn("composite_risk_score", risk)
+        self.assertIn("severity_component", risk)
+        self.assertIn("confidence_component", risk)
+        self.assertIn("activity_component", risk)
+        self.assertIn("overall_risk_level", risk)
+        
+        # Verify scores are in valid range
+        self.assertGreaterEqual(risk["composite_risk_score"], 0.0)
+        self.assertLessEqual(risk["composite_risk_score"], 1.0)
+        self.assertIn(risk["overall_risk_level"], ["CRITICAL", "HIGH", "MEDIUM", "LOW"])
+
+    def test_get_campaign_timeline(self):
+        """Test campaign timeline generation"""
+        self.tracker.register_campaign(self.test_campaign)
+        
+        timeline = self.tracker.get_campaign_timeline("CAMP-TEST-001")
+        
+        self.assertIn("campaign_id", timeline)
+        self.assertIn("campaign_name", timeline)
+        self.assertIn("timeline", timeline)
+        self.assertGreater(len(timeline["timeline"]), 0)
+
+    def test_generate_campaign_summary_report(self):
+        """Test summary report generation"""
+        self.tracker.register_threat_actor(self.test_actor)
+        self.tracker.register_campaign(self.test_campaign)
+        
+        report = self.tracker.generate_campaign_summary_report()
+        
+        # Verify summary fields
+        self.assertIn("summary", report)
+        self.assertEqual(report["summary"]["total_campaigns"], 1)
+        self.assertEqual(report["summary"]["active_campaigns"], 1)
+        self.assertEqual(report["summary"]["total_threat_actors"], 1)
+        
+        # Verify distributions
+        self.assertIn("campaign_status_distribution", report)
+        self.assertIn("threat_actor_type_distribution", report)
+        self.assertIn("top_targeted_sectors", report)
+
+    def test_export_data(self):
         """Test data export functionality"""
-        self.tracker.create_campaign("Export Test 1", "APT-1")
-        self.tracker.create_campaign("Export Test 2", "APT-2")
+        self.tracker.register_threat_actor(self.test_actor)
+        self.tracker.register_campaign(self.test_campaign)
         
-        export = self.tracker.export_all_data()
+        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
+            filepath = f.name
         
-        self.assertIn("total_campaigns", export)
-        self.assertIn("total_iocs_indexed", export)
-        self.assertIn("campaigns", export)
-        self.assertGreaterEqual(export["total_campaigns"], 2)
+        try:
+            result = self.tracker.export_data(filepath)
+            self.assertTrue(result)
+            
+            # Verify file exists and contains valid JSON
+            with open(filepath, 'r') as f:
+                data = json.load(f)
+            
+            self.assertIn("threat_actors", data)
+            self.assertIn("campaigns", data)
+            self.assertIn("APT-TEST-001", data["threat_actors"])
+            self.assertIn("CAMP-TEST-001", data["campaigns"])
+            
+        finally:
+            os.unlink(filepath)
 
-    def test_campaign_duration_calculation(self):
-        """Test actual duration calculation"""
-        old_ioc = IndicatorOfCompromise(
-            value="old.com",
-            ioc_type=IOCType.DOMAIN,
-            first_seen=datetime.now() - timedelta(days=10),
+    def test_campaign_duration(self):
+        """Test campaign duration calculation"""
+        duration = self.test_campaign.duration_days()
+        self.assertIsNotNone(duration)
+        self.assertGreater(duration, 0)
+
+    def test_threat_indicator_validation(self):
+        """Test threat indicator confidence validation"""
+        # Valid confidence should work
+        indicator = ThreatIndicator(
+            indicator_type="ip",
+            value="1.2.3.4",
+            first_seen=datetime.now(),
             last_seen=datetime.now(),
-            source="test",
-            confidence=0.9
+            confidence=0.5,
+            source="Test"
         )
+        self.assertEqual(indicator.confidence, 0.5)
         
-        campaign = self.tracker.create_campaign(
-            "Duration Test",
-            "APT-TEST",
-            initial_iocs=[old_ioc]
-        )
-        
-        duration = campaign.get_campaign_duration_days()
-        self.assertGreaterEqual(duration, 10)
-
-    def test_activity_velocity_calculation(self):
-        """Test activity velocity calculation"""
-        iocs = [
-            IndicatorOfCompromise(
-                value=f"recent-{i}.com",
-                ioc_type=IOCType.DOMAIN,
-                first_seen=datetime.now() - timedelta(days=i),
+        # Invalid confidence should raise error
+        with self.assertRaises(ValueError):
+            ThreatIndicator(
+                indicator_type="ip",
+                value="1.2.3.4",
+                first_seen=datetime.now(),
                 last_seen=datetime.now(),
-                source="test",
-                confidence=0.9
+                confidence=1.5,  # Invalid
+                source="Test"
             )
-            for i in range(5)
-        ]
-        
-        campaign = self.tracker.create_campaign(
-            "Velocity Test",
-            "APT-TEST",
-            initial_iocs=iocs
+
+    def test_campaign_score_clamping(self):
+        """Test campaign score auto-clamping"""
+        campaign = Campaign(
+            campaign_id="TEST-CLAMP",
+            name="Test Clamp",
+            description="Test",
+            confidence_score=2.0,  # Should clamp to 1.0
+            severity_score=15.0    # Should clamp to 10.0
         )
-        
-        velocity = campaign.get_activity_velocity(window_days=7)
-        # 5 IOCs in 7 days = ~0.714 per day
-        self.assertAlmostEqual(velocity, 5/7, places=3)
+        self.assertEqual(campaign.confidence_score, 1.0)
+        self.assertEqual(campaign.severity_score, 10.0)
 
 
-def run_tests_and_save_results():
-    """Run tests and save honest results"""
+def run_tests():
+    """Run all tests and return results"""
     loader = unittest.TestLoader()
-    suite = loader.loadTestsFromTestCase(TestIndicatorOfCompromise)
-    suite.addTests(loader.loadTestsFromTestCase(TestThreatActorCampaignTracker))
-    
+    suite = loader.loadTestsFromTestCase(TestThreatActorCampaignTracker)
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
     
-    # Save honest test results
-    test_results = {
-        "test_timestamp": datetime.now().isoformat(),
-        "module_tested": "threat_intelligence_threat_actor_campaign_tracker_2026_june",
+    return {
         "tests_run": result.testsRun,
-        "tests_failed": len(result.failures),
-        "tests_errored": len(result.errors),
-        "tests_skipped": len(result.skipped),
-        "all_passed": result.wasSuccessful(),
-        "failures": [str(f[0]) for f in result.failures],
-        "errors": [str(e[0]) for e in result.errors]
+        "failures": len(result.failures),
+        "errors": len(result.errors),
+        "success": result.wasSuccessful()
     }
-    
-    with open("test_results_threat_actor_campaign_tracker.json", "w") as f:
-        json.dump(test_results, f, indent=2)
-    
-    return result
 
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("HONEST TESTING: Threat Actor Campaign Tracker")
+    print("Threat Actor Campaign Tracker - Production Test Suite")
     print("=" * 60)
-    result = run_tests_and_save_results()
-    print("\n" + "=" * 60)
-    print(f"Tests Run: {result.testsRun}")
-    print(f"Failures: {len(result.failures)}")
-    print(f"Errors: {len(result.errors)}")
-    print(f"Success: {result.wasSuccessful()}")
+    print()
+    
+    results = run_tests()
+    
+    print()
     print("=" * 60)
+    print("TEST SUMMARY")
+    print("=" * 60)
+    print(f"Tests Run: {results['tests_run']}")
+    print(f"Failures: {results['failures']}")
+    print(f"Errors: {results['errors']}")
+    print(f"Success: {'PASS' if results['success'] else 'FAIL'}")
+    print("=" * 60)
+    
+    # Save results
+    with open("test_results_threat_actor_campaign_tracker.json", "w") as f:
+        json.dump(results, f, indent=2)
