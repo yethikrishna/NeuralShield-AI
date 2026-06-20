@@ -1,0 +1,44 @@
+{
+  "test_date": "2026-06-21",
+  "total_tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "results": [
+    {
+      "test": "test_critical_severity_cve",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_high_severity_cve",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_medium_severity_cve",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_temporal_scoring",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_vector_string_parsing",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_batch_scoring",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_cve_prioritization",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_caching",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_json_export",
+      "status": "PASSED"
+    }
+  ]
+}

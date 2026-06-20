@@ -1932,6 +1932,37 @@ __all__.extend([
     "URLClassificationResult",
     "URLFeatures"
 ])
-__version__ = "2026.6.21.0"
-__version__ = "2026.6.20.6"
+
+# Threat Intelligence CVE CVSS v3.1 Scoring Engine (June 21, 2026)
+from .threat_intelligence_cve_cvss_v31_scoring_engine_2026_june import (
+    CVSSv31Calculator,
+    AttackVector,
+    AttackComplexity,
+    PrivilegesRequired,
+    UserInteraction,
+    Scope,
+    ConfidentialityImpact,
+    IntegrityImpact,
+    AvailabilityImpact,
+    ExploitCodeMaturity,
+    RemediationLevel,
+    ReportConfidence,
+    SeverityRating
+)
+__all__.extend([
+    "CVSSv31Calculator",
+    "AttackVector",
+    "AttackComplexity",
+    "PrivilegesRequired",
+    "UserInteraction",
+    "Scope",
+    "ConfidentialityImpact",
+    "IntegrityImpact",
+    "AvailabilityImpact",
+    "ExploitCodeMaturity",
+    "RemediationLevel",
+    "ReportConfidence",
+    "SeverityRating"
+])
+__version__ = "2026.6.21.1"
 
