@@ -1,0 +1,46 @@
+{
+  "test_date": "2026-06-21 06:39:51",
+  "module": "threat_intelligence_semantic_similarity_search_engine_optimized_v3",
+  "total_tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "results": [
+    {
+      "test": "test_lru_cache_basic",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_lru_cache_ttl",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_tfidf_vectorizer",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_query_expander",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_search_engine_basic",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_search_engine_caching",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_search_engine_type_filter",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_batch_search",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_result_scoring",
+      "status": "PASSED"
+    }
+  ]
+}
