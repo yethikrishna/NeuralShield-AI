@@ -1,438 +1,383 @@
 """
 Threat Intelligence Automated Classification Engine
-June 20, 2026 - Real Production-Grade Implementation
+Production-grade implementation for NeuralShield-AI
 
-Automatically classifies threat intelligence feeds, assesses severity,
-maps to MITRE ATT&CK framework, and prioritizes threats for response.
-
-HONEST IMPLEMENTATION: Real working code, no empty shells
+Classifies threat intelligence feeds into categories:
+- MALWARE: Malicious software, ransomware, trojans, viruses
+- PHISHING: Phishing domains, fake login pages, social engineering
+- VULNERABILITY: CVEs, security advisories, patch information
+- IOC: Indicators of Compromise (IPs, domains, hashes)
+- THREAT_ACTOR: APT groups, hacker teams, campaign tracking
+- NETWORK: Network attacks, DDoS, port scanning
+- DATA_BREACH: Data leaks, credential stuffing, exfiltration
+- ZERO_DAY: Unknown vulnerabilities, exploit development
+- MISCELLANEOUS: Uncategorized threats
 """
 
 import re
-import json
 import hashlib
-from datetime import datetime
+import json
+import time
 from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, field
 from enum import Enum
+from collections import defaultdict, Counter
+import logging
 
-
-class ThreatSeverity(Enum):
-    """Standard threat severity levels"""
-    CRITICAL = "CRITICAL"
-    HIGH = "HIGH"
-    MEDIUM = "MEDIUM"
-    LOW = "LOW"
-    INFORMATIONAL = "INFORMATIONAL"
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class ThreatCategory(Enum):
-    """Standard threat categories"""
-    MALWARE = "Malware"
-    PHISHING = "Phishing"
-    RANSOMWARE = "Ransomware"
-    DATA_BREACH = "Data Breach"
-    DDOS = "DDoS"
-    SQL_INJECTION = "SQL Injection"
-    XSS = "Cross-Site Scripting"
-    CSRF = "CSRF"
-    PRIVILEGE_ESCALATION = "Privilege Escalation"
-    ZERO_DAY = "Zero-Day"
-    SUPPLY_CHAIN = "Supply Chain"
-    CREDENTIAL_STUFFING = "Credential Stuffing"
-    BRUTE_FORCE = "Brute Force"
-    UNKNOWN = "Unknown"
+    """Standard threat classification categories"""
+    MALWARE = "malware"
+    PHISHING = "phishing"
+    VULNERABILITY = "vulnerability"
+    IOC = "ioc"
+    THREAT_ACTOR = "threat_actor"
+    NETWORK = "network"
+    DATA_BREACH = "data_breach"
+    ZERO_DAY = "zero_day"
+    MISCELLANEOUS = "miscellaneous"
+
+
+class SeverityLevel(Enum):
+    """Severity classification levels"""
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    INFO = "info"
 
 
 @dataclass
-class ClassifiedThreat:
-    """Structured classified threat data"""
+class ClassificationResult:
+    """Result of threat classification"""
     threat_id: str
-    raw_content: str
     category: ThreatCategory
-    severity: ThreatSeverity
-    confidence_score: float  # 0.0 - 1.0
-    mitre_techniques: List[str]
-    iocs_extracted: Dict[str, List[str]]
-    threat_actor: Optional[str]
-    timestamp: str
-    priority_score: float
-    recommended_actions: List[str]
+    severity: SeverityLevel
+    confidence: float
+    matched_keywords: List[str]
+    extracted_iocs: Dict[str, List[str]]
+    classification_reason: str
+    processing_time_ms: float
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 
 class ThreatIntelligenceClassifier:
     """
-    Real working threat intelligence classification engine.
-    
-    Features:
-    - Pattern-based threat category detection
-    - Severity assessment with weighted scoring
-    - IOC extraction (IPs, domains, hashes, emails)
-    - MITRE ATT&CK technique mapping
-    - Confidence scoring
-    - Priority calculation
-    - Recommended response actions
+    Production-grade threat intelligence classification engine.
+    Uses pattern matching, keyword analysis, and IOC extraction.
     """
-    
-    def __init__(self):
-        # Real keyword patterns for classification
-        self.category_patterns = {
-            ThreatCategory.MALWARE: [
-                r'malware', r'virus', r'trojan', r'worm', r'ransom',
-                r'spyware', r'adware', r'rootkit', r'botnet', r'backdoor'
-            ],
-            ThreatCategory.RANSOMWARE: [
-                r'ransomware', r'encrypt', r'decrypt', r'readme',
-                r'lockbit', r'contil', r'blackcat', r'cl0p'
-            ],
-            ThreatCategory.PHISHING: [
-                r'phish', r'phishing', r'spearphish', r'whaling',
-                r'fake.*login', r'credential.*harvest'
-            ],
-            ThreatCategory.DATA_BREACH: [
-                r'data.*breach', r'leak', r'exfiltr', r'dump',
-                r'credential.*leak', r'database.*leak'
-            ],
-            ThreatCategory.DDOS: [
-                r'ddos', r'denial.*service', r'distributed.*denial',
-                r'flood.*attack', r'syn.*flood'
-            ],
-            ThreatCategory.SQL_INJECTION: [
-                r'sql.*inject', r'union.*select', r'xp_cmdshell',
-                r'orm.*inject'
-            ],
-            ThreatCategory.XSS: [
-                r'cross.*site', r'xss', r'script.*inject',
-                r'dom.*xss', r'stored.*xss'
-            ],
-            ThreatCategory.ZERO_DAY: [
-                r'zero.*day', r'0day', r'cve.*202[4-6]',
-                r'actively.*exploit', r'unpatched'
-            ],
-            ThreatCategory.SUPPLY_CHAIN: [
-                r'supply.*chain', r'software.*supply',
-                r'dependency.*attack', r'sbom', r'version.*vulnerable'
-            ],
-            ThreatCategory.CREDENTIAL_STUFFING: [
-                r'credential.*stuff', r'password.*spray',
-                r'brute.*force', r'account.*takeover'
-            ]
-        }
+
+    def __init__(self, min_confidence: float = 0.3):
+        self.min_confidence = min_confidence
+        self.classification_stats = Counter()
+        self.processed_count = 0
+        self._init_patterns()
+
+    def _init_patterns(self):
+        """Initialize classification patterns and keywords"""
         
-        # Severity keywords with weights
-        self.severity_keywords = {
-            ThreatSeverity.CRITICAL: [
-                ('critical', 1.0), ('emergency', 1.0), ('cve.*10\.0', 1.0),
-                ('mass.*exploit', 0.9), ('widespread', 0.9), ('ransomware', 0.85),
-                ('zero.*day', 0.9), ('actively.*exploited', 0.9)
-            ],
-            ThreatSeverity.HIGH: [
-                ('high', 0.7), ('important', 0.7), ('cve.*[7-9]\.\d', 0.7),
-                ('remote.*code', 0.8), ('privilege.*escalation', 0.75)
-            ],
-            ThreatSeverity.MEDIUM: [
-                ('medium', 0.5), ('moderate', 0.5), ('cve.*[4-6]\.\d', 0.5),
-                ('information.*disclosure', 0.5), ('xss', 0.45)
-            ],
-            ThreatSeverity.LOW: [
-                ('low', 0.3), ('minor', 0.3), ('cve.*[0-3]\.\d', 0.3),
-                ('best.*practice', 0.2)
-            ]
-        }
-        
-        # MITRE ATT&CK mapping patterns
-        self.mitre_mapping = {
-            'T1566': ['phish', 'spearphish', 'email'],  # Phishing
-            'T1059': ['command', 'shell', 'execute'],   # Command and Scripting Interpreter
-            'T1027': ['obfuscat', 'encrypt', 'pack'],   # Obfuscated Files or Information
-            'T1046': ['scan', 'port.*scan', 'service.*scan'],  # Network Service Scanning
-            'T1003': ['credential', 'dump', 'hash'],    # OS Credential Dumping
-            'T1055': ['inject', 'process.*inject'],     # Process Injection
-            'T1071': ['c2', 'command.*control', 'beacon'],  # Application Layer Protocol
-            'T1041': ['exfiltr', 'data.*exfil'],        # Exfiltration Over C2 Channel
-            'T1486': ['ransom', 'encrypt'],             # Data Encrypted for Impact
-            'T1490': ['wipe', 'delete', 'destruct'],    # Inhibit System Recovery
-        }
-        
-        # IOC regex patterns (real working patterns)
-        self.ioc_patterns = {
-            'ipv4': r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b',
-            'domain': r'\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}\b',
-            'md5': r'\b[a-fA-F0-9]{32}\b',
-            'sha1': r'\b[a-fA-F0-9]{40}\b',
-            'sha256': r'\b[a-fA-F0-9]{64}\b',
-            'email': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
-            'url': r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
+        # Malware patterns
+        self.malware_keywords = {
+            'malware', 'ransomware', 'trojan', 'virus', 'worm', 'botnet',
+            'spyware', 'adware', 'rootkit', 'keylogger', 'backdoor',
+            'cryptolocker', 'wannacry', 'emotet', 'trickbot', 'zeus',
+            'dridex', 'formbook', 'agenttesla', 'remcos', 'njrat',
+            'exe', 'dll', 'payload', 'infection', 'infect', 'dropper'
         }
 
-    def _generate_threat_id(self, content: str) -> str:
-        """Generate unique threat ID"""
-        content_hash = hashlib.sha256(content.encode()).hexdigest()[:12]
-        timestamp = datetime.now().strftime("%Y%m%d")
-        return f"THREAT-{timestamp}-{content_hash.upper()}"
+        # Phishing patterns
+        self.phishing_keywords = {
+            'phish', 'phishing', 'spoof', 'spoofing', 'fake login',
+            'credential harvester', 'social engineering', 'spear phish',
+            'whaling', 'vishing', 'smishing', 'lookalike', 'typosquat',
+            'brand impersonation', 'login page', 'verify account',
+            'suspicious email', 'malicious attachment'
+        }
 
-    def _extract_iocs(self, content: str) -> Dict[str, List[str]]:
-        """Extract real IOCs from content"""
-        iocs = {}
-        content_lower = content.lower()
-        
-        for ioc_type, pattern in self.ioc_patterns.items():
-            matches = re.findall(pattern, content, re.IGNORECASE)
-            if matches:
-                # Deduplicate and filter noise
-                unique_matches = list(set(m.lower() for m in matches))
-                # Filter out common false positives
-                if ioc_type == 'domain':
-                    unique_matches = [d for d in unique_matches 
-                                    if not d.endswith(('.txt', '.png', '.jpg', '.gif', '.exe'))]
-                if unique_matches:
-                    iocs[ioc_type] = unique_matches
-        
+        # Vulnerability patterns
+        self.vulnerability_keywords = {
+            'cve', 'vulnerability', 'exploit', 'patch', 'security advisory',
+            'buffer overflow', 'sql injection', 'xss', 'cross-site',
+            'remote code execution', 'rce', 'privilege escalation',
+            'authentication bypass', 'directory traversal', 'csrf',
+            'ssrf', 'deserialization', 'use-after-free', 'nvd'
+        }
+
+        # IOC patterns
+        self.ioc_keywords = {
+            'ioc', 'indicator', 'ip address', 'domain', 'hash', 'md5',
+            'sha1', 'sha256', 'url', 'malicious ip', 'malicious domain',
+            'c2', 'command and control', 'callback'
+        }
+
+        # Threat actor patterns
+        self.threat_actor_keywords = {
+            'apt', 'threat actor', 'hacking group', 'campaign', 'ta',
+            'nation state', 'financially motivated', 'espionage',
+            'lazarus', 'apt28', 'apt29', 'cozy bear', 'fancy bear',
+            'conti', 'lockbit', 'cl0p', 'ransomware gang', 'hackers'
+        }
+
+        # Network attack patterns
+        self.network_keywords = {
+            'ddos', 'denial of service', 'port scan', 'brute force',
+            'network attack', 'syn flood', 'udp flood', 'dns amplification',
+            'man-in-the-middle', 'mitm', 'arp spoofing', 'dns poisoning',
+            'traffic anomaly', 'bandwidth', 'packet'
+        }
+
+        # Data breach patterns
+        self.data_breach_keywords = {
+            'data breach', 'leak', 'leaked', 'exfiltration', 'exfiltrate',
+            'credential stuffing', 'password dump', 'database leak',
+            'personal information', 'pii', 'data exposure', 'compromised',
+            'hacked database', 'dark web'
+        }
+
+        # Zero-day patterns
+        self.zero_day_keywords = {
+            'zero day', 'zero-day', '0day', 'zeroday', 'unknown vulnerability',
+            'unpatched', 'no patch', 'no patch available', 'actively exploited', 
+            'in the wild', 'exploit development', 'proof of concept', 'poc'
+        }
+
+        # Regex patterns for IOC extraction
+        self.ipv4_pattern = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b')
+        self.domain_pattern = re.compile(
+            r'\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+'
+            r'[a-zA-Z]{2,}\b'
+        )
+        self.md5_pattern = re.compile(r'\b[a-fA-F0-9]{32}\b')
+        self.sha1_pattern = re.compile(r'\b[a-fA-F0-9]{40}\b')
+        self.sha256_pattern = re.compile(r'\b[a-fA-F0-9]{64}\b')
+        self.url_pattern = re.compile(
+            r'https?://(?:[-\w.]|%[\da-fA-F]{2})+'
+        )
+        self.cve_pattern = re.compile(r'CVE-\d{4}-\d{4,7}', re.IGNORECASE)
+
+    def _extract_iocs(self, text: str) -> Dict[str, List[str]]:
+        """Extract IOCs from threat text"""
+        iocs = {
+            'ipv4': [],
+            'domains': [],
+            'md5': [],
+            'sha1': [],
+            'sha256': [],
+            'urls': [],
+            'cves': []
+        }
+
+        # Extract IPs
+        ips = self.ipv4_pattern.findall(text)
+        iocs['ipv4'] = list(set([ip for ip in ips if not ip.startswith('192.168.') 
+                                and not ip.startswith('10.')
+                                and not ip.startswith('127.')]))
+
+        # Extract domains (basic filtering)
+        domains = self.domain_pattern.findall(text)
+        exclude_domains = {'example.com', 'localhost', 'test.com'}
+        iocs['domains'] = list(set([d.lower() for d in domains 
+                                   if d.lower() not in exclude_domains]))
+
+        # Extract hashes
+        iocs['md5'] = list(set(self.md5_pattern.findall(text)))
+        iocs['sha1'] = list(set(self.sha1_pattern.findall(text)))
+        iocs['sha256'] = list(set(self.sha256_pattern.findall(text)))
+
+        # Extract URLs
+        iocs['urls'] = list(set(self.url_pattern.findall(text)))
+
+        # Extract CVEs
+        iocs['cves'] = list(set([c.upper() for c in self.cve_pattern.findall(text)]))
+
         return iocs
 
-    def _detect_category(self, content: str) -> Tuple[ThreatCategory, float]:
-        """Detect threat category with confidence score"""
-        content_lower = content.lower()
-        category_scores = {}
-        
-        for category, patterns in self.category_patterns.items():
-            matches = 0
-            total_patterns = len(patterns)
-            for pattern in patterns:
-                if re.search(pattern, content_lower, re.IGNORECASE):
-                    matches += 1
-            if matches > 0:
-                confidence = matches / total_patterns
-                # Boost confidence for multiple matches
-                if matches >= 3:
-                    confidence = min(1.0, confidence * 1.5)
-                category_scores[category] = confidence
-        
-        if not category_scores:
-            return ThreatCategory.UNKNOWN, 0.3
-        
-        # Get best category
-        best_category = max(category_scores.keys(), key=lambda k: category_scores[k])
-        return best_category, category_scores[best_category]
+    def _calculate_category_score(self, text: str, keywords: set) -> Tuple[float, List[str]]:
+        """Calculate classification score for a category"""
+        text_lower = text.lower()
+        matched = []
+        score = 0.0
 
-    def _assess_severity(self, content: str) -> Tuple[ThreatSeverity, float]:
-        """Assess threat severity with weighted scoring"""
-        content_lower = content.lower()
-        severity_scores = {}
-        
-        for severity, keywords in self.severity_keywords.items():
-            max_score = 0.0
-            for keyword, weight in keywords:
-                if re.search(keyword, content_lower, re.IGNORECASE):
-                    max_score = max(max_score, weight)
-            if max_score > 0:
-                severity_scores[severity] = max_score
-        
-        if not severity_scores:
-            return ThreatSeverity.INFORMATIONAL, 0.2
-        
-        best_severity = max(severity_scores.keys(), key=lambda k: severity_scores[k])
-        return best_severity, severity_scores[best_severity]
+        for keyword in keywords:
+            if keyword in text_lower:
+                matched.append(keyword)
+                # Longer keywords get more weight
+                score += len(keyword) / 10.0
 
-    def _map_mitre_techniques(self, content: str) -> List[str]:
-        """Map threat to MITRE ATT&CK techniques"""
-        content_lower = content.lower()
-        techniques = []
-        
-        for technique_id, keywords in self.mitre_mapping.items():
-            for keyword in keywords:
-                if re.search(keyword, content_lower, re.IGNORECASE):
-                    techniques.append(technique_id)
-                    break
-        
-        return list(set(techniques))
+        # Bonus for multiple matches
+        if len(matched) >= 3:
+            score *= 1.5
+        elif len(matched) >= 5:
+            score *= 2.0
 
-    def _extract_threat_actor(self, content: str) -> Optional[str]:
-        """Extract threat actor if mentioned"""
-        actor_patterns = [
-            r'(?:APT|FIN|SOUR|PION|TA)[\s-]?\d{1,4}',
-            r'(?:Lapsus|Lockbit|Conti|BlackCat|Cl0p|REvil)',
-            r'(?:ransomware\s+group|threat\s+actor)\s+([A-Z][a-z]+)',
-        ]
-        
-        for pattern in actor_patterns:
-            match = re.search(pattern, content, re.IGNORECASE)
-            if match:
-                return match.group(0)
-        
-        return None
+        return min(score, 1.0), matched
 
-    def _calculate_priority(self, severity: ThreatSeverity, confidence: float) -> float:
-        """Calculate overall priority score 0-10"""
-        severity_weights = {
-            ThreatSeverity.CRITICAL: 10,
-            ThreatSeverity.HIGH: 7.5,
-            ThreatSeverity.MEDIUM: 5,
-            ThreatSeverity.LOW: 2.5,
-            ThreatSeverity.INFORMATIONAL: 1
+    def _calculate_severity(self, text: str, category: ThreatCategory) -> SeverityLevel:
+        """Calculate severity level based on content"""
+        text_lower = text.lower()
+
+        critical_keywords = {
+            'critical', 'emergency', 'massive', 'widespread', 'actively exploited',
+            'in the wild', 'zero day', 'ransomware', 'data breach', 'cve-202'
         }
-        
-        base_score = severity_weights.get(severity, 1)
-        return round(base_score * confidence, 1)
-
-    def _get_recommended_actions(self, category: ThreatCategory, severity: ThreatSeverity) -> List[str]:
-        """Get real recommended actions based on category and severity"""
-        actions = []
-        
-        # Base actions by severity
-        if severity == ThreatSeverity.CRITICAL:
-            actions.extend([
-                "Activate incident response immediately",
-                "Isolate affected systems",
-                "Notify executive management",
-                "Begin forensic investigation"
-            ])
-        elif severity == ThreatSeverity.HIGH:
-            actions.extend([
-                "Investigate within 4 hours",
-                "Apply security patches",
-                "Review affected assets"
-            ])
-        elif severity == ThreatSeverity.MEDIUM:
-            actions.extend([
-                "Investigate within 24 hours",
-                "Monitor for suspicious activity"
-            ])
-        
-        # Category-specific actions
-        category_actions = {
-            ThreatCategory.RANSOMWARE: [
-                "Verify backup integrity",
-                "Disable macro execution",
-                "Review network shares"
-            ],
-            ThreatCategory.PHISHING: [
-                "Block sender domains",
-                "User awareness training",
-                "Reset compromised credentials"
-            ],
-            ThreatCategory.DATA_BREACH: [
-                "Identify exposed data",
-                "Comply with breach notification laws",
-                "Reset affected credentials"
-            ],
-            ThreatCategory.ZERO_DAY: [
-                "Apply mitigations immediately",
-                "Monitor for exploitation",
-                "Check vendor for patches"
-            ]
+        high_keywords = {
+            'high', 'important', 'serious', 'exploit available', 'remote code',
+            'privilege escalation', 'authentication bypass'
         }
-        
-        if category in category_actions:
-            actions.extend(category_actions[category])
-        
-        return actions[:6]  # Limit to top 6 actions
+        medium_keywords = {
+            'medium', 'moderate', 'dos', 'denial of service', 'xss', 'csrf'
+        }
+        low_keywords = {
+            'low', 'minor', 'information disclosure', 'best practice'
+        }
 
-    def classify_threat(self, threat_content: str) -> ClassifiedThreat:
+        critical_count = sum(1 for k in critical_keywords if k in text_lower)
+        high_count = sum(1 for k in high_keywords if k in text_lower)
+        medium_count = sum(1 for k in medium_keywords if k in text_lower)
+        low_count = sum(1 for k in low_keywords if k in text_lower)
+
+        if critical_count > 0 or category in {ThreatCategory.ZERO_DAY, ThreatCategory.DATA_BREACH}:
+            return SeverityLevel.CRITICAL
+        elif high_count > 0 or category in {ThreatCategory.MALWARE, ThreatCategory.THREAT_ACTOR}:
+            return SeverityLevel.HIGH
+        elif medium_count > 0 or category in {ThreatCategory.VULNERABILITY}:
+            return SeverityLevel.MEDIUM
+        elif low_count > 0 or category in {ThreatCategory.IOC}:
+            return SeverityLevel.LOW
+        else:
+            return SeverityLevel.INFO
+
+    def classify(self, threat_text: str, 
+                 threat_source: str = "unknown",
+                 metadata: Optional[Dict[str, Any]] = None) -> ClassificationResult:
         """
-        Main classification method - fully working implementation
+        Classify a threat intelligence entry.
         
         Args:
-            threat_content: Raw threat intelligence text
+            threat_text: The threat description to classify
+            threat_source: Source of the threat intel
+            metadata: Additional metadata
             
         Returns:
-            ClassifiedThreat object with full analysis
+            ClassificationResult with category, severity, confidence
         """
+        start_time = time.time()
+        self.processed_count += 1
+
         # Generate threat ID
-        threat_id = self._generate_threat_id(threat_content)
-        
+        threat_id = hashlib.sha256(
+            f"{threat_text}{time.time()}".encode()
+        ).hexdigest()[:16]
+
         # Extract IOCs
-        iocs = self._extract_iocs(threat_content)
-        
-        # Detect category
-        category, category_confidence = self._detect_category(threat_content)
-        
-        # Assess severity
-        severity, severity_confidence = self._assess_severity(threat_content)
-        
-        # Overall confidence (average of category and severity)
-        overall_confidence = round((category_confidence + severity_confidence) / 2, 2)
-        
-        # Map MITRE techniques
-        mitre_techniques = self._map_mitre_techniques(threat_content)
-        
-        # Extract threat actor
-        threat_actor = self._extract_threat_actor(threat_content)
-        
-        # Calculate priority
-        priority = self._calculate_priority(severity, overall_confidence)
-        
-        # Get recommended actions
-        actions = self._get_recommended_actions(category, severity)
-        
-        return ClassifiedThreat(
+        extracted_iocs = self._extract_iocs(threat_text)
+
+        # Calculate scores for each category
+        scores = {}
+        all_matched = {}
+
+        scores[ThreatCategory.MALWARE], all_matched[ThreatCategory.MALWARE] = \
+            self._calculate_category_score(threat_text, self.malware_keywords)
+        scores[ThreatCategory.PHISHING], all_matched[ThreatCategory.PHISHING] = \
+            self._calculate_category_score(threat_text, self.phishing_keywords)
+        scores[ThreatCategory.VULNERABILITY], all_matched[ThreatCategory.VULNERABILITY] = \
+            self._calculate_category_score(threat_text, self.vulnerability_keywords)
+        scores[ThreatCategory.IOC], all_matched[ThreatCategory.IOC] = \
+            self._calculate_category_score(threat_text, self.ioc_keywords)
+        scores[ThreatCategory.THREAT_ACTOR], all_matched[ThreatCategory.THREAT_ACTOR] = \
+            self._calculate_category_score(threat_text, self.threat_actor_keywords)
+        scores[ThreatCategory.NETWORK], all_matched[ThreatCategory.NETWORK] = \
+            self._calculate_category_score(threat_text, self.network_keywords)
+        scores[ThreatCategory.DATA_BREACH], all_matched[ThreatCategory.DATA_BREACH] = \
+            self._calculate_category_score(threat_text, self.data_breach_keywords)
+        scores[ThreatCategory.ZERO_DAY], all_matched[ThreatCategory.ZERO_DAY] = \
+            self._calculate_category_score(threat_text, self.zero_day_keywords)
+
+        # Find best category
+        best_category = ThreatCategory.MISCELLANEOUS
+        best_score = self.min_confidence
+        best_matched = []
+
+        for category, score in scores.items():
+            if score > best_score:
+                best_score = score
+                best_category = category
+                best_matched = all_matched[category]
+
+        # Calculate severity
+        severity = self._calculate_severity(threat_text, best_category)
+
+        # Build classification reason
+        if best_matched:
+            reason = f"Matched keywords: {', '.join(best_matched[:5])}"
+        else:
+            reason = "No strong classification signals, defaulting to miscellaneous"
+
+        processing_time = (time.time() - start_time) * 1000
+
+        # Update stats
+        self.classification_stats[best_category.value] += 1
+
+        result_metadata = metadata or {}
+        result_metadata.update({
+            'source': threat_source,
+            'all_scores': {k.value: v for k, v in scores.items()},
+            'ioc_count': sum(len(v) for v in extracted_iocs.values())
+        })
+
+        return ClassificationResult(
             threat_id=threat_id,
-            raw_content=threat_content[:500],  # Truncate for storage
-            category=category,
+            category=best_category,
             severity=severity,
-            confidence_score=overall_confidence,
-            mitre_techniques=mitre_techniques,
-            iocs_extracted=iocs,
-            threat_actor=threat_actor,
-            timestamp=datetime.now().isoformat(),
-            priority_score=priority,
-            recommended_actions=actions
+            confidence=round(best_score, 3),
+            matched_keywords=best_matched,
+            extracted_iocs=extracted_iocs,
+            classification_reason=reason,
+            processing_time_ms=round(processing_time, 2),
+            metadata=result_metadata
         )
 
-    def batch_classify(self, threat_list: List[str]) -> List[ClassifiedThreat]:
+    def batch_classify(self, threats: List[Tuple[str, str]], 
+                       metadata: Optional[Dict[str, Any]] = None) -> List[ClassificationResult]:
         """Classify multiple threats in batch"""
-        return [self.classify_threat(threat) for threat in threat_list]
+        results = []
+        for threat_text, source in threats:
+            result = self.classify(threat_text, source, metadata)
+            results.append(result)
+        return results
 
-    def to_dict(self, classified: ClassifiedThreat) -> Dict[str, Any]:
-        """Convert to serializable dictionary"""
-        result = asdict(classified)
-        result['category'] = classified.category.value
-        result['severity'] = classified.severity.value
-        return result
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get classification statistics"""
+        return {
+            'total_processed': self.processed_count,
+            'category_distribution': dict(self.classification_stats),
+            'min_confidence_threshold': self.min_confidence
+        }
 
-    def to_json(self, classified: ClassifiedThreat) -> str:
-        """Convert to JSON string"""
-        return json.dumps(self.to_dict(classified), indent=2)
+    def export_results_json(self, results: List[ClassificationResult]) -> str:
+        """Export classification results to JSON"""
+        export_data = []
+        for r in results:
+            export_data.append({
+                'threat_id': r.threat_id,
+                'category': r.category.value,
+                'severity': r.severity.value,
+                'confidence': r.confidence,
+                'matched_keywords': r.matched_keywords,
+                'extracted_iocs': r.extracted_iocs,
+                'reason': r.classification_reason,
+                'processing_time_ms': r.processing_time_ms
+            })
+        return json.dumps(export_data, indent=2)
 
 
-# Example usage and self-test
-if __name__ == "__main__":
-    print("=" * 60)
-    print("Threat Intelligence Classification Engine - Self Test")
-    print("=" * 60)
-    
-    classifier = ThreatIntelligenceClassifier()
-    
-    # Real test cases
-    test_threats = [
-        """CRITICAL: New LockBit 3.0 ransomware campaign detected. 
-        IP: 192.168.1.100, Domain: malicious-ransom.com
-        SHA256: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
-        Actively exploiting CVE-2024-1234 with CVSS 9.8. Mass exploitation observed.""",
-        
-        """New phishing campaign targeting healthcare organizations.
-        Email: attacker@phish-domain.com, URL: http://fake-login-hospital.com
-        Harvesting credentials via fake login pages. MITRE T1566 observed.""",
-        
-        """Security advisory: Medium severity XSS vulnerability in web application.
-        Affects versions 2.1.0 through 2.3.5. Patch available."""
-    ]
-    
-    print(f"\nProcessing {len(test_threats)} test threats...\n")
-    
-    for i, threat in enumerate(test_threats, 1):
-        result = classifier.classify_threat(threat)
-        print(f"--- Threat {i} ---")
-        print(f"ID: {result.threat_id}")
-        print(f"Category: {result.category.value}")
-        print(f"Severity: {result.severity.value}")
-        print(f"Confidence: {result.confidence_score}")
-        print(f"Priority: {result.priority_score}/10")
-        print(f"MITRE Techniques: {result.mitre_techniques}")
-        print(f"IOCs Found: {list(result.iocs_extracted.keys())}")
-        if result.threat_actor:
-            print(f"Threat Actor: {result.threat_actor}")
-        print(f"Actions: {len(result.recommended_actions)} recommended")
-        print()
-    
-    print("✓ SELF TEST COMPLETED - ALL FEATURES WORKING")
+# Export main class
+__all__ = [
+    'ThreatIntelligenceClassifier',
+    'ClassificationResult',
+    'ThreatCategory',
+    'SeverityLevel'
+]
