@@ -1,0 +1,38 @@
+{
+  "test_date": "2026-06-21 22:25:08",
+  "total_tests": 6,
+  "passed": 6,
+  "failed": 0,
+  "results": [
+    {
+      "test": "test_entity_normalization",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "test_similarity_clustering",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "test_full_deduplication_pipeline",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "test_empty_input",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "test_single_alert",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "test_time_window_isolation",
+      "passed": true,
+      "error": null
+    }
+  ]
+}

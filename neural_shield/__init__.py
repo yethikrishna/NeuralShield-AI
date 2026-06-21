@@ -2098,3 +2098,33 @@ __all__.extend([
 ])
 __version__ = "2026.6.21.60"
 
+
+# Threat Intelligence Alert Deduplication v6 (June 21, 2026 Production Release)
+# HDBSCAN clustering + context similarity for advanced alert deduplication
+from .threat_intelligence_alert_deduplication_context_similarity_v6_2026_june import (
+    AlertDeduplicationEngineV6,
+    Alert,
+    AlertEntity,
+    AlertCluster,
+    DeduplicationResult,
+    EntityType,
+    SimilarityMethod,
+    EntityNormalizer,
+    SimplifiedHDBSCAN,
+    create_alert_deduplicator,
+    verify_deduplicator
+)
+__all__.extend([
+    "AlertDeduplicationEngineV6",
+    "Alert",
+    "AlertEntity",
+    "AlertCluster",
+    "DeduplicationResult",
+    "EntityType",
+    "SimilarityMethod",
+    "EntityNormalizer",
+    "SimplifiedHDBSCAN",
+    "create_alert_deduplicator",
+    "verify_deduplicator"
+])
+__version__ = "2026.6.21.61"
