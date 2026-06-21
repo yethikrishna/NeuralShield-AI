@@ -2127,14 +2127,6 @@ __all__.extend([
     "create_alert_deduplicator",
     "verify_deduplicator"
 ])
-    "EntityNormalizer",
-    "SimplifiedHDBSCAN",
-    "create_alert_deduplicator",
-    "verify_deduplicator"
-])
-__version__ = "2026.6.21.61"
-
-
 # Malware Hash Reputation Checker (June 22, 2026 Production Release)
 # Validates file hashes against known malware threat intelligence databases
 from .malware_hash_reputation_checker_2026_june import (
