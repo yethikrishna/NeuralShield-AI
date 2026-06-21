@@ -1,0 +1,625 @@
+{
+  "generated_at": "2026-06-21T06:06:59.886545",
+  "version": "v3",
+  "summary": {
+    "total_detections": 60,
+    "techniques_observed": 8,
+    "threat_actors": 2
+  },
+  "heatmap_data": {
+    "Reconnaissance": [
+      {
+        "technique_id": "T1595",
+        "technique_name": "Active Scanning",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1592",
+        "technique_name": "Gather Victim Host Information",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1591",
+        "technique_name": "Gather Victim Org Information",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1593",
+        "technique_name": "Search Open Technical Databases",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1598",
+        "technique_name": "Phishing for Information",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Initial Access": [
+      {
+        "technique_id": "T1566",
+        "technique_name": "Phishing",
+        "count": 15,
+        "severity": "Critical",
+        "trend_percent": 50.0,
+        "threat_actors": [
+          "APT29"
+        ]
+      },
+      {
+        "technique_id": "T1190",
+        "technique_name": "Exploit Public-Facing Application",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1200",
+        "technique_name": "Hardware Additions",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1091",
+        "technique_name": "Replication Through Removable Media",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1133",
+        "technique_name": "External Remote Services",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1078",
+        "technique_name": "Valid Accounts",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Execution": [
+      {
+        "technique_id": "T1059",
+        "technique_name": "Command and Scripting Interpreter",
+        "count": 8,
+        "severity": "High",
+        "trend_percent": 60.0,
+        "threat_actors": [
+          "APT29"
+        ]
+      },
+      {
+        "technique_id": "T1053",
+        "technique_name": "Scheduled Task/Job",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1204",
+        "technique_name": "User Execution",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1072",
+        "technique_name": "Software Deployment Tools",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1559",
+        "technique_name": "Inter-Process Communication",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1047",
+        "technique_name": "Windows Management Instrumentation",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Persistence": [
+      {
+        "technique_id": "T1547",
+        "technique_name": "Boot or Logon Autostart Execution",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1037",
+        "technique_name": "Boot or Logon Initialization Scripts",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1546",
+        "technique_name": "Event Triggered Execution",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1136",
+        "technique_name": "Create Account",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1098",
+        "technique_name": "Account Manipulation",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Privilege Escalation": [
+      {
+        "technique_id": "T1548",
+        "technique_name": "Abuse Elevation Control Mechanism",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1547",
+        "technique_name": "Boot or Logon Autostart Execution",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1068",
+        "technique_name": "Exploitation for Privilege Escalation",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1055",
+        "technique_name": "Process Injection",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1037",
+        "technique_name": "Boot or Logon Initialization Scripts",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Defense Evasion": [
+      {
+        "technique_id": "T1562",
+        "technique_name": "Impair Defenses",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1070",
+        "technique_name": "Indicator Removal",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1027",
+        "technique_name": "Obfuscated Files or Information",
+        "count": 12,
+        "severity": "Critical",
+        "trend_percent": -20.0,
+        "threat_actors": [
+          "APT28"
+        ]
+      },
+      {
+        "technique_id": "T1055",
+        "technique_name": "Process Injection",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1202",
+        "technique_name": "Indirect Command Execution",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1497",
+        "technique_name": "Virtualization/Sandbox Evasion",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Credential Access": [
+      {
+        "technique_id": "T1555",
+        "technique_name": "Credentials from Password Stores",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1056",
+        "technique_name": "Input Capture",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1110",
+        "technique_name": "Brute Force",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1556",
+        "technique_name": "Modify Authentication Process",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1003",
+        "technique_name": "OS Credential Dumping",
+        "count": 6,
+        "severity": "High",
+        "trend_percent": 100.0,
+        "threat_actors": [
+          "APT28"
+        ]
+      },
+      {
+        "technique_id": "T1558",
+        "technique_name": "Steal or Forge Kerberos Tickets",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Discovery": [
+      {
+        "technique_id": "T1087",
+        "technique_name": "Account Discovery",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1069",
+        "technique_name": "Permission Groups Discovery",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1083",
+        "technique_name": "File and Directory Discovery",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1046",
+        "technique_name": "Network Service Scanning",
+        "count": 3,
+        "severity": "Medium",
+        "trend_percent": 100.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1049",
+        "technique_name": "System Network Connections Discovery",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1082",
+        "technique_name": "System Information Discovery",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Lateral Movement": [
+      {
+        "technique_id": "T1021",
+        "technique_name": "Remote Services",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1075",
+        "technique_name": "Pass the Hash",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1550",
+        "technique_name": "Use Alternate Authentication Material",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1080",
+        "technique_name": "Data Staged",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1210",
+        "technique_name": "Exploitation of Remote Services",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Collection": [
+      {
+        "technique_id": "T1560",
+        "technique_name": "Archive Collected Data",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1114",
+        "technique_name": "Email Collection",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1056",
+        "technique_name": "Input Capture",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1113",
+        "technique_name": "Screen Capture",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1005",
+        "technique_name": "Data from Local System",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Command and Control": [
+      {
+        "technique_id": "T1071",
+        "technique_name": "Application Layer Protocol",
+        "count": 9,
+        "severity": "High",
+        "trend_percent": 100.0,
+        "threat_actors": [
+          "APT29"
+        ]
+      },
+      {
+        "technique_id": "T1095",
+        "technique_name": "Non-Application Layer Protocol",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1573",
+        "technique_name": "Encrypted Channel",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1090",
+        "technique_name": "Proxy",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1105",
+        "technique_name": "Ingress Tool Transfer",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1571",
+        "technique_name": "Non-Standard Port",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Exfiltration": [
+      {
+        "technique_id": "T1041",
+        "technique_name": "Exfiltration Over C2 Channel",
+        "count": 5,
+        "severity": "High",
+        "trend_percent": 100.0,
+        "threat_actors": [
+          "APT28"
+        ]
+      },
+      {
+        "technique_id": "T1048",
+        "technique_name": "Exfiltration Over Alternative Protocol",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1052",
+        "technique_name": "Exfiltration Over Physical Medium",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1567",
+        "technique_name": "Exfiltration Over Web Service",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1030",
+        "technique_name": "Data Transfer Size Limits",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ],
+    "Impact": [
+      {
+        "technique_id": "T1498",
+        "technique_name": "Network Denial of Service",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1499",
+        "technique_name": "Endpoint Denial of Service",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1486",
+        "technique_name": "Data Encrypted for Impact",
+        "count": 2,
+        "severity": "Medium",
+        "trend_percent": 100.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1485",
+        "technique_name": "Data Destruction",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1490",
+        "technique_name": "Inhibit System Recovery",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      },
+      {
+        "technique_id": "T1565",
+        "technique_name": "Data Manipulation",
+        "count": 0,
+        "severity": "None",
+        "trend_percent": 0.0,
+        "threat_actors": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "test_status": "PASSED",
+  "performance": {
+    "test_size": 1000,
+    "unique_found": 6,
+    "processing_time_ms": 78.57632637023926,
+    "throughput_iocs_per_sec": 12726.479414272408
+  },
+  "timestamp": "2026-06-21 11:21:18"
+}
