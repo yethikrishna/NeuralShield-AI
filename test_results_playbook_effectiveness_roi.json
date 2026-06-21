@@ -1,0 +1,8 @@
+{
+  "test_module": "playbook_effectiveness_roi_calculator",
+  "timestamp": "2026-06-21T02:18:51.108034",
+  "total_tests": 6,
+  "passed": 5,
+  "failed": 1,
+  "success_rate": 83.3
+}
