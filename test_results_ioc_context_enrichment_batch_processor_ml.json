@@ -1,0 +1,15 @@
+{
+  "test_results": {
+    "test1_single_ioc": "PASSED",
+    "test2_whitelist": "PASSED",
+    "test3_domain": "PASSED",
+    "test4_batch": "PASSED",
+    "test5_cache": "PASSED",
+    "test6_ml_scoring": "PASSED",
+    "test7_tor_vpn": "PASSED",
+    "test8_hash_types": "PASSED"
+  },
+  "all_passed": true,
+  "timestamp": 1781999806.3009365,
+  "engine": "IOCContextEnrichmentEngine"
+}
