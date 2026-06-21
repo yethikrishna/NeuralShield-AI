@@ -1943,5 +1943,23 @@ __all__.extend([
     "ReportConfidence",
     "SeverityRating"
 ])
-__version__ = "2026.6.21.1"
+# Threat Intelligence Semantic Similarity Search Engine v5 (June 21, 2026)
+from .threat_intelligence_semantic_similarity_search_engine_v5_2026_june import (
+    ThreatIntelligenceSemanticSimilaritySearchV5,
+    LRUTieredCache,
+    NGramTokenizer,
+    TFIDFCalculator,
+    cosine_similarity,
+    SAMPLE_IOC_DATASET
+)
+__all__.extend([
+    "ThreatIntelligenceSemanticSimilaritySearchV5",
+    "LRUTieredCache",
+    "NGramTokenizer",
+    "TFIDFCalculator",
+    "cosine_similarity",
+    "SAMPLE_IOC_DATASET"
+])
+
+__version__ = "2026.6.21.2"
 

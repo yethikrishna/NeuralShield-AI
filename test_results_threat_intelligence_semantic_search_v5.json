@@ -1,0 +1,16 @@
+{
+  "test_timestamp": "2026-06-21 12:17:16",
+  "all_tests_passed": true,
+  "results": {
+    "cache": "PASSED",
+    "tokenizer": "PASSED",
+    "tfidf": "PASSED",
+    "similarity": "PASSED",
+    "search_engine": "PASSED",
+    "sample_results": {
+      "malware_top_match": "http://malicious-site.com/payload.exe",
+      "total_iocs_indexed": 10
+    }
+  },
+  "engine_version": "v5"
+}
