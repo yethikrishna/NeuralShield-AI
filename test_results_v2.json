@@ -1,0 +1,71 @@
+{
+  "test_timestamp": 1782062466.4801779,
+  "module": "NeuralShield-AI",
+  "feature": "SemanticSearchCachePrefetcherEnhancedV2",
+  "all_tests_passed": true,
+  "checks": [
+    [
+      "256D embeddings",
+      true
+    ],
+    [
+      "BM25 computes score",
+      true
+    ],
+    [
+      "Cosine similarity works",
+      true
+    ],
+    [
+      "Candidates generated",
+      true
+    ],
+    [
+      "Prefetch works",
+      true
+    ],
+    [
+      "Metrics available",
+      true
+    ],
+    [
+      "Vocabulary built",
+      true
+    ]
+  ],
+  "metrics": {
+    "core_metrics": {
+      "cache_hit_rate": 0.2,
+      "total_queries_embedded": 20,
+      "vocabulary_size": 57,
+      "clusters_formed": 20,
+      "unique_queries_tracked": 20,
+      "cache_size": 11
+    },
+    "prefetch_metrics": {
+      "total_prefetch_attempts": 11,
+      "successful_prefetches": 11,
+      "cross_cluster_correlations": 0,
+      "adaptive_adjustments_made": 3,
+      "current_adaptive_prefetch_count": 11
+    },
+    "configuration": {
+      "embedding_dimensions": 256,
+      "bm25_weight": 0.4,
+      "similarity_threshold": 0.35,
+      "decay_half_life_hours": 24.0
+    },
+    "similarity_distribution": {
+      "0.3": 12,
+      "0.2": 24
+    }
+  },
+  "candidates_count": 11,
+  "prefetched_count": 11,
+  "limitations": [
+    "Uses TF-IDF/BM25, not transformer embeddings (production-friendly)",
+    "Cold start period (~20 queries for vocabulary)",
+    "BM25 tuned for security queries only",
+    "Cross-cluster O(n\u00b2) limited to top 100 queries"
+  ]
+}
