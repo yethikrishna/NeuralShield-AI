@@ -1,0 +1,59 @@
+{
+  "module": "adversarial_prompt_gradient_anomaly_detector_v2_2026_june",
+  "timestamp": 1782052155.8088582,
+  "all_passed": true,
+  "passed_count": 10,
+  "total_tests": 10,
+  "test_results": [
+    {
+      "test": "normal_prompt",
+      "passed": true,
+      "score": 0.5200676403995517
+    },
+    {
+      "test": "repetitive_injection",
+      "passed": true,
+      "score": 0.5373038558103285
+    },
+    {
+      "test": "char_distribution_anomaly",
+      "passed": true,
+      "score": 0.575
+    },
+    {
+      "test": "special_char_flood",
+      "passed": true,
+      "score": 0.5853626277174988
+    },
+    {
+      "test": "empty_input",
+      "passed": true,
+      "score": 0.0
+    },
+    {
+      "test": "batch_detection",
+      "passed": true,
+      "score": 0.5569656074481382
+    },
+    {
+      "test": "gradient_magnitude",
+      "passed": true,
+      "score": 0.8649999999999999
+    },
+    {
+      "test": "risk_level",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "test": "serialization",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "test": "performance",
+      "passed": true,
+      "score": 0.05324602127075195
+    }
+  ]
+}
