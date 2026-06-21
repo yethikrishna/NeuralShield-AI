@@ -1,0 +1,46 @@
+{
+  "tests_passed": 10,
+  "tests_failed": 0,
+  "test_details": [
+    {
+      "test": "Initialization",
+      "status": "PASSED"
+    },
+    {
+      "test": "Add Detections",
+      "status": "PASSED"
+    },
+    {
+      "test": "Coverage Scoring",
+      "status": "PASSED"
+    },
+    {
+      "test": "Detection Rules",
+      "status": "PASSED"
+    },
+    {
+      "test": "Tactic Coverage",
+      "status": "PASSED"
+    },
+    {
+      "test": "Coverage Gaps",
+      "status": "PASSED"
+    },
+    {
+      "test": "Mermaid Visualization",
+      "status": "PASSED"
+    },
+    {
+      "test": "Executive Summary",
+      "status": "PASSED"
+    },
+    {
+      "test": "HTML Dashboard",
+      "status": "PASSED"
+    },
+    {
+      "test": "JSON Export",
+      "status": "PASSED"
+    }
+  ]
+}
