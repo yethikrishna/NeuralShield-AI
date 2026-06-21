@@ -1,0 +1,9 @@
+{
+  "test_suite": "threat_intelligence_context_enricher_v72",
+  "version": "v72",
+  "total_tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "success_rate": "100.0%",
+  "timestamp": "2026-06-21T19:18:02.585301"
+}
