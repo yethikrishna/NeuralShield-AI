@@ -1,0 +1,40 @@
+{
+  "test_timestamp": 1782047939.94786,
+  "engine_version": "v63",
+  "tests_run": [
+    {
+      "name": "Bloom Filter",
+      "passed": true
+    },
+    {
+      "name": "TF-IDF Similarity",
+      "passed": true
+    },
+    {
+      "name": "MITRE Mapper",
+      "passed": true
+    },
+    {
+      "name": "Context Enricher",
+      "passed": true
+    },
+    {
+      "name": "Full Correlator Pipeline",
+      "passed": true
+    },
+    {
+      "name": "Adaptive Time Window",
+      "passed": true
+    },
+    {
+      "name": "Bayesian FP Calculation",
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "summary": {
+    "passed": 7,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}
