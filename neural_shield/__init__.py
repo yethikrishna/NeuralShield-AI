@@ -2065,3 +2065,36 @@ __all__.extend([
 ])
 __version__ = "2026.6.21.57"
 __version__ = "2026.6.21.59"
+
+# Threat Intelligence Feed Aggregator & Normalizer v1 (June 21, 2026 Production Release)
+# Multi-source threat feed aggregation, deduplication, and STIX 2.1 normalization
+from .threat_intelligence_feed_aggregator_normalizer_v1_2026_june import (
+    IOCTYPE,
+    ThreatSeverity,
+    ThreatType,
+    FeedSource,
+    FeedSourceConfig,
+    RawIndicator,
+    NormalizedIndicator,
+    FeedHealthMetrics,
+    AggregationResult,
+    ThreatFeedAggregator,
+    create_threat_feed_aggregator,
+    verify_threat_feed_aggregator
+)
+__all__.extend([
+    "IOCTYPE",
+    "ThreatSeverity",
+    "ThreatType",
+    "FeedSource",
+    "FeedSourceConfig",
+    "RawIndicator",
+    "NormalizedIndicator",
+    "FeedHealthMetrics",
+    "AggregationResult",
+    "ThreatFeedAggregator",
+    "create_threat_feed_aggregator",
+    "verify_threat_feed_aggregator"
+])
+__version__ = "2026.6.21.60"
+
