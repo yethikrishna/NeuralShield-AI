@@ -1,0 +1,9 @@
+{
+  "test_module": "threat_intelligence_hunting_query_result_relevance_ranker",
+  "total_tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "success_rate": 1.0,
+  "timestamp": "2026-06-21T03:06:12.382369",
+  "honest_testing": true
+}
