@@ -1,0 +1,8 @@
+{
+  "tests_run": 19,
+  "failures": 0,
+  "errors": 0,
+  "success": true,
+  "timestamp": "2026-06-21 23:45:16.510163",
+  "module": "threat_intelligence_feed_aggregator_bloom_filter_2026_june"
+}
