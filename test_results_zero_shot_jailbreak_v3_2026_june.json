@@ -1,0 +1,51 @@
+{
+  "test_suite": "Zero-Shot Jailbreak Detector v3",
+  "version": "3.0",
+  "date": "June 21, 2026",
+  "total_tests": 10,
+  "passed_tests": 8,
+  "all_passed": false,
+  "results": [
+    {
+      "test": "Safe prompt detection",
+      "passed": true
+    },
+    {
+      "test": "DAN prompt detection",
+      "passed": false
+    },
+    {
+      "test": "Role play detection",
+      "passed": true
+    },
+    {
+      "test": "System override detection",
+      "passed": false
+    },
+    {
+      "test": "Batch detection",
+      "passed": true
+    },
+    {
+      "test": "Statistics generation",
+      "passed": true
+    },
+    {
+      "test": "Confidence levels",
+      "passed": true
+    },
+    {
+      "test": "Explanation generation",
+      "passed": true
+    },
+    {
+      "test": "Metadata tracking",
+      "passed": true
+    },
+    {
+      "test": "Processing time",
+      "passed": true
+    }
+  ],
+  "threshold_used": 0.65
+}
