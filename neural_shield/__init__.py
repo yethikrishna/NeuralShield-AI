@@ -2048,4 +2048,20 @@ __all__.extend([
     "create_ip_enrichment_engine",
     "verify_enrichment_engine"
 ])
+# + Context-Aware Alert Deduplication Engine v5 (June 21, 2026)
+from .threat_intelligence_alert_deduplication_context_similarity_v5_2026_june import (
+    Alert,
+    TextSimilarityScorer,
+    IOCExtractor,
+    BloomFilter,
+    ContextAwareDeduplicationEngineV5
+)
+__all__.extend([
+    "Alert",
+    "TextSimilarityScorer",
+    "IOCExtractor",
+    "BloomFilter",
+    "ContextAwareDeduplicationEngineV5"
+])
+__version__ = "2026.6.21.57"
 __version__ = "2026.6.21.59"

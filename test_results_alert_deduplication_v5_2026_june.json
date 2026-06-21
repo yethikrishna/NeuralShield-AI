@@ -1,0 +1,37 @@
+{
+  "test_suite": "ContextAwareDeduplicationEngineV5",
+  "timestamp": 1782031413.2462463,
+  "passed": 7,
+  "failed": 0,
+  "total": 7,
+  "results": [
+    {
+      "test": "test_text_similarity_scorer",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_ioc_extractor",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_bloom_filter",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_alert_dataclass",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_deduplication_engine_basic",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_deduplication_batch",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_statistics",
+      "status": "PASSED"
+    }
+  ]
+}
