@@ -1,0 +1,38 @@
+{
+  "test_suite": "ThreatIntelligenceContextEnricherV71",
+  "version": "v71",
+  "timestamp": "2026-06-21T19:13:26.358668",
+  "passed": 7,
+  "failed": 0,
+  "total": 7,
+  "results": [
+    {
+      "test": "test_basic_enrichment",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_deduplication",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_false_positive_detection",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_threat_reputation",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_batch_processing",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_correlation_groups",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_statistics",
+      "status": "PASSED"
+    }
+  ]
+}
