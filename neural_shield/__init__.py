@@ -2127,6 +2127,11 @@ __all__.extend([
     "create_alert_deduplicator",
     "verify_deduplicator"
 ])
+    "EntityNormalizer",
+    "SimplifiedHDBSCAN",
+    "create_alert_deduplicator",
+    "verify_deduplicator"
+])
 __version__ = "2026.6.21.61"
 
 
@@ -2152,5 +2157,29 @@ __all__.extend([
     "create_hash_checker",
     "verify_hash_checker"
 ])
-__version__ = "2026.6.22.1"
+
+"""
++ Observability Engine (June 22, 2026) - Add-only logging and metrics layer
+"""
+from .observability_engine_2026_june import (
+    ObservabilityState,
+    observe,
+    observe_class,
+    MetricsReporter,
+    enable_observability,
+    disable_observability,
+    get_observability_metrics,
+    reset_observability_metrics,
+)
+__all__.extend([
+    "ObservabilityState",
+    "observe",
+    "observe_class",
+    "MetricsReporter",
+    "enable_observability",
+    "disable_observability",
+    "get_observability_metrics",
+    "reset_observability_metrics",
+])
+__version__ = "2026.6.22.2"
 
