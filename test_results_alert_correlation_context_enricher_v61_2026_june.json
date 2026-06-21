@@ -1,0 +1,31 @@
+{
+  "test_version": "v61",
+  "test_date": "2026-06-21T19:53:31.257219",
+  "session": "61",
+  "results": {
+    "tests_passed": 6,
+    "tests_failed": 0,
+    "test_cases": [],
+    "v61_new_features": {
+      "false_positive_suppression": "WORKING",
+      "threat_attribution": "WORKING",
+      "campaign_detection": "WORKING"
+    },
+    "honest_limitations": [
+      "Threat actor attribution is TTP-based only (no external threat intel feeds)",
+      "False positive suppression uses pattern matching (no ML model training)",
+      "Campaign detection requires 3+ correlated alerts with kill chain progression",
+      "Whitelist patterns are static (configurable but not auto-learning)",
+      "IOC extraction uses regex only (no NLP or advanced parsing)",
+      "All processing is in-memory only (no persistence layer)"
+    ]
+  },
+  "honest_limitations": [
+    "Threat actor attribution is TTP-based only (no external threat intel feeds)",
+    "False positive suppression uses pattern matching (no ML model training)",
+    "Campaign detection requires 3+ correlated alerts with kill chain progression",
+    "Whitelist patterns are static (configurable but not auto-learning)",
+    "IOC extraction uses regex only (no NLP or advanced parsing)",
+    "All processing is in-memory only (no persistence layer)"
+  ]
+}
