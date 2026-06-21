@@ -1986,3 +1986,27 @@ __all__.extend([
 ])
 
 __version__ = "2026.6.21.55"
+
+# + Automated False Positive Classifier Transformer V11 (June 21, 2026)
+from .threat_intelligence_automated_false_positive_classifier_transformer_v11_2026_june import (
+    FalsePositiveClassifierV11,
+    AlertFeatures,
+    AlertSeverity,
+    AlertType,
+    ClassificationResult,
+    PlattScaler,
+    TransformerFeatureAttention,
+    create_fp_classifier_v11,
+    verify_fp_classifier_v11
+)
+__all__.extend([
+    "FalsePositiveClassifierV11",
+    "AlertFeatures",
+    "AlertSeverity",
+    "AlertType",
+    "ClassificationResult",
+    "PlattScaler",
+    "TransformerFeatureAttention",
+    "create_fp_classifier_v11",
+    "verify_fp_classifier_v11"
+])
