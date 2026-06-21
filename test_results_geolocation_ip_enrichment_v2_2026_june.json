@@ -1,0 +1,221 @@
+{
+  "test_suite": "Geolocation IP Enrichment Engine v2",
+  "date": "2026-06-21",
+  "tests_passed": 22,
+  "tests_failed": 0,
+  "test_cases": [
+    {
+      "test": "validation_8.8.8.8",
+      "passed": true,
+      "expected": {
+        "valid": true,
+        "type": "ipv4"
+      },
+      "actual": {
+        "valid": true,
+        "type": "ipv4"
+      }
+    },
+    {
+      "test": "validation_2001:4860:4860::8888",
+      "passed": true,
+      "expected": {
+        "valid": true,
+        "type": "ipv6"
+      },
+      "actual": {
+        "valid": true,
+        "type": "ipv6"
+      }
+    },
+    {
+      "test": "validation_192.168.1.1",
+      "passed": true,
+      "expected": {
+        "valid": true,
+        "type": "ipv4"
+      },
+      "actual": {
+        "valid": true,
+        "type": "ipv4"
+      }
+    },
+    {
+      "test": "validation_invalid",
+      "passed": true,
+      "expected": {
+        "valid": false,
+        "type": "invalid"
+      },
+      "actual": {
+        "valid": false,
+        "type": "invalid"
+      }
+    },
+    {
+      "test": "validation_256.256.256.256",
+      "passed": true,
+      "expected": {
+        "valid": false,
+        "type": "invalid"
+      },
+      "actual": {
+        "valid": false,
+        "type": "invalid"
+      }
+    },
+    {
+      "test": "validation_",
+      "passed": true,
+      "expected": {
+        "valid": false,
+        "type": "invalid"
+      },
+      "actual": {
+        "valid": false,
+        "type": "invalid"
+      }
+    },
+    {
+      "test": "private_192.168.1.1",
+      "passed": true,
+      "expected": true,
+      "actual": true
+    },
+    {
+      "test": "private_10.0.0.1",
+      "passed": true,
+      "expected": true,
+      "actual": true
+    },
+    {
+      "test": "private_172.16.0.1",
+      "passed": true,
+      "expected": true,
+      "actual": true
+    },
+    {
+      "test": "private_127.0.0.1",
+      "passed": true,
+      "expected": true,
+      "actual": true
+    },
+    {
+      "test": "threat_score_8.8.8.8",
+      "passed": true,
+      "expected": "0-100",
+      "actual": 0.0
+    },
+    {
+      "test": "threat_score_192.168.1.1",
+      "passed": true,
+      "expected": "0-100",
+      "actual": 5.0
+    },
+    {
+      "test": "threat_score_109.70.100.10",
+      "passed": true,
+      "expected": "0-100",
+      "actual": 40.0
+    },
+    {
+      "test": "cidr_192.168.1.100_192.168.1.0/24",
+      "passed": true,
+      "expected": true,
+      "actual": true
+    },
+    {
+      "test": "cidr_192.168.2.100_192.168.1.0/24",
+      "passed": true,
+      "expected": false,
+      "actual": false
+    },
+    {
+      "test": "cidr_10.0.0.5_10.0.0.0/8",
+      "passed": true,
+      "expected": true,
+      "actual": true
+    },
+    {
+      "test": "cidr_8.8.8.8_0.0.0.0/0",
+      "passed": true,
+      "expected": true,
+      "actual": true
+    }
+  ],
+  "final_verification": {
+    "verified": true,
+    "test_count": 7,
+    "results": [
+      {
+        "ip": "8.8.8.8",
+        "valid": true,
+        "score": 0.0,
+        "country": "US",
+        "tags": []
+      },
+      {
+        "ip": "1.1.1.1",
+        "valid": true,
+        "score": 0.0,
+        "country": "US",
+        "tags": []
+      },
+      {
+        "ip": "192.168.1.1",
+        "valid": true,
+        "score": 5.0,
+        "country": "US",
+        "tags": [
+          "private_network"
+        ]
+      },
+      {
+        "ip": "127.0.0.1",
+        "valid": true,
+        "score": 5.0,
+        "country": "US",
+        "tags": [
+          "private_network"
+        ]
+      },
+      {
+        "ip": "109.70.100.10",
+        "valid": true,
+        "score": 40.0,
+        "country": "US",
+        "tags": [
+          "tor_exit_node"
+        ]
+      },
+      {
+        "ip": "2001:4860:4860::8888",
+        "valid": true,
+        "score": 0.0,
+        "country": "US",
+        "tags": []
+      },
+      {
+        "ip": "invalid_ip",
+        "valid": false,
+        "score": 0.0,
+        "country": "ZZ",
+        "tags": [
+          "invalid_ip"
+        ]
+      }
+    ],
+    "stats": {
+      "total_enrichments": 7,
+      "cache_hits": 2,
+      "cache_size": 6,
+      "cache_hit_ratio": 0.2857142857142857,
+      "uptime_seconds": 0.00010395050048828125,
+      "engine_version": "2.0.0",
+      "implementation_date": "2026-06-21"
+    },
+    "cidr_test_passed": true,
+    "bulk_test_passed": true,
+    "message": "Geolocation IP Enrichment Engine v2 - ALL TESTS PASSED"
+  }
+}

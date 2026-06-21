@@ -1961,6 +1961,28 @@ __all__.extend([
     "SAMPLE_IOC_DATASET"
 ])
 
-__version__ = "2026.6.21.2"
+# + Geolocation IP Enrichment Engine v2 (June 21, 2026)
+from .threat_intelligence_geolocation_ip_enrichment_engine_v2_2026_june import (
+    GeolocationIPEnrichmentEngine,
+    IPType,
+    IPReputation,
+    ThreatLevel,
+    GeolocationData,
+    IPEnrichmentResult,
+    LRUCache,
+    create_geolocation_enrichment_engine,
+    verify_geolocation_enrichment_engine
+)
+__all__.extend([
+    "GeolocationIPEnrichmentEngine",
+    "IPType",
+    "IPReputation",
+    "ThreatLevel",
+    "GeolocationData",
+    "IPEnrichmentResult",
+    "LRUCache",
+    "create_geolocation_enrichment_engine",
+    "verify_geolocation_enrichment_engine"
+])
 
-__version__ = "2026.6.21.2"
+__version__ = "2026.6.21.55"
