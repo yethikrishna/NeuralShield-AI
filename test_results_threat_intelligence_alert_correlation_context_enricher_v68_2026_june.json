@@ -1,0 +1,39 @@
+{
+  "test_timestamp": 1782064286.9748633,
+  "engine_version": "v68",
+  "tests_passed": 7,
+  "tests_failed": 0,
+  "test_details": [
+    {
+      "test": "initialization",
+      "status": "PASSED"
+    },
+    {
+      "test": "single_alert",
+      "status": "PASSED"
+    },
+    {
+      "test": "correlation",
+      "status": "PASSED",
+      "correlations_found": 0
+    },
+    {
+      "test": "campaign_detection",
+      "status": "PASSED"
+    },
+    {
+      "test": "fp_analyzer",
+      "status": "PASSED",
+      "fp_probability": 0.22499999999999998
+    },
+    {
+      "test": "temporal_engine",
+      "status": "PASSED",
+      "neighbors_count": 1
+    },
+    {
+      "test": "system_health",
+      "status": "PASSED"
+    }
+  ]
+}
