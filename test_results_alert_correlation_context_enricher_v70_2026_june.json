@@ -1,0 +1,16 @@
+{
+  "test_version": "v70",
+  "timestamp": 1782068537.398295,
+  "passed": 7,
+  "failed": 0,
+  "success_rate": 1.0,
+  "tests": [
+    "1: Basic alert enrichment",
+    "2: Semantic caching feature",
+    "3: Alert correlation with attack timeline",
+    "4: ML-based false positive classification",
+    "5: Automated playbook recommendations",
+    "6: Alert deduplication",
+    "7: Asset criticality weighted scoring"
+  ]
+}
