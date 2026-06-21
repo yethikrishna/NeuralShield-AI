@@ -1,0 +1,22 @@
+{
+  "test_timestamp": "2026-06-21T05:00:48.259573",
+  "module": "threat_intelligence_semantic_search_v6_enhanced_2026_june",
+  "tests_passed": 7,
+  "tests_failed": 0,
+  "test_details": {
+    "tokenizer": "PASS",
+    "indexing": "PASS",
+    "search": "PASS",
+    "caching": "PASS",
+    "boosting": "PASS",
+    "batch_search": "PASS",
+    "performance": "PASS"
+  },
+  "performance_metrics": {
+    "total_queries": 50,
+    "total_time_ms": 0.41,
+    "avg_per_query_ms": 0.008,
+    "cache_hit_rate_estimate": 3.8333333333333335
+  },
+  "success": true
+}
