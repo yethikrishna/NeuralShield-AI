@@ -1,0 +1,71 @@
+{
+  "engine_version": "v65",
+  "timestamp": "2026-06-21T14:51:47Z",
+  "results": {
+    "tests_passed": 7,
+    "tests_failed": 1,
+    "test_details": [
+      {
+        "test": "basic_processing",
+        "status": "passed"
+      },
+      {
+        "test": "kill_chain_classification",
+        "status": "passed"
+      },
+      {
+        "test": "alert_correlation",
+        "status": "failed",
+        "error": "Related alerts should be in same group"
+      },
+      {
+        "test": "attack_hypothesis",
+        "status": "passed"
+      },
+      {
+        "test": "ioc_deduplication",
+        "status": "passed"
+      },
+      {
+        "test": "asset_enrichment",
+        "status": "passed"
+      },
+      {
+        "test": "performance_metrics",
+        "status": "passed"
+      },
+      {
+        "test": "geolocation",
+        "status": "passed"
+      }
+    ]
+  },
+  "final_metrics": {
+    "version": "v65",
+    "timestamp": "2026-06-21T14:51:47.417194Z",
+    "metrics": {
+      "total_alerts_processed": 16,
+      "alerts_enriched": 16,
+      "correlation_groups_created": 16,
+      "iocs_deduplicated": 8,
+      "false_positives_filtered": 0,
+      "anomalies_detected": 0,
+      "kill_chains_identified": 9,
+      "avg_processing_time_ms": 0.08299946784973145,
+      "total_processing_time_ms": 1.3279914855957031,
+      "batches_processed": 0
+    },
+    "active_alerts": 16,
+    "correlation_groups": 16,
+    "bloom_filter_fp_rate": 0.0,
+    "enhancements": [
+      "temporal_pattern_analysis",
+      "kill_chain_progression_tracking",
+      "statistical_anomaly_detection",
+      "ip_convergence_correlation",
+      "adaptive_weighted_scoring",
+      "batch_processing_optimization"
+    ]
+  },
+  "status": "partial_success"
+}
