@@ -1,0 +1,97 @@
+{
+  "engine_version": "3.0.0",
+  "generated_at": "2026-06-21T16:12:12.326993",
+  "total_ips_processed": 4,
+  "summary": {
+    "trusted": 3,
+    "low_risk": 1
+  },
+  "statistics": {
+    "total_enrichments": 4,
+    "cache_hits": 0,
+    "cache_misses": 4,
+    "anonymized_detected": 0,
+    "malicious_detected": 0,
+    "critical_alerts": 0,
+    "high_alerts": 0,
+    "threat_feed_matches": 0,
+    "asn_lookups": 2,
+    "cache_size": 4,
+    "cache_hit_rate": 0.0,
+    "trusted_zones_count": 0,
+    "threat_feed_database": {
+      "malicious_ips": 6,
+      "malicious_asns": 3,
+      "malicious_cidrs": 0
+    }
+  },
+  "enrichments": [
+    {
+      "ip": "8.8.8.8",
+      "country": "FR",
+      "city": "Amsterdam",
+      "asn": 61725,
+      "threat_score": 1.25,
+      "threat_confidence": 0.0,
+      "reputation": "trusted",
+      "is_anonymized": false,
+      "is_cloud": false,
+      "network_type": "business",
+      "should_alert": false,
+      "alert_severity": "info",
+      "alert_reasons": [],
+      "threat_categories": []
+    },
+    {
+      "ip": "1.1.1.1",
+      "country": "ZA",
+      "city": "London",
+      "asn": 465857,
+      "threat_score": 21.25,
+      "threat_confidence": 0.3,
+      "reputation": "low_risk",
+      "is_anonymized": false,
+      "is_cloud": false,
+      "network_type": "datacenter",
+      "should_alert": false,
+      "alert_severity": "info",
+      "alert_reasons": [],
+      "threat_categories": [
+        "medium_risk_geography",
+        "datacenter_network"
+      ]
+    },
+    {
+      "ip": "203.0.113.42",
+      "country": "ZZ",
+      "city": "Unknown",
+      "asn": null,
+      "threat_score": 0.0,
+      "threat_confidence": 0.0,
+      "reputation": "trusted",
+      "is_anonymized": false,
+      "is_cloud": false,
+      "network_type": "unknown",
+      "should_alert": false,
+      "alert_severity": "info",
+      "alert_reasons": [],
+      "threat_categories": []
+    },
+    {
+      "ip": "192.168.1.1",
+      "country": "ZZ",
+      "city": "Unknown",
+      "asn": null,
+      "threat_score": 0.0,
+      "threat_confidence": 0.0,
+      "reputation": "trusted",
+      "is_anonymized": false,
+      "is_cloud": false,
+      "network_type": "unknown",
+      "should_alert": false,
+      "alert_severity": "info",
+      "alert_reasons": [],
+      "threat_categories": []
+    }
+  ]
+}

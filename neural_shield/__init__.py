@@ -2010,3 +2010,42 @@ __all__.extend([
     "create_fp_classifier_v11",
     "verify_fp_classifier_v11"
 ])
+
+# + Geolocation IP Enrichment Engine V3 (June 21, 2026)
+from .threat_intelligence_geolocation_ip_enrichment_v3_2026_june import (
+    GeolocationIPEnrichmentEngineV3,
+    IPEnrichmentResult,
+    ASNIntelligence,
+    ThreatFeedMatch,
+    HistoricalThreatRecord,
+    EnrichmentCache,
+    AdaptiveRateLimiter,
+    ThreatFeedDatabase,
+    IPVersion,
+    ThreatReputation,
+    NetworkType,
+    ASNReputation,
+    ThreatFeedSource,
+    Coordinates,
+    create_ip_enrichment_engine,
+    verify_enrichment_engine
+)
+__all__.extend([
+    "GeolocationIPEnrichmentEngineV3",
+    "IPEnrichmentResult",
+    "ASNIntelligence",
+    "ThreatFeedMatch",
+    "HistoricalThreatRecord",
+    "EnrichmentCache",
+    "AdaptiveRateLimiter",
+    "ThreatFeedDatabase",
+    "IPVersion",
+    "ThreatReputation",
+    "NetworkType",
+    "ASNReputation",
+    "ThreatFeedSource",
+    "Coordinates",
+    "create_ip_enrichment_engine",
+    "verify_enrichment_engine"
+])
+__version__ = "2026.6.21.59"
