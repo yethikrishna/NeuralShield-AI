@@ -1,0 +1,118 @@
+{
+  "test_suite": "TransformerV10FalsePositiveClassifier",
+  "version": "v10-transformer-2026-june",
+  "timestamp": "2026-06-21T13:59:58.514769",
+  "total_tests": 15,
+  "passed": 15,
+  "failed": 0,
+  "success_rate": 100.0,
+  "results": [
+    {
+      "test": "TEST-1",
+      "status": "PASS",
+      "description": "Basic classification"
+    },
+    {
+      "test": "TEST-2",
+      "status": "PASS",
+      "description": "Private IP detection"
+    },
+    {
+      "test": "TEST-3",
+      "status": "PASS",
+      "description": "CGNAT IP detection"
+    },
+    {
+      "test": "TEST-4",
+      "status": "PASS",
+      "description": "Reserved IP detection"
+    },
+    {
+      "test": "TEST-5",
+      "status": "PASS",
+      "description": "Confidence interval"
+    },
+    {
+      "test": "TEST-6",
+      "status": "PASS",
+      "description": "Gradient importance"
+    },
+    {
+      "test": "TEST-7",
+      "status": "PASS",
+      "description": "Stability score"
+    },
+    {
+      "test": "TEST-8",
+      "status": "PASS",
+      "description": "6 attention heads"
+    },
+    {
+      "test": "TEST-9",
+      "status": "PASS",
+      "description": "Online learning"
+    },
+    {
+      "test": "TEST-10",
+      "status": "PASS",
+      "description": "Batch classification"
+    },
+    {
+      "test": "TEST-11",
+      "status": "PASS",
+      "description": "Model stats"
+    },
+    {
+      "test": "TEST-12",
+      "status": "PASS",
+      "description": "Explainability report"
+    },
+    {
+      "test": "TEST-13",
+      "status": "PASS",
+      "description": "Non-FP classification"
+    },
+    {
+      "test": "TEST-14",
+      "status": "PASS",
+      "description": "Processing time"
+    },
+    {
+      "test": "TEST-15",
+      "status": "PASS",
+      "description": "Feature importance"
+    }
+  ],
+  "model_stats": {
+    "version": "v10-transformer-2026-june",
+    "total_classifications": 14,
+    "attention_heads": [
+      "content_analysis",
+      "ioc_reputation",
+      "context_correlation",
+      "historical_pattern",
+      "temporal_patterns",
+      "network_context"
+    ],
+    "ensemble_weights": {
+      "content": 0.18,
+      "ioc": 0.22,
+      "context": 0.18,
+      "historical": 0.18,
+      "temporal": 0.12,
+      "network": 0.12
+    },
+    "confidence_calibration_enabled": true,
+    "adaptive_threshold_enabled": true,
+    "drift_detection_enabled": true,
+    "online_learning_enabled": true,
+    "current_threshold": 0.55,
+    "base_threshold": 0.55,
+    "history_size": 0,
+    "platt_parameters": {
+      "a": 0.91,
+      "b": -0.14
+    },
+    "feedback_count": 2
+  }
+}
