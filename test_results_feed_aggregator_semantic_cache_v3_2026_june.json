@@ -1,0 +1,77 @@
+{
+  "test_suite": "Threat Intelligence Feed Aggregator v3 Tests",
+  "timestamp": "2026-06-21T18:24:51Z",
+  "total_tests": 12,
+  "passed": 12,
+  "failed": 0,
+  "pass_rate": "100.0%",
+  "total_time_ms": 1154.89,
+  "results": [
+    {
+      "test": "test_adaptive_ttl_calculator",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_semantic_bloom_filter",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_lru_cache_basic",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_lru_cache_eviction",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_cache_expired_cleanup",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_feed_registration",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_query_cache_miss",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_query_cache_hit",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_unknown_feed",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_prefetch_similar_queries",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_get_stats",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "test": "test_cache_priority_eviction",
+      "status": "PASSED",
+      "error": null
+    }
+  ],
+  "code_quality": {
+    "type_hints": "Full coverage",
+    "thread_safety": "RLock protection implemented",
+    "error_handling": "Comprehensive try/except",
+    "documentation": "Docstrings on all classes/methods"
+  }
+}
