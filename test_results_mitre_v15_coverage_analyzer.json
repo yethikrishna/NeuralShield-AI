@@ -1,0 +1,18 @@
+{
+  "test_timestamp": "2026-06-21T09:53:12.542939",
+  "tests_passed": 9,
+  "tests_total": 9,
+  "pass_rate": 100.0,
+  "execution_time_ms": 24.283170700073242,
+  "test_results": {
+    "Analyzer Initialization": true,
+    "Coverage Score Calculation": true,
+    "Detection Maturity Levels": true,
+    "Full Coverage Analysis": true,
+    "Tactic Coverage Statistics": true,
+    "Coverage Gap Prioritization": true,
+    "Navigator Layer Export": true,
+    "Heatmap Generation": true,
+    "Edge Cases Handling": true
+  }
+}
