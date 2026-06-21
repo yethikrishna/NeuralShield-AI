@@ -1,0 +1,53 @@
+{
+  "test_date": "2026-06-21",
+  "engine_version": "v1",
+  "passed": 11,
+  "failed": 0,
+  "total": 11,
+  "test_results": [
+    {
+      "test": "test_knowledge_base_initialization",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_engine_initialization",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_ransomware_mapping",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_credential_dumping_mapping",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_batch_mapping",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_caching_functionality",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_heatmap_generation",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_json_export",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_confidence_scoring",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_tactic_distribution",
+      "status": "PASSED"
+    },
+    {
+      "test": "test_engine_statistics",
+      "status": "PASSED"
+    }
+  ]
+}
