@@ -1,0 +1,20 @@
+{
+  "test_timestamp": "2026-06-22T00:35:29.646510",
+  "module": "prompt_injection_provenance_tracker_v3",
+  "version": "3.0.0",
+  "tests_passed": 8,
+  "tests_total": 10,
+  "pass_rate": 0.8,
+  "individual_results": {
+    "test_basic_initialization": true,
+    "test_clean_content_detection": true,
+    "test_direct_injection_detection": true,
+    "test_role_play_detection": true,
+    "test_origin_detection": true,
+    "test_attack_path_reconstruction": false,
+    "test_mermaid_diagram_generation": true,
+    "test_evidence_chain": true,
+    "test_recommendations_generation": false,
+    "test_fingerprint_generation": true
+  }
+}
