@@ -2128,3 +2128,29 @@ __all__.extend([
     "verify_deduplicator"
 ])
 __version__ = "2026.6.21.61"
+
+
+# Malware Hash Reputation Checker (June 22, 2026 Production Release)
+# Validates file hashes against known malware threat intelligence databases
+from .malware_hash_reputation_checker_2026_june import (
+    MalwareHashReputationChecker,
+    HashType,
+    ThreatLevel,
+    ReputationSource,
+    HashReputation,
+    ReputationResult,
+    create_hash_checker,
+    verify_hash_checker
+)
+__all__.extend([
+    "MalwareHashReputationChecker",
+    "HashType",
+    "ThreatLevel",
+    "ReputationSource",
+    "HashReputation",
+    "ReputationResult",
+    "create_hash_checker",
+    "verify_hash_checker"
+])
+__version__ = "2026.6.22.1"
+
