@@ -1,0 +1,71 @@
+{
+  "test_timestamp": "2026-06-21T18:54:45Z",
+  "detector_version": "v3",
+  "total_tests": 10,
+  "passed_tests": 10,
+  "all_passed": true,
+  "test_results": [
+    {
+      "test": "combining_diacritics",
+      "passed": true,
+      "confidence": 1.0
+    },
+    {
+      "test": "url_encoding",
+      "passed": true,
+      "confidence": 0.8764705882352941
+    },
+    {
+      "test": "html_encoding",
+      "passed": true,
+      "confidence": 0.9564705882352941
+    },
+    {
+      "test": "homoglyphs",
+      "passed": true,
+      "confidence": 1.0
+    },
+    {
+      "test": "leetspeak",
+      "passed": true,
+      "confidence": 1.0
+    },
+    {
+      "test": "nested_obfuscation",
+      "passed": true,
+      "layers": 1
+    },
+    {
+      "test": "entropy_analysis",
+      "passed": true,
+      "entropy": 4.7483286603655745
+    },
+    {
+      "test": "fp_reduction",
+      "passed": true,
+      "fp_risk": 0.0
+    },
+    {
+      "test": "clean_text",
+      "passed": true,
+      "confidence": 0.0
+    },
+    {
+      "test": "batch_processing",
+      "passed": true,
+      "time_ms": 4.827260971069336
+    }
+  ],
+  "performance": {
+    "supports_caching": true,
+    "new_v3_features": [
+      "combining_diacritics",
+      "url_encoding",
+      "html_entities",
+      "nested_obfuscation",
+      "entropy_analysis",
+      "fp_reduction",
+      "batch_processing"
+    ]
+  }
+}
