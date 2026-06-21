@@ -1,0 +1,41 @@
+{
+  "test_suite": "threat_intelligence_alert_noise_reduction_engine_v2",
+  "date": "2026-06-21 10:18:57",
+  "total_tests": 6,
+  "passed": 6,
+  "failed": 0,
+  "success_rate": 1.0,
+  "total_time_seconds": 0.02006840705871582,
+  "tests": [
+    {
+      "name": "test_historical_data_store",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_single_alert_processing",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_batch_processing",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_adaptive_learning",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_edge_cases",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "test_json_serialization",
+      "passed": true,
+      "error": null
+    }
+  ]
+}
