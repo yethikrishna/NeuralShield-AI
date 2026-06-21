@@ -1,0 +1,17 @@
+{
+  "test_results": {
+    "test_basic_detection": "PASSED",
+    "test_roleplay_escape_detection": "ERROR: Detection rate should be >= 75%, got 0.00%",
+    "test_few_shot_manipulation": "PASSED",
+    "test_multilingual_detection": "PASSED",
+    "test_batch_processing": "PASSED",
+    "test_complexity_scoring": "PASSED",
+    "test_performance_benchmark": "PASSED",
+    "test_result_serialization": "PASSED"
+  },
+  "passed": 7,
+  "failed": 1,
+  "total": 8,
+  "success_rate": 0.875,
+  "timestamp": "2026-06-21 19:14:53"
+}
