@@ -1,405 +1,444 @@
 """
-Threat Intelligence Rate Limiter & Circuit Breaker - June 21, 2026
-Production-grade resilience system for threat intelligence processing
-REAL WORKING FEATURES:
-- Token bucket rate limiting with configurable rates
-- Circuit breaker pattern for failure detection
-- Half-open state recovery with success threshold
-- Adaptive backoff for failure recovery
-- Per-client and global rate limiting
-- Metrics collection and monitoring
-- Thread-safe implementation
+NeuralShield-AI: Threat Intelligence Rate Limiter & Circuit Breaker
+June 21, 2026 - Production Grade Implementation
+
+Implements:
+1. Token Bucket Rate Limiting
+2. Circuit Breaker Pattern (Closed/Open/Half-Open states)
+3. Adaptive Backoff with Jitter
+4. Request Batching with Priority Queue
+5. Real-time Metrics Collection
+6. Fallback Mechanisms
 """
+
 import time
 import threading
+import heapq
+import random
+import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Optional, Callable, Any, Tuple
-from collections import defaultdict
+from typing import Callable, Any, Optional, Dict, List
+from collections import deque
 from datetime import datetime, timedelta
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 class CircuitState(Enum):
-    """Circuit breaker states"""
-    CLOSED = "closed"           # Normal operation - requests pass through
-    OPEN = "open"               # Circuit tripped - requests blocked
-    HALF_OPEN = "half_open"     # Testing recovery - limited requests allowed
-class RateLimitResult(Enum):
-    """Result of rate limit check"""
-    ALLOWED = "allowed"
-    RATE_LIMITED = "rate_limited"
-    CIRCUIT_OPEN = "circuit_open"
-@dataclass
-class RateLimitConfig:
-    """Configuration for rate limiting"""
-    max_requests_per_second: int = 100
-    max_burst_requests: int = 50
-    per_client_max_requests: int = 20
-    refill_interval_ms: int = 100
+    CLOSED = "closed"           # Normal operation - all requests pass through
+    OPEN = "open"               # Circuit tripped - requests fail fast
+    HALF_OPEN = "half_open"     # Testing recovery - limited test requests
+
+
+class Priority(Enum):
+    CRITICAL = 0    # IOCs, active threats
+    HIGH = 1        # Vulnerability updates
+    MEDIUM = 2      # Regular feed updates
+    LOW = 3         # Background enrichment
+
+
+@dataclass(order=True)
+class PrioritizedRequest:
+    priority: int
+    timestamp: float
+    request_id: str = field(compare=False)
+    payload: Any = field(compare=False)
+    callback: Optional[Callable] = field(compare=False, default=None)
+
+
 @dataclass
 class CircuitBreakerConfig:
-    """Configuration for circuit breaker"""
-    failure_threshold: int = 5          # Open after N failures
-    recovery_timeout_ms: int = 30000    # Stay open for 30 seconds
-    half_open_success_threshold: int = 3  # Need N successes to close
-    min_execution_time_ms: int = 0      # Consider slow calls as failures
-    max_execution_time_ms: int = 5000   # Timeout threshold
+    failure_threshold: int = 5
+    recovery_timeout: int = 30
+    half_open_max_requests: int = 3
+    window_size_seconds: int = 60
+    min_failure_rate: float = 0.5
+
+
 @dataclass
-class RequestMetrics:
-    """Metrics for a single client/endpoint"""
-    total_requests: int = 0
-    allowed_requests: int = 0
-    rate_limited: int = 0
-    circuit_blocked: int = 0
-    failures: int = 0
-    successes: int = 0
-    total_latency_ms: float = 0.0
-    @property
-    def average_latency_ms(self) -> float:
-        if self.successes == 0:
-            return 0.0
-        return self.total_latency_ms / self.successes
-    @property
-    def success_rate(self) -> float:
-        if self.total_requests == 0:
-            return 1.0
-        return self.successes / self.total_requests
-@dataclass
+class RateLimiterConfig:
+    max_requests_per_second: int = 10
+    max_burst: int = 20
+    max_queue_size: int = 1000
+    batch_size: int = 5
+    batch_max_wait_ms: int = 100
+
+
 class TokenBucket:
-    """Token bucket for rate limiting"""
-    capacity: int
-    tokens: float
-    refill_rate: float
-    last_refill: float = field(default_factory=time.time)
-class TokenBucketRateLimiter:
-    """
-    Token bucket rate limiter implementation
-    REAL WORKING: Actually enforces rate limits
-    """
-    def __init__(self, config: RateLimitConfig):
-        self.config = config
-        self.global_bucket = TokenBucket(
-            capacity=config.max_burst_requests,
-            tokens=config.max_burst_requests,
-            refill_rate=config.max_requests_per_second
-        )
-        self.client_buckets: Dict[str, TokenBucket] = {}
-        self._lock = threading.Lock()
-    def _refill_bucket(self, bucket: TokenBucket) -> None:
-        """Refill tokens based on elapsed time"""
-        now = time.time()
-        elapsed = now - bucket.last_refill
-        new_tokens = elapsed * bucket.refill_rate
-        bucket.tokens = min(bucket.capacity, bucket.tokens + new_tokens)
-        bucket.last_refill = now
-    def try_acquire(self, client_id: Optional[str] = None, tokens: int = 1) -> Tuple[bool, str]:
-        """
-        Try to acquire tokens for a request
-        Returns (allowed, reason)
-        """
-        with self._lock:
-            # Check global rate limit
-            self._refill_bucket(self.global_bucket)
-            if self.global_bucket.tokens < tokens:
-                return False, "global_rate_limit_exceeded"
-            # Check per-client rate limit if client_id provided
-            if client_id:
-                if client_id not in self.client_buckets:
-                    self.client_buckets[client_id] = TokenBucket(
-                        capacity=self.config.per_client_max_requests,
-                        tokens=self.config.per_client_max_requests,
-                        refill_rate=self.config.per_client_max_requests / 1.0
-                    )
-                client_bucket = self.client_buckets[client_id]
-                self._refill_bucket(client_bucket)
-                if client_bucket.tokens < tokens:
-                    return False, "client_rate_limit_exceeded"
-                client_bucket.tokens -= tokens
-            self.global_bucket.tokens -= tokens
-            return True, "allowed"
-    def get_bucket_status(self, client_id: Optional[str] = None) -> Dict[str, Any]:
-        """Get current bucket status for monitoring"""
-        with self._lock:
-            self._refill_bucket(self.global_bucket)
-            status = {
-                "global_tokens_remaining": self.global_bucket.tokens,
-                "global_capacity": self.global_bucket.capacity,
-                "global_refill_rate": self.global_bucket.refill_rate,
-                "active_clients": len(self.client_buckets)
-            }
-            if client_id and client_id in self.client_buckets:
-                client_bucket = self.client_buckets[client_id]
-                self._refill_bucket(client_bucket)
-                status["client_tokens_remaining"] = client_bucket.tokens
-                status["client_capacity"] = client_bucket.capacity
-            return status
-class CircuitBreaker:
-    """
-    Circuit breaker implementation for fault tolerance
-    REAL WORKING: Actually trips circuit on failures and recovers
-    """
-    def __init__(self, config: CircuitBreakerConfig, name: str = "default"):
-        self.config = config
-        self.name = name
-        self.state = CircuitState.CLOSED
-        self.failure_count = 0
-        self.success_count_in_half_open = 0
-        self.last_failure_time = 0.0
-        self._lock = threading.Lock()
-    def _should_open_circuit(self) -> bool:
-        """Check if circuit should open"""
-        return self.failure_count >= self.config.failure_threshold
-    def _should_attempt_recovery(self) -> bool:
-        """Check if we should try half-open state"""
-        elapsed = (time.time() - self.last_failure_time) * 1000
-        return elapsed >= self.config.recovery_timeout_ms
-    def allow_request(self) -> bool:
-        """Check if request should be allowed through"""
-        with self._lock:
-            if self.state == CircuitState.CLOSED:
-                return True
-            elif self.state == CircuitState.OPEN:
-                if self._should_attempt_recovery():
-                    self.state = CircuitState.HALF_OPEN
-                    self.success_count_in_half_open = 0
-                    return True
-                return False
-            elif self.state == CircuitState.HALF_OPEN:
-                # Allow limited requests in half-open
+    """Thread-safe token bucket implementation for rate limiting"""
+    
+    def __init__(self, rate: float, capacity: float):
+        self.rate = rate  # tokens per second
+        self.capacity = capacity
+        self.tokens = capacity
+        self.last_refill = time.time()
+        self.lock = threading.Lock()
+    
+    def consume(self, tokens: int = 1) -> bool:
+        """Try to consume tokens, return True if successful"""
+        with self.lock:
+            now = time.time()
+            elapsed = now - self.last_refill
+            self.tokens = min(self.capacity, self.tokens + elapsed * self.rate)
+            self.last_refill = now
+            
+            if self.tokens >= tokens:
+                self.tokens -= tokens
                 return True
             return False
-    def record_success(self) -> None:
-        """Record a successful request"""
-        with self._lock:
+    
+    def wait_for_token(self, timeout: float = 5.0) -> bool:
+        """Wait until token available or timeout"""
+        start = time.time()
+        while time.time() - start < timeout:
+            if self.consume():
+                return True
+            time.sleep(0.01)
+        return False
+
+
+class CircuitBreaker:
+    """Production-grade circuit breaker with state management"""
+    
+    def __init__(self, config: CircuitBreakerConfig = None):
+        self.config = config or CircuitBreakerConfig()
+        self.state = CircuitState.CLOSED
+        self.failure_count = 0
+        self.success_count = 0
+        self.open_timestamp = 0.0
+        self.half_open_attempts = 0
+        self.failure_window: deque = deque(maxlen=100)
+        self.lock = threading.Lock()
+        self.state_change_callbacks: List[Callable] = []
+    
+    def on_state_change(self, callback: Callable):
+        """Register callback for state transitions"""
+        self.state_change_callbacks.append(callback)
+    
+    def _transition(self, new_state: CircuitState):
+        """Transition to new state"""
+        old_state = self.state
+        self.state = new_state
+        logger.info(f"CircuitBreaker state transition: {old_state.value} -> {new_state.value}")
+        for callback in self.state_change_callbacks:
+            callback(old_state, new_state)
+    
+    def record_success(self):
+        """Record successful request"""
+        with self.lock:
+            self.success_count += 1
+            self.failure_window.append(False)
+            
             if self.state == CircuitState.HALF_OPEN:
-                self.success_count_in_half_open += 1
-                if self.success_count_in_half_open >= self.config.half_open_success_threshold:
-                    self.state = CircuitState.CLOSED
+                self.half_open_attempts += 1
+                if self.half_open_attempts >= self.config.half_open_max_requests:
+                    # Recovery successful - close circuit
                     self.failure_count = 0
-                    self.success_count_in_half_open = 0
-            elif self.state == CircuitState.CLOSED:
-                self.failure_count = max(0, self.failure_count - 1)
-    def record_failure(self) -> None:
-        """Record a failed request"""
-        with self._lock:
+                    self.half_open_attempts = 0
+                    self._transition(CircuitState.CLOSED)
+    
+    def record_failure(self):
+        """Record failed request"""
+        with self.lock:
             self.failure_count += 1
-            self.last_failure_time = time.time()
-            if self.state == CircuitState.HALF_OPEN:
-                # Any failure in half-open trips back to open
-                self.state = CircuitState.OPEN
-                self.success_count_in_half_open = 0
-            elif self.state == CircuitState.CLOSED and self._should_open_circuit():
-                self.state = CircuitState.OPEN
-    def get_state(self) -> Dict[str, Any]:
-        """Get current circuit breaker state"""
-        with self._lock:
+            self.failure_window.append(True)
+            
+            if self.state == CircuitState.CLOSED:
+                # Check if we should trip the circuit
+                total = len(self.failure_window)
+                failures = sum(1 for f in self.failure_window if f)
+                
+                if (total >= self.config.failure_threshold and 
+                    failures / total >= self.config.min_failure_rate):
+                    self.open_timestamp = time.time()
+                    self._transition(CircuitState.OPEN)
+            
+            elif self.state == CircuitState.HALF_OPEN:
+                # Recovery failed - reopen circuit
+                self.half_open_attempts = 0
+                self.open_timestamp = time.time()
+                self._transition(CircuitState.OPEN)
+    
+    def allow_request(self) -> bool:
+        """Check if request should be allowed"""
+        with self.lock:
+            if self.state == CircuitState.CLOSED:
+                return True
+            
+            elif self.state == CircuitState.OPEN:
+                # Check if recovery timeout elapsed
+                if time.time() - self.open_timestamp >= self.config.recovery_timeout:
+                    self.half_open_attempts = 0
+                    self._transition(CircuitState.HALF_OPEN)
+                    return True
+                return False
+            
+            elif self.state == CircuitState.HALF_OPEN:
+                # Allow limited test requests
+                return self.half_open_attempts < self.config.half_open_max_requests
+            
+            return False
+    
+    def get_metrics(self) -> Dict[str, Any]:
+        """Get circuit breaker metrics"""
+        with self.lock:
+            total = len(self.failure_window)
+            failures = sum(1 for f in self.failure_window if f)
             return {
-                "name": self.name,
                 "state": self.state.value,
                 "failure_count": self.failure_count,
-                "success_count_in_half_open": self.success_count_in_half_open,
-                "last_failure_seconds_ago": time.time() - self.last_failure_time if self.last_failure_time > 0 else None,
-                "failure_threshold": self.config.failure_threshold,
-                "recovery_timeout_ms": self.config.recovery_timeout_ms
+                "success_count": self.success_count,
+                "failure_rate": failures / total if total > 0 else 0.0,
+                "open_remaining": max(0, self.config.recovery_timeout - 
+                                     (time.time() - self.open_timestamp)) 
+                                if self.state == CircuitState.OPEN else 0,
+                "half_open_attempts": self.half_open_attempts
             }
-class ResilienceManager:
+
+
+class BatchingPriorityQueue:
+    """Priority queue with automatic batching"""
+    
+    def __init__(self, max_size: int = 1000):
+        self.queue: List[PrioritizedRequest] = []
+        self.max_size = max_size
+        self.lock = threading.Lock()
+        self.not_empty = threading.Condition(self.lock)
+    
+    def put(self, request: PrioritizedRequest) -> bool:
+        """Add request to queue, return False if full"""
+        with self.lock:
+            if len(self.queue) >= self.max_size:
+                return False
+            heapq.heappush(self.queue, request)
+            self.not_empty.notify()
+            return True
+    
+    def get_batch(self, batch_size: int, timeout_ms: int = 100) -> List[PrioritizedRequest]:
+        """Get batch of requests, waiting up to timeout"""
+        deadline = time.time() + timeout_ms / 1000
+        batch = []
+        
+        with self.lock:
+            while len(batch) < batch_size and time.time() < deadline:
+                if self.queue:
+                    batch.append(heapq.heappop(self.queue))
+                else:
+                    remaining = deadline - time.time()
+                    if remaining > 0:
+                        self.not_empty.wait(remaining)
+        return batch
+    
+    def size(self) -> int:
+        with self.lock:
+            return len(self.queue)
+
+
+class RateLimitedCircuitBreakerClient:
     """
-    Combined rate limiter + circuit breaker manager
-    Production-grade resilience for threat intelligence processing
+    Combined Rate Limiter + Circuit Breaker client for Threat Intelligence APIs
+    Production-grade with adaptive backoff and fallback support
     """
-    def __init__(
-        self,
-        rate_limit_config: Optional[RateLimitConfig] = None,
-        circuit_config: Optional[CircuitBreakerConfig] = None
-    ):
-        self.rate_config = rate_limit_config or RateLimitConfig()
+    
+    def __init__(self, 
+                 rate_config: RateLimiterConfig = None,
+                 circuit_config: CircuitBreakerConfig = None):
+        self.rate_config = rate_config or RateLimiterConfig()
         self.circuit_config = circuit_config or CircuitBreakerConfig()
-        self.rate_limiter = TokenBucketRateLimiter(self.rate_config)
-        self.circuit_breakers: Dict[str, CircuitBreaker] = {}
-        self.metrics: Dict[str, RequestMetrics] = defaultdict(RequestMetrics)
-        self._lock = threading.Lock()
-    def _get_circuit_breaker(self, endpoint: str) -> CircuitBreaker:
-        """Get or create circuit breaker for endpoint"""
-        with self._lock:
-            if endpoint not in self.circuit_breakers:
-                self.circuit_breakers[endpoint] = CircuitBreaker(
-                    self.circuit_config, name=endpoint
-                )
-            return self.circuit_breakers[endpoint]
-    def check_request(self, endpoint: str, client_id: Optional[str] = None) -> RateLimitResult:
-        """
-        Check if request should be allowed
-        Returns RateLimitResult
-        """
-        key = f"{endpoint}:{client_id}" if client_id else endpoint
-        self.metrics[key].total_requests += 1
-        # Check circuit breaker first
-        circuit = self._get_circuit_breaker(endpoint)
-        if not circuit.allow_request():
-            self.metrics[key].circuit_blocked += 1
-            return RateLimitResult.CIRCUIT_OPEN
-        # Check rate limiter
-        allowed, _ = self.rate_limiter.try_acquire(client_id)
-        if not allowed:
-            self.metrics[key].rate_limited += 1
-            return RateLimitResult.RATE_LIMITED
-        self.metrics[key].allowed_requests += 1
-        return RateLimitResult.ALLOWED
-    def execute_with_resilience(
-        self,
-        endpoint: str,
-        func: Callable,
-        client_id: Optional[str] = None,
-        *args, **kwargs
-    ) -> Tuple[bool, Any, Optional[str]]:
-        """
-        Execute a function with rate limiting and circuit breaker protection
-        REAL WORKING: Actually wraps and protects function calls
-        Returns (success, result, error_message)
-        """
-        key = f"{endpoint}:{client_id}" if client_id else endpoint
-        # Check preconditions
-        check_result = self.check_request(endpoint, client_id)
-        if check_result == RateLimitResult.CIRCUIT_OPEN:
-            return False, None, "Circuit open - service temporarily unavailable"
-        elif check_result == RateLimitResult.RATE_LIMITED:
-            return False, None, "Rate limit exceeded - please try again later"
-        circuit = self._get_circuit_breaker(endpoint)
-        start_time = time.time()
-        try:
-            result = func(*args, **kwargs)
-            latency = (time.time() - start_time) * 1000
-            # Check for slow execution
-            if self.circuit_config.max_execution_time_ms > 0 and latency > self.circuit_config.max_execution_time_ms:
-                circuit.record_failure()
-                self.metrics[key].failures += 1
-                return False, None, f"Execution timeout: {latency:.1f}ms"
-            circuit.record_success()
-            self.metrics[key].successes += 1
-            self.metrics[key].total_latency_ms += latency
-            return True, result, None
-        except Exception as e:
-            circuit.record_failure()
-            self.metrics[key].failures += 1
-            return False, None, str(e)
-    def get_metrics(self, endpoint: Optional[str] = None, client_id: Optional[str] = None) -> Dict[str, Any]:
-        """Get aggregated metrics"""
-        with self._lock:
-            if endpoint and client_id:
-                key = f"{endpoint}:{client_id}"
-                if key in self.metrics:
-                    m = self.metrics[key]
-                    return {
-                        "endpoint": endpoint,
-                        "client_id": client_id,
-                        "total_requests": m.total_requests,
-                        "allowed": m.allowed_requests,
-                        "rate_limited": m.rate_limited,
-                        "circuit_blocked": m.circuit_blocked,
-                        "successes": m.successes,
-                        "failures": m.failures,
-                        "avg_latency_ms": round(m.average_latency_ms, 2),
-                        "success_rate": round(m.success_rate, 3)
-                    }
-            # Global metrics
-            total = RequestMetrics()
-            for m in self.metrics.values():
-                total.total_requests += m.total_requests
-                total.allowed_requests += m.allowed_requests
-                total.rate_limited += m.rate_limited
-                total.circuit_blocked += m.circuit_blocked
-                total.successes += m.successes
-                total.failures += m.failures
-                total.total_latency_ms += m.total_latency_ms
-            return {
-                "global": {
-                    "total_requests": total.total_requests,
-                    "allowed": total.allowed_requests,
-                    "rate_limited": total.rate_limited,
-                    "circuit_blocked": total.circuit_blocked,
-                    "successes": total.successes,
-                    "failures": total.failures,
-                    "avg_latency_ms": round(total.average_latency_ms, 2),
-                    "success_rate": round(total.success_rate, 3)
-                },
-                "rate_limiter": self.rate_limiter.get_bucket_status(),
-                "circuit_breakers": {
-                    name: cb.get_state() for name, cb in self.circuit_breakers.items()
-                },
-                "tracked_endpoints": len(self.circuit_breakers),
-                "active_clients": len(self.metrics)
-            }
-def create_resilience_manager() -> ResilienceManager:
-    """Factory function with production defaults"""
-    rate_config = RateLimitConfig(
-        max_requests_per_second=100,
-        max_burst_requests=50,
-        per_client_max_requests=20
-    )
-    circuit_config = CircuitBreakerConfig(
-        failure_threshold=5,
-        recovery_timeout_ms=30000,
-        half_open_success_threshold=3,
-        max_execution_time_ms=5000
-    )
-    return ResilienceManager(rate_config, circuit_config)
-def verify_resilience_manager() -> Dict[str, Any]:
-    """
-    VERIFICATION: Actually test the resilience manager
-    REAL WORKING TESTS - no empty shells
-    """
-    try:
-        manager = create_resilience_manager()
-        test_results = {}
-        # Test 1: Basic rate limiting
-        allowed_count = 0
-        for i in range(10):
-            result = manager.check_request("test_endpoint", "client1")
-            if result == RateLimitResult.ALLOWED:
-                allowed_count += 1
-        test_results["basic_rate_limit_test"] = {
-            "success": allowed_count > 0,
-            "allowed_requests": allowed_count
-        }
-        # Test 2: Circuit breaker - force failures
-        def failing_func():
-            raise ValueError("Simulated failure")
-        failure_count = 0
-        for i in range(10):
-            success, _, _ = manager.execute_with_resilience("failing_endpoint", failing_func, "clientA")
-            if not success:
-                failure_count += 1
-        circuit_state = manager.get_metrics("failing_endpoint", "clientA")
-        test_results["circuit_breaker_test"] = {
-            "success": failure_count >= 5,
-            "total_failures": failure_count,
-            "circuit_eventually_opens": True
-        }
-        # Test 3: Successful execution
-        def working_func(x, y):
-            return x + y
-        success, result, error = manager.execute_with_resilience(
-            "working_endpoint", working_func, "clientB", 5, 3
+        
+        # Core components
+        self.token_bucket = TokenBucket(
+            rate=self.rate_config.max_requests_per_second,
+            capacity=self.rate_config.max_burst
         )
-        test_results["successful_execution_test"] = {
-            "success": success and result == 8,
-            "result": result,
-            "error": error
-        }
-        # Test 4: Metrics collection
-        metrics = manager.get_metrics()
-        test_results["metrics_test"] = {
-            "success": metrics["global"]["total_requests"] > 0,
-            "total_requests_tracked": metrics["global"]["total_requests"]
-        }
-        all_passed = all(t["success"] for t in test_results.values())
-        return {
-            "success": all_passed,
-            "tests": test_results,
-            "final_metrics": manager.get_metrics(),
-            "message": "Resilience Manager verified and working correctly" if all_passed else "Some tests failed"
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "error": str(e),
-            "message": "Resilience Manager verification failed"
-        }
+        self.circuit_breaker = CircuitBreaker(self.circuit_config)
+        self.request_queue = BatchingPriorityQueue(self.rate_config.max_queue_size)
+        
+        # Metrics
+        self.total_requests = 0
+        self.rejected_requests = 0
+        self.fallback_responses = 0
+        self.metrics_lock = threading.Lock()
+        
+        # Background worker
+        self._worker_thread: Optional[threading.Thread] = None
+        self._running = False
+        
+        # Fallback handlers
+        self.fallbacks: Dict[str, Callable] = {}
+    
+    def register_fallback(self, operation: str, handler: Callable):
+        """Register fallback handler for circuit-open scenario"""
+        self.fallbacks[operation] = handler
+    
+    def execute(self, 
+                operation: str,
+                func: Callable,
+                *args,
+                priority: Priority = Priority.MEDIUM,
+                timeout: float = 10.0,
+                **kwargs) -> Any:
+        """
+        Execute operation with rate limiting and circuit breaker protection
+        
+        Args:
+            operation: Operation name for fallback routing
+            func: Function to execute
+            priority: Request priority
+            timeout: Max wait time
+            *args, **kwargs: Arguments for func
+        """
+        request_id = f"{operation}_{int(time.time() * 1000)}_{random.randint(0, 9999)}"
+        
+        with self.metrics_lock:
+            self.total_requests += 1
+        
+        # Fast fail if circuit is open
+        if not self.circuit_breaker.allow_request():
+            with self.metrics_lock:
+                self.rejected_requests += 1
+            
+            # Try fallback
+            if operation in self.fallbacks:
+                with self.metrics_lock:
+                    self.fallback_responses += 1
+                logger.warning(f"Circuit open, using fallback for: {operation}")
+                return self.fallbacks[operation](*args, **kwargs)
+            
+            raise CircuitBreakerOpenError(
+                f"Circuit breaker is OPEN for {operation}. "
+                f"Retry in {self.circuit_breaker.get_metrics()['open_remaining']:.1f}s"
+            )
+        
+        # Wait for rate limit token
+        if not self.token_bucket.wait_for_token(min(timeout, 5.0)):
+            with self.metrics_lock:
+                self.rejected_requests += 1
+            raise RateLimitExceededError(f"Rate limit exceeded for {operation}")
+        
+        # Execute with retry logic
+        max_retries = 3
+        base_delay = 0.1
+        
+        for attempt in range(max_retries):
+            try:
+                result = func(*args, **kwargs)
+                self.circuit_breaker.record_success()
+                return result
+                
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    # Exponential backoff with jitter
+                    delay = base_delay * (2 ** attempt) * (0.5 + random.random())
+                    logger.warning(f"Attempt {attempt + 1} failed for {operation}, "
+                                  f"retrying in {delay:.2f}s: {e}")
+                    time.sleep(delay)
+                else:
+                    self.circuit_breaker.record_failure()
+                    logger.error(f"All retries failed for {operation}: {e}")
+                    raise
+    
+    def enqueue(self,
+                operation: str,
+                payload: Any,
+                priority: Priority = Priority.MEDIUM,
+                callback: Optional[Callable] = None) -> bool:
+        """Enqueue request for async batch processing"""
+        request = PrioritizedRequest(
+            priority=priority.value,
+            timestamp=time.time(),
+            request_id=f"{operation}_{int(time.time() * 1000)}",
+            payload=payload,
+            callback=callback
+        )
+        return self.request_queue.put(request)
+    
+    def start_worker(self, processor_func: Callable):
+        """Start background worker for batch processing"""
+        if self._running:
+            return
+        
+        self._running = True
+        
+        def worker():
+            while self._running:
+                batch = self.request_queue.get_batch(
+                    self.rate_config.batch_size,
+                    self.rate_config.batch_max_wait_ms
+                )
+                if batch:
+                    try:
+                        results = processor_func([r.payload for r in batch])
+                        self.circuit_breaker.record_success()
+                        
+                        for req, result in zip(batch, results):
+                            if req.callback:
+                                req.callback(result, None)
+                                
+                    except Exception as e:
+                        self.circuit_breaker.record_failure()
+                        for req in batch:
+                            if req.callback:
+                                req.callback(None, e)
+        
+        self._worker_thread = threading.Thread(target=worker, daemon=True)
+        self._worker_thread.start()
+    
+    def stop_worker(self):
+        """Stop background worker"""
+        self._running = False
+        if self._worker_thread:
+            self._worker_thread.join(timeout=5.0)
+    
+    def get_health_metrics(self) -> Dict[str, Any]:
+        """Get comprehensive health metrics"""
+        with self.metrics_lock:
+            circuit_metrics = self.circuit_breaker.get_metrics()
+            return {
+                "timestamp": datetime.utcnow().isoformat(),
+                "circuit_breaker": circuit_metrics,
+                "rate_limiter": {
+                    "tokens_remaining": self.token_bucket.tokens,
+                    "max_burst": self.token_bucket.capacity,
+                    "rate_per_second": self.token_bucket.rate
+                },
+                "queue": {
+                    "size": self.request_queue.size(),
+                    "max_size": self.rate_config.max_queue_size
+                },
+                "requests": {
+                    "total": self.total_requests,
+                    "rejected": self.rejected_requests,
+                    "fallback_used": self.fallback_responses,
+                    "acceptance_rate": (
+                        (self.total_requests - self.rejected_requests) / self.total_requests
+                        if self.total_requests > 0 else 1.0
+                    )
+                }
+            }
+
+
+class CircuitBreakerOpenError(Exception):
+    """Raised when circuit breaker is open"""
+    pass
+
+
+class RateLimitExceededError(Exception):
+    """Raised when rate limit is exceeded"""
+    pass
+
+
+# Export public API
+__all__ = [
+    'RateLimitedCircuitBreakerClient',
+    'CircuitBreaker',
+    'TokenBucket',
+    'CircuitState',
+    'Priority',
+    'CircuitBreakerConfig',
+    'RateLimiterConfig',
+    'CircuitBreakerOpenError',
+    'RateLimitExceededError',
+]

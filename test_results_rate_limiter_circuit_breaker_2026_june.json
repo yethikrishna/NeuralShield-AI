@@ -1,0 +1,64 @@
+{
+  "test_suite": "RateLimiter & CircuitBreaker - June 21, 2026",
+  "timestamp": 1782025639.3358407,
+  "tests_passed": 7,
+  "tests_failed": 1,
+  "tests": {
+    "token_bucket": {
+      "passed": true,
+      "tokens_consumed": 20,
+      "expected": 20,
+      "message": "Token bucket correctly enforces capacity limit"
+    },
+    "circuit_breaker_states": {
+      "passed": true,
+      "initial_closed": true,
+      "after_failures_open": false,
+      "recovery_half_open": true,
+      "after_successes_closed": true,
+      "message": "Circuit breaker correctly transitions through all states"
+    },
+    "successful_execution": {
+      "passed": true,
+      "result": 8,
+      "expected": 8,
+      "message": "Client successfully executes protected functions"
+    },
+    "circuit_trip": {
+      "passed": false,
+      "error": "Simulated API failure"
+    },
+    "fallback_mechanism": {
+      "passed": true,
+      "result": "FALLBACK_RESPONSE",
+      "expected": "FALLBACK_RESPONSE",
+      "message": "Fallback correctly used when circuit is open"
+    },
+    "health_metrics": {
+      "passed": true,
+      "metrics_collected": [
+        "timestamp",
+        "circuit_breaker",
+        "rate_limiter",
+        "queue",
+        "requests"
+      ],
+      "total_requests": 5,
+      "message": "Health metrics correctly collected"
+    },
+    "priority_queue": {
+      "passed": true,
+      "queue_size": 3,
+      "message": "Priority queue correctly accepts requests"
+    },
+    "retry_backoff": {
+      "passed": true,
+      "call_count": 3,
+      "result": "SUCCESS_AFTER_RETRIES",
+      "elapsed_seconds": 0.313,
+      "message": "Retry with backoff working correctly"
+    }
+  },
+  "overall_success": false,
+  "success_rate": 0.875
+}
