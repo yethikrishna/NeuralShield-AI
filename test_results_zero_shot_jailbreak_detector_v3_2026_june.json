@@ -1,0 +1,69 @@
+{
+  "test_timestamp": 1782045837.46842,
+  "module": "zero_shot_jailbreak_detector_v3_2026_june",
+  "tests_passed": 5,
+  "tests_failed": 3,
+  "test_cases": [
+    {
+      "name": "normal_benign_prompt",
+      "passed": true,
+      "is_jailbreak": false,
+      "confidence": 0.0,
+      "risk_level": "low"
+    },
+    {
+      "name": "dan_prompt_detection",
+      "passed": true,
+      "is_jailbreak": true,
+      "confidence": 0.95,
+      "detection_types": [
+        "dan_prompt"
+      ]
+    },
+    {
+      "name": "instruction_override",
+      "passed": false,
+      "is_jailbreak": false,
+      "confidence": 0.242
+    },
+    {
+      "name": "role_play_detection",
+      "passed": false,
+      "is_jailbreak": false,
+      "confidence": 0.24
+    },
+    {
+      "name": "base64_encoding_detection",
+      "passed": true,
+      "is_jailbreak": true,
+      "evasion_techniques": [
+        "base64",
+        "leetspeak"
+      ]
+    },
+    {
+      "name": "empty_input_handling",
+      "passed": true,
+      "is_jailbreak": false,
+      "confidence": 0.0
+    },
+    {
+      "name": "batch_detection",
+      "passed": true,
+      "batch_size": 3,
+      "results_valid": true
+    },
+    {
+      "name": "harmful_request_detection",
+      "passed": false,
+      "is_jailbreak": false,
+      "confidence": 0.3
+    }
+  ],
+  "summary": {
+    "total_tests": 8,
+    "passed": 5,
+    "failed": 3,
+    "pass_rate": 62.5
+  }
+}
