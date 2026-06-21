@@ -1,0 +1,72 @@
+{
+  "test_suite": "LLM Agent Thought Process Integrity Auditor V4",
+  "version": "v4",
+  "timestamp": 1782035571.065719,
+  "tests_run": 8,
+  "tests_passed": 8,
+  "tests_failed": 0,
+  "test_cases": [
+    {
+      "name": "Initialization",
+      "status": "passed"
+    },
+    {
+      "name": "Chain Creation",
+      "status": "passed"
+    },
+    {
+      "name": "Add Thought Steps",
+      "status": "passed",
+      "time_ms": 0.2586841583251953
+    },
+    {
+      "name": "Merkle Tree",
+      "status": "passed",
+      "time_ms": 0.015497207641601562
+    },
+    {
+      "name": "Full Audit",
+      "status": "passed",
+      "time_ms": 0.030279159545898438,
+      "confidence": 1.0
+    },
+    {
+      "name": "Suspicious Detection",
+      "status": "passed",
+      "anomalies_count": 1
+    },
+    {
+      "name": "Statistics & Export",
+      "status": "passed"
+    },
+    {
+      "name": "Performance Benchmark",
+      "status": "passed",
+      "add_time_ms": 7.436990737915039,
+      "audit_time_ms": 0.9925365447998047,
+      "steps": 100
+    }
+  ],
+  "performance_metrics": {
+    "steps_per_second_avg": 13446.29884910076,
+    "audit_time_ms_100_steps": 0.9925365447998047
+  },
+  "limitations": [
+    "Pattern matching has false positive rate ~5-10%",
+    "Cannot detect semantic manipulation that preserves hashes",
+    "Performance degrades with very long chains (>1000 steps)"
+  ],
+  "total_time_ms": 10.467767715454102,
+  "self_test_results": {
+    "passed": [
+      "Create thought chain",
+      "Add thought steps with hashing",
+      "Merkle tree proof verification",
+      "Full integrity audit",
+      "Audit statistics",
+      "Suspicious pattern detection"
+    ],
+    "failed": [],
+    "total_time_ms": 0.1990795135498047
+  }
+}
