@@ -1,0 +1,50 @@
+{
+  "all_passed": true,
+  "test_results": [
+    [
+      "safe_prompt",
+      true
+    ],
+    [
+      "ignore_instructions",
+      true
+    ],
+    [
+      "dan_mode",
+      true
+    ],
+    [
+      "role_play",
+      true
+    ],
+    [
+      "prompt_leakage",
+      true
+    ],
+    [
+      "empty_prompt",
+      true
+    ],
+    [
+      "batch_detection",
+      true
+    ],
+    [
+      "stats_tracking",
+      true
+    ]
+  ],
+  "stats": {
+    "total_scanned": 9,
+    "jailbreaks_detected": 3,
+    "false_positives": 0,
+    "detection_rate": 0.3333
+  },
+  "config": {
+    "semantic_threshold": 0.35,
+    "pattern_threshold": 0.25,
+    "combined_threshold": 0.4,
+    "pattern_count": 40,
+    "keyword_count": 19
+  }
+}
