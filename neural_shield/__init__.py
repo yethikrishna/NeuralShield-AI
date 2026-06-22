@@ -2175,3 +2175,36 @@ __all__.extend([
 ])
 __version__ = "2026.6.22.2"
 
+
+"""
++ Distributed Tracing & Span Context (June 22, 2026) - Add-only distributed tracing
+  with span nesting, trace correlation, and structured exports
+"""
+from .observability_distributed_tracing_span_context_2026_june import (
+    enable_tracing,
+    disable_tracing,
+    reset_tracing,
+    get_traces,
+    export_traces_json,
+    Tracer,
+    TracingState,
+    TraceExporter,
+    TraceAnalyzer,
+    trace,
+    SpanKind,
+    SpanStatus,
+)
+__all__.extend([
+    "enable_tracing",
+    "disable_tracing",
+    "reset_tracing",
+    "get_traces",
+    "export_traces_json",
+    "Tracer",
+    "TracingState",
+    "TraceExporter",
+    "TraceAnalyzer",
+    "trace",
+    "SpanKind",
+    "SpanStatus",
+])
