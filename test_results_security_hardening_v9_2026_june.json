@@ -1,0 +1,141 @@
+{
+  "test_module": "security_hardening_advanced_v9_2026_june",
+  "dimension": "B - Security Hardening",
+  "timestamp": 1782119723.8734348,
+  "passed": 31,
+  "failed": 0,
+  "tests": {
+    "TestSecureMemoryManager": [
+      {
+        "name": "test_constant_time_compare_different",
+        "passed": true
+      },
+      {
+        "name": "test_constant_time_compare_equal",
+        "passed": true
+      },
+      {
+        "name": "test_constant_time_compare_length_mismatch",
+        "passed": true
+      },
+      {
+        "name": "test_constant_time_no_early_termination",
+        "passed": true
+      },
+      {
+        "name": "test_memory_manager_initialization",
+        "passed": true
+      },
+      {
+        "name": "test_memory_manager_stats",
+        "passed": true
+      },
+      {
+        "name": "test_nist_multipass_overwrite",
+        "passed": true
+      },
+      {
+        "name": "test_sensitive_buffer_context_manager",
+        "passed": true
+      },
+      {
+        "name": "test_sensitive_buffer_different_types",
+        "passed": true
+      },
+      {
+        "name": "test_zeroize_bytearray_basic",
+        "passed": true
+      },
+      {
+        "name": "test_zeroize_empty_buffer",
+        "passed": true
+      },
+      {
+        "name": "test_zeroize_memoryview",
+        "passed": true
+      }
+    ],
+    "TestPromptSecurityValidator": [
+      {
+        "name": "test_auto_sanitization",
+        "passed": true
+      },
+      {
+        "name": "test_entropy_calculation",
+        "passed": true
+      },
+      {
+        "name": "test_validate_code_injection",
+        "passed": true
+      },
+      {
+        "name": "test_validate_control_characters",
+        "passed": true
+      },
+      {
+        "name": "test_validate_empty_prompt",
+        "passed": true
+      },
+      {
+        "name": "test_validate_injection_attempt",
+        "passed": true
+      },
+      {
+        "name": "test_validate_long_prompt",
+        "passed": true
+      },
+      {
+        "name": "test_validate_obfuscation_high_entropy",
+        "passed": true
+      },
+      {
+        "name": "test_validate_safe_prompt",
+        "passed": true
+      },
+      {
+        "name": "test_validator_initialization",
+        "passed": true
+      },
+      {
+        "name": "test_validator_stats",
+        "passed": true
+      }
+    ],
+    "TestConvenienceFunctions": [
+      {
+        "name": "test_constant_time_compare_convenience",
+        "passed": true
+      },
+      {
+        "name": "test_memory_manager_singleton",
+        "passed": true
+      },
+      {
+        "name": "test_secure_zeroize_convenience",
+        "passed": true
+      },
+      {
+        "name": "test_validate_prompt_security_convenience",
+        "passed": true
+      },
+      {
+        "name": "test_validator_singleton",
+        "passed": true
+      }
+    ],
+    "TestIntegrationSecurity": [
+      {
+        "name": "test_combined_memory_and_validation",
+        "passed": true
+      },
+      {
+        "name": "test_constant_time_api_key_validation",
+        "passed": true
+      },
+      {
+        "name": "test_production_recommended_pattern",
+        "passed": true
+      }
+    ]
+  }
+}
