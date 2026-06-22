@@ -2208,3 +2208,37 @@ __all__.extend([
     "SpanKind",
     "SpanStatus",
 ])
+
+"""
++ Security Hardening Input Validation Wrappers (June 22, 2026) - Dimension B
+  Secure memory zeroization, constant-time comparison, input validation decorators,
+  and secure input gateway wrappers for all public API entry points
+"""
+from .security_hardening_input_validation_wrappers_2026_june import (
+    secure_zeroize,
+    SecureSensitiveData,
+    constant_time_compare,
+    constant_time_str_compare,
+    ValidationError,
+    validate_string,
+    validate_input_types,
+    validate_boundaries,
+    sanitize_for_logging,
+    validate_prompt_safety,
+    SecureInputGateway,
+)
+__all__.extend([
+    "secure_zeroize",
+    "SecureSensitiveData",
+    "constant_time_compare",
+    "constant_time_str_compare",
+    "ValidationError",
+    "validate_string",
+    "validate_input_types",
+    "validate_boundaries",
+    "sanitize_for_logging",
+    "validate_prompt_safety",
+    "SecureInputGateway",
+])
+__version__ = "2026.6.22.90"
+
