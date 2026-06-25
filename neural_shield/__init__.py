@@ -2332,6 +2332,42 @@ __all__.extend([
     # Utilities
     "safe_call",
 ])
-__version__ = "2026.6.25.1"
-__version__ = "2026.6.22.90"
+# Comprehensive Security Hardening Framework v29 (June 25, 2026 - Dimension B)
+from .comprehensive_security_hardening_framework_v29_2026_june import (
+    SecureMemory,
+    ConstantTime,
+    InputValidator,
+    RateLimiter,
+    SecurityHardeningWrapper,
+    SecurityLevel,
+    RateLimitConfig,
+    ValidationRule,
+    SecurityError,
+    ValidationError as SecurityValidationError,
+    RateLimitError as SecurityRateLimitError,
+    secure_memory,
+    constant_time,
+    default_validator as security_validator,
+    default_rate_limiter as security_rate_limiter,
+)
+__all__.extend([
+    # Security Hardening v29
+    "SecureMemory",
+    "ConstantTime",
+    "InputValidator",
+    "RateLimiter",
+    "SecurityHardeningWrapper",
+    "SecurityLevel",
+    "RateLimitConfig",
+    "ValidationRule",
+    "SecurityError",
+    "SecurityValidationError",
+    "SecurityRateLimitError",
+    "secure_memory",
+    "constant_time",
+    "security_validator",
+    "security_rate_limiter",
+])
+
+__version__ = "2026.6.25.146"
 
