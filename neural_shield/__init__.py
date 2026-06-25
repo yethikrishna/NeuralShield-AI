@@ -2240,5 +2240,98 @@ __all__.extend([
     "validate_prompt_safety",
     "SecureInputGateway",
 ])
+
+"""
++ Error Resilience Engine (June 25, 2026) - Dimension E
+  Custom exception hierarchy, timeout wrappers, retry with exponential backoff,
+  circuit breaker pattern, bulkhead isolation, and graceful degradation fallbacks
+"""
+from .error_resilience_engine_2026_june import (
+    # Exceptions
+    NeuralShieldError,
+    ConfigurationError,
+    ValidationError,
+    TimeoutError,
+    RateLimitError,
+    ResourceExhaustedError,
+    ExternalServiceError,
+    SecurityViolationError,
+    ModelInferenceError,
+    CircuitBreakerOpenError,
+    
+    # Circuit Breaker
+    CircuitState,
+    CircuitBreaker,
+    CircuitBreakerStats,
+    get_circuit_breaker,
+    
+    # Timeout
+    TimeoutWrapper,
+    with_timeout,
+    
+    # Retry
+    RetryConfig,
+    RetryStats,
+    RetryWrapper,
+    with_retry,
+    
+    # Graceful Degradation
+    FallbackStrategy,
+    GracefulDegradation,
+    with_graceful_degradation,
+    
+    # Combined Resilience
+    with_resilience,
+    
+    # Bulkhead Isolation
+    Bulkhead,
+    
+    # Utilities
+    safe_call,
+)
+__all__.extend([
+    # Exceptions
+    "NeuralShieldError",
+    "ConfigurationError",
+    "ValidationError",
+    "TimeoutError",
+    "RateLimitError",
+    "ResourceExhaustedError",
+    "ExternalServiceError",
+    "SecurityViolationError",
+    "ModelInferenceError",
+    "CircuitBreakerOpenError",
+    
+    # Circuit Breaker
+    "CircuitState",
+    "CircuitBreaker",
+    "CircuitBreakerStats",
+    "get_circuit_breaker",
+    
+    # Timeout
+    "TimeoutWrapper",
+    "with_timeout",
+    
+    # Retry
+    "RetryConfig",
+    "RetryStats",
+    "RetryWrapper",
+    "with_retry",
+    
+    # Graceful Degradation
+    "FallbackStrategy",
+    "GracefulDegradation",
+    "with_graceful_degradation",
+    
+    # Combined Resilience
+    "with_resilience",
+    
+    # Bulkhead Isolation
+    "Bulkhead",
+    
+    # Utilities
+    "safe_call",
+])
+__version__ = "2026.6.25.1"
 __version__ = "2026.6.22.90"
 
